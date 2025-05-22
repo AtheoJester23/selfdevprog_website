@@ -1,4 +1,6 @@
 import { auth } from '@/auth'
+import Addtime from '@/components/Addtime';
+import { Clock, Plus } from 'lucide-react';
 import { redirect } from 'next/navigation';
 import React from 'react'
 
@@ -7,9 +9,15 @@ const page = async () => {
 
     if(!session) redirect('/');
 
+    const handleSubmit = () => {
+        console.log("Testing")
+    }
+
   return (
-    <div className='mt-[70px]'>
-      <input type="time" className='text-black border border-white py-3 placeholder-gray-500' />
+    <div className='p-5 mt-[70px]'>
+        <h1 className='text-5xl text-white font-bold'>Create Schedule Page</h1>
+    
+        <Addtime/>
     </div>
   )
 }
