@@ -3,12 +3,15 @@
 import { Check, Clock, ConstructionIcon, Pencil, Plus, Trash2, X } from 'lucide-react'
 import React, { useState } from 'react'
 import { format, parse } from 'date-fns'
+import 'react-toastify/dist/ReactToastify.css'
+import { toast, ToastContainer } from 'react-toastify'
 
 
 const Addtime = () => {
     const [arr, setArr] = useState<Array<Entry>>([]);
     const [started, setStarted] = useState(false);
     const [totalMinutes, setTotalMinutes] = useState(0);
+    const [title, setTitle] = useState(null);
 
     type Entry = {
         id: number;
@@ -157,13 +160,13 @@ const Addtime = () => {
                 const newTotal = totalMinutesSoFar + addedDuration;
 
                 if (addedDuration === 0) {
-                    alert("End time must be after start time.");
+                    toast.error("End time must be after start time.");
                     return;
                 }
 
                 if (newTotal > 1440) {
-                    alert("Total schedule exceeds 24 hours.");
-
+                    toast.error("Total schedule exceeds 24 hours. abcd")
+                    
                     console.log("totalMins: ",totalMinutes)
                     return;
                 }
@@ -181,28 +184,20 @@ const Addtime = () => {
             }else{
 
                 if(toMinutes(timeVal2) < toMinutes(timeVal)){
-                    alert("Time must be later than the previous one...");
+                    toast.error("Time must be later than the previous one...");
                     return;
                 }
 
-                console.log(`This is new time: ${newHour}:${newMin}`);
-    
                 const updateArr = arr.map((item,index) => item.id == theId ? {...item, activity: actVal, timeValue: timeVal, status: 'Done', timeValue2: timeVal2} : item)
     
                 updateArr.push({id: Date.now(), status: "Empty", activity: "", timeValue: `${newHour}:${newMin}`, timeValue2: `${nextHour}:${nextMin}`, editingVal: false, editingVal2: false});
     
                 setArr(updateArr);
                 recalculateTotalMinutes(updateArr)
-
-                console.log(updateArr);
-
-                console.log("2. arr.length: ", arr.length);
             }
         }else{
-            console.log("This is the timeVal: ", timeVal);
-
             if(toMinutes(timeVal2) < toMinutes(timeVal)){
-                alert("Time must be later than the previous one...");
+                toast.error("Time must be later than the previous one... abcd");
                 return;
             }
 
@@ -269,12 +264,12 @@ const Addtime = () => {
                         const prevTime = arr[theIndex - 1]?.timeValue;
         
                         if(toMinutes(timeVal) < toMinutes(prevTime)){
-                            alert("Time must be later than the previous one...");
+                            toast.error("Time must be later than the previous one...");
                             return;
                         }
                     }else{
                         if(toMinutes(timeVal) > toMinutes(arr[theIndex + 1]?.timeValue2)){
-                            alert("Time must be later than the next one...");
+                            toast.error("Time must be later than the next one...");
                             return;
                         }
                     }
@@ -315,12 +310,12 @@ const Addtime = () => {
                         const prevTime = arr[theIndex - 1]?.timeValue;
         
                         if(toMinutes(timeVal2) < toMinutes(prevTime)){
-                            alert("Time must be later than the previous one...");
+                            toast.error("Time must be later than the previous one...");
                             return;
                         }
                     }else{
                         if(toMinutes(timeVal2) < toMinutes(arr[theIndex]?.timeValue)){
-                            alert("Time must be later than the next one...");
+                            toast.error("Time must be later than the next one...");
                             return;
                         }
                     }
@@ -348,7 +343,7 @@ const Addtime = () => {
     }
 
     const handleCancel = (theIndex: number, theId: number) => {
-        const updateArr = arr.map(item => item.id === theId ? { ...item, status: "Done"} : item)
+        const updateArr = arr.map(item => item.id === theId ? { ...item, status: "Done", editingVal: false, editingVal2: false} : item)
 
         console.log(updateArr[theIndex].status);
 
@@ -392,10 +387,42 @@ const Addtime = () => {
         }
     };
 
+    const handleAddTitle = () => {
+        if(title){
+            setTitle(null);
+        }else{
+            const title = document.getElementById("theTitle")?.value
+    
+            setTitle(title);
+    
+            console.log("testing")
+        }
 
+    }
 
   return (
-    <div className='mt-[70px] p-5 flex flex-col gap-3' id="theForm">
+    <div className='mt-[10px] p-5 flex flex-col gap-3' id="theForm">
+        {title ? (
+            <div className='shadow-xl rounded p-5 mb-3 flex gap-2 justify-between'>
+                <h1 className='text-white font-bold text-3xl flex items-center'>Title: {title}</h1>
+                <div>
+                    <button onClick={()=>handleAddTitle()} type='button' className='bg-blue-500 p-2 rounded-xl -translate-y-0.5 hover:translate-none duration-500 cursor-pointer'>
+                        <Pencil className='text-[rgb(22,22,22)]'/>
+                    </button>
+                </div>
+            </div>
+        ) : (
+            <div className='flex gap-2 items-center mb-5'>
+                <h1 className='text-white font-bold text-3xl flex items-center'>Title: </h1>
+                <input id="theTitle" type="text" className="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" autoComplete='off' placeholder='What title should this schedule have?' required/>
+            
+                <button onClick={()=>handleAddTitle()} type='button' className='bg-green-400 p-2 rounded-xl -translate-y-0.5 hover:translate-none duration-500 cursor-pointer'>
+                    <Check className='text-[rgb(22,22,22)]'/>
+                </button>
+            </div>
+            
+        )}
+        
         { arr.length === 0 ? 
             (
                 <button onClick={()=>handleStart()} type='button' className='bg-green-400 p-2 rounded-xl w-full flex justify-center -translate-y-0.5 hover:translate-none duration-500 cursor-pointer'>
@@ -437,7 +464,7 @@ const Addtime = () => {
                                 <Plus className='text-[rgb(22,22,22)]'/>
                             </button>
                         ) : item.status === "Done" ? (
-                            <button onClick={()=>handleEdit(index, item?.id)} type='button' className='bg-orange-400 p-2 rounded-xl'>
+                            <button onClick={()=>handleEdit(index, item?.id)} type='button' className='bg-blue-500 p-2 rounded-xl'>
                                 <Pencil className='text-[rgb(22,22,22)]'/>
                             </button>
                         ) : (
@@ -454,7 +481,7 @@ const Addtime = () => {
                 </div>
             )) : (
                 arr.map((item, index)=>(
-                    <div key={item?.id} className='flex items-center gap-3'>
+                    <div key={item?.id} className='flex items-center gap-3 border border-white p-5 rounded justify-between'>
                         { item.status === "Empty" ? (
                                 <>
                                     <h1 className='text-white whitespace-nowrap'>{to12Hour(item.timeValue)}</h1>
@@ -507,16 +534,14 @@ const Addtime = () => {
                                     ) : (
                                         <div className='flex'>
                                             <h1 className='text-white font-bold text-4xl flex gap-1 items-center whitespace-nowrap'>
-                                                {to12Hour(item.timeValue)}
-                                                <button onClick={()=>handleEditVal(index, item?.id)} type='button' className='bg-orange-400 p-3 rounded-xl -translate-y-0.5 hover:translate-none duration-500 cursor-pointer'>
-                                                    <Pencil className='text-[rgb(22,22,22)]' size={17}/>
+                                                <button onClick={()=>handleEditVal(index, item?.id)} type='button' className='bg-blue-500 p-3 rounded-xl -translate-y-0.5 hover:translate-none duration-500 cursor-pointer text-[rgb(22,22,22)]'>
+                                                    {to12Hour(item.timeValue)}
                                                 </button>
 
                                                 <span className='text-lg font-normal mx-2'> to </span>
                                                 
-                                                {to12Hour(item.timeValue2)}
-                                                <button onClick={()=>handleEditVal2(index, item?.id)} type='button' className='bg-orange-400 p-3 rounded-xl -translate-y-0.5 hover:translate-none duration-500 cursor-pointer'>
-                                                    <Pencil className='text-[rgb(22,22,22)]' size={17}/>
+                                                <button onClick={()=>handleEditVal2(index, item?.id)} type='button' className='bg-blue-500 p-3 rounded-xl -translate-y-0.5 hover:translate-none duration-500 cursor-pointer text-[rgb(22,22,22)]'>
+                                                    {to12Hour(item.timeValue2)}
                                                 </button>
                                             </h1>
                                         </div>
@@ -542,7 +567,7 @@ const Addtime = () => {
                                         :
                                     </h1>
                                     
-                                    <p className='text-white font-normal text-2xl inline-block'>{item.activity}</p>
+                                    <p className='text-white font-normal text-2xl inline-block whitespace-normal break-all'>{item.activity}</p>
                                 </div>
                             )
                         }
@@ -553,7 +578,7 @@ const Addtime = () => {
                                 </button>
                             ) : item.status === "Done" ? (
                                 <div className='flex items-center gap-2'>
-                                    <button onClick={()=>handleEdit(index, item?.id)} type='button' className='bg-orange-400 p-2 rounded-xl -translate-y-0.5 hover:translate-none duration-500 cursor-pointer'>
+                                    <button onClick={()=>handleEdit(index, item?.id)} type='button' className='bg-blue-500 p-2 rounded-xl -translate-y-0.5 hover:translate-none duration-500 cursor-pointer'>
                                         <Pencil className='text-[rgb(22,22,22)]'/>
                                     </button>
                                     <button onClick={()=>handleDelete(index, item?.id)} type='button' className='bg-red-500 p-2 rounded-xl cursor-pointer -translate-y-0.5 hover:translate-none duration-500 cursor-pointer'>
@@ -565,7 +590,7 @@ const Addtime = () => {
                                     <button onClick={()=>handleUpdate(index, item?.id)} type='button' className='bg-green-400 p-2 rounded-xl -translate-y-0.5 hover:translate-none duration-500 cursor-pointer'>
                                         <Check className='text-[rgb(22,22,22)]'/>
                                     </button>
-                                    <button onClick={()=>handleCancel(index, item?.id)} type='button' className='bg-red-400 p-2 rounded-xl -translate-y-0.5 hover:translate-none duration-500 cursor-pointer'>
+                                    <button onClick={()=>handleCancel(index, item?.id)} type='button' className='bg-red-500 p-2 rounded-xl -translate-y-0.5 hover:translate-none duration-500 cursor-pointer'>
                                         <X className='text-[rgb(22,22,22)]'/>
                                     </button>
                                 </>
@@ -581,6 +606,7 @@ const Addtime = () => {
         ) : (
             null
         )}
+        <ToastContainer theme='dark'/>
     </div>
     )
 }

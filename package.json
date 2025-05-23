@@ -25,6 +25,7 @@
     "next-auth": "^5.0.0-beta.28",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-toastify": "^11.0.5",
     "tailwind-merge": "^3.3.0"
   },
   "devDependencies": {
