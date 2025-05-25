@@ -1,17 +1,20 @@
 "use client"
 
-import { Check, Clock, ConstructionIcon, Pencil, Plus, Trash2, X } from 'lucide-react'
+import { Check, CircleAlert, Clock, ConstructionIcon, Pencil, Plus, Trash2, X } from 'lucide-react'
 import React, { useState } from 'react'
 import { format, parse } from 'date-fns'
 import 'react-toastify/dist/ReactToastify.css'
 import { toast, ToastContainer } from 'react-toastify'
+import { Dialog } from '@headlessui/react'
 
 
 const Addtime = () => {
     const [arr, setArr] = useState<Array<Entry>>([]);
     const [started, setStarted] = useState(false);
     const [totalMinutes, setTotalMinutes] = useState(0);
-    const [title, setTitle] = useState(null);
+    const [title, setTitle] = useState<any>(null);
+    const [isOpen, setIsOpen] = useState(false)
+    const [selectedDelete, setSelectedDelete] = useState<object | null>(null);
 
     type Entry = {
         id: number;
@@ -24,6 +27,14 @@ const Addtime = () => {
         editingVal: boolean;
         editingVal2: boolean;
     };
+
+    const handleModal = (theIndex: number, theId: number) => {
+        console.log('modal closed...');
+        setSelectedDelete({theIndex, theId});
+        setIsOpen(!isOpen);
+
+        console.log(selectedDelete);
+    }
 
     const handleSubmit = () => {
         const timeOne = document.getElementById("time") as HTMLInputElement;
@@ -164,8 +175,12 @@ const Addtime = () => {
                     return;
                 }
 
-                if (newTotal > 1440) {
-                    toast.error("Total schedule exceeds 24 hours. abcd")
+                console.log("")
+                console.log("Added Duration: ", addedDuration);
+                console.log("")
+
+                if ((totalMinutes + addedDuration) > 1440) {
+                    toast.error("Total schedule exceeds 24 hours.")
                     
                     console.log("totalMins: ",totalMinutes)
                     return;
@@ -250,8 +265,6 @@ const Addtime = () => {
     const handleUpdate = (theIndex: number, theId: number) => {
         let actVal = (document.getElementById(`activity${theIndex}`) as HTMLInputElement )?.value
 
-        console.log("timeValue2s: ", arr.map(item => item.timeValue2));
-
         if(arr.length - 1 != theIndex){
             
             if(arr[theIndex]?.editingVal){
@@ -259,17 +272,14 @@ const Addtime = () => {
 
                 const currentTimeDiff = toMinutes(arr[theIndex]?.timeValue2) - toMinutes(timeVal);
 
+                console.log(`Current Time Diff: ${toMinutes(arr[theIndex]?.timeValue2)} - ${toMinutes(timeVal)}`);
+
                 if(arr.length > 1){
                     if(theIndex != 0){
                         const prevTime = arr[theIndex - 1]?.timeValue;
         
                         if(toMinutes(timeVal) < toMinutes(prevTime)){
                             toast.error("Time must be later than the previous one...");
-                            return;
-                        }
-                    }else{
-                        if(toMinutes(timeVal) > toMinutes(arr[theIndex + 1]?.timeValue2)){
-                            toast.error("Time must be later than the next one...");
                             return;
                         }
                     }
@@ -290,10 +300,36 @@ const Addtime = () => {
                 console.log("*========================================================================================")
                 console.log("")
                 
-                if(currentTimeDiff + totalMinutes >= 1440){
-                    const updateArr = arr.map((item,index) => item.id == theId ? {...item, timeValue: updated[index], editingVal: false, activity: actVal, status: 'Done', timeValue2: updated[index + 1]} : index != arr.length - 1 ? ({...item, timeValue: updated[index], timeValue2: updated[index + 1], editingVal: false}) : index == arr.length - 1 ? ({...item, editingVal: false}) : index == arr.length - 3 ? ({...item, editingVal: false}) : ({...item, timeValue: updated[index], editingVal: false}));
+                const totalMinutesSoFar = arr.reduce((sum, item) => {
+                    return sum + getTimeDifferenceInDayCycle(item.timeValue, item.timeValue2);
+                }, 0);
+
+                const fromMin = toMinutes(timeVal);
+                const toMin = toMinutes(arr[theIndex]?.timeValue2);
+                const toMin2 = toMinutes(arr[theIndex]?.timeValue);
+
+                const addedDuration = (toMin - fromMin + 1440) % 1440;
+                const addedDuration2 = (toMin2 - fromMin + 1440) % 1440;
+
+                const newTotal = totalMinutesSoFar + addedDuration;
+
+                // console.log(`The real new total: ${newTotal}`)
+            
+                console.log("Total Minutes: ", totalMinutes)
+                console.log(`addedDuration: ${addedDuration}`);
+
+                if((totalMinutes + addedDuration) > 1440){
+                    if(fromMin > toMin && theIndex == 0){
+                        const updateArr = arr.map((item,index) => item.id == theId ? {...item, timeValue: updated[index], editingVal: false, activity: actVal, status: 'Done', timeValue2: updated[index + 1]} : index != arr.length - 1 ? ({...item, timeValue: updated[index], timeValue2: updated[index + 1], editingVal: false}) : ({...item, timeValue: updated[index], editingVal: false}));
         
-                    setArr(updateArr);
+                        setArr(updateArr);
+                    }else{
+                        toast.error("Total schedule exceeds 24 hours. abcdefg");
+                        return;
+                    }
+                    // const updateArr = arr.map((item,index) => item.id == theId ? {...item, timeValue: updated[index], editingVal: false, activity: actVal, status: 'Done', timeValue2: updated[index + 1]} : index == arr.length - 1 ? ({...item, editingVal: false}) : index == arr.length - 2 ? ({...item, timeValue: updated[index], editingVal: false}) : index != arr.length - 1 ? ({...item, timeValue: updated[index], timeValue2: updated[index + 1], editingVal: false}) : ({...item, timeValue: updated[index], editingVal: false}));
+        
+                    // setArr(updateArr);
                 }else{
                     const updateArr = arr.map((item,index) => item.id == theId ? {...item, timeValue: updated[index], editingVal: false, activity: actVal, status: 'Done', timeValue2: updated[index + 1]} : index != arr.length - 1 ? ({...item, timeValue: updated[index], timeValue2: updated[index + 1], editingVal: false}) : ({...item, timeValue: updated[index], editingVal: false}));
         
@@ -329,12 +365,46 @@ const Addtime = () => {
                 const durationTimes = updateArr.map((item: {timeValue2: string}) => item.timeValue2);
                 const updatedDuration = updateTimes(durationTimes, theIndex, timeVal2);
 
-                const updateArr2 = updateArr.map((item, index) => index < theIndex ? {...item, timeValue: updated[index], timeValue2: updatedDuration[index], editingVal2: false} : item.id == theId ? {...item, status: 'Done', timeValue2: updatedDuration[index], editingVal2: false, activity: actVal} : index != arr.length - 1 ? {...item, timeValue: updatedDuration[index - 1], timeValue2: updatedDuration[index], editingVal2: false} : {...item, timeValue: updatedDuration[index - 1], timeValue2: updatedDuration[index], editingVal2: false})
+                const totalMinutesSoFar = arr.reduce((sum, item) => {
+                    return sum + getTimeDifferenceInDayCycle(item.timeValue, item.timeValue2);
+                }, 0);
 
-                setArr(updateArr2);
+                const fromMin = toMinutes(arr[theIndex]?.timeValue2);
+                const toMin = toMinutes(timeVal2);
 
-                console.log(arr);
+                console.log(`This is the fromMin: ${arr[theIndex]?.timeValue}`);
+
+
+                console.log(`fromMin & toMin: ${fromMin} - ${toMin}`)
+
+                const addedDurationb = (toMin - fromMin + 1440) % 1440;
+
+                const newTotal = totalMinutesSoFar + addedDurationb;
+
+                console.log("")
+                console.log("TotalMins: ", totalMinutes);
+                console.log("Added Duration: ", addedDurationb);
+                console.log("")
+
+                if((totalMinutes + addedDurationb) > 1440){
+                    if(toMin < fromMin){
+                        console.log("minus: ", (toMin - fromMin) )
+                        const updateArr2 = updateArr.map((item, index) => index < theIndex ? {...item, timeValue: updated[index], timeValue2: updatedDuration[index], editingVal2: false} : item.id == theId ? {...item, status: 'Done', timeValue2: updatedDuration[index], editingVal2: false, activity: actVal} : index != arr.length - 1 ? {...item, timeValue: updatedDuration[index - 1], timeValue2: updatedDuration[index], editingVal2: false} : {...item, timeValue: updatedDuration[index - 1], timeValue2: updatedDuration[index], editingVal2: false})
+    
+                        setArr(updateArr2);
+                    }else{
+                        toast.error("Total schedule exceeds 24 hours.");
+                        return;
+                    }
+                }else{
+                    const updateArr2 = updateArr.map((item, index) => index < theIndex ? {...item, timeValue: updated[index], timeValue2: updatedDuration[index], editingVal2: false} : item.id == theId ? {...item, status: 'Done', timeValue2: updatedDuration[index], editingVal2: false, activity: actVal} : index != arr.length - 1 ? {...item, timeValue: updatedDuration[index - 1], timeValue2: updatedDuration[index], editingVal2: false} : {...item, timeValue: updatedDuration[index - 1], timeValue2: updatedDuration[index], editingVal2: false})
+    
+                    setArr(updateArr2);
+                }
+
             }else{
+                console.log("This is for the first index of array...");
+
                 const updateArr3 = arr.map(item => item.id == theId ? {...item, activity: actVal, status: 'Done'} : item);
             
                 setArr(updateArr3);
@@ -372,6 +442,8 @@ const Addtime = () => {
         setArr(updatedArr);
         setTotalMinutes(prev => prev - timeRemoved);
 
+        console.log(totalMinutes);
+
         // Optional: Fix next entry’s timeValue if needed (relinking continuity)
         if (theIndex > 0 && theIndex < arr.length - 1) {
             const prevItem = arr[theIndex - 1];
@@ -385,13 +457,15 @@ const Addtime = () => {
             );
             setArr(fixedArr);
         }
+
+        setIsOpen(false);
     };
 
     const handleAddTitle = () => {
         if(title){
             setTitle(null);
         }else{
-            const title = document.getElementById("theTitle")?.value
+            const title = (document.getElementById("theTitle") as HTMLInputElement)?.value
     
             setTitle(title);
     
@@ -414,7 +488,20 @@ const Addtime = () => {
         ) : (
             <div className='flex gap-2 items-center mb-5'>
                 <h1 className='text-white font-bold text-3xl flex items-center'>Title: </h1>
-                <input id="theTitle" type="text" className="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" autoComplete='off' placeholder='What title should this schedule have?' required/>
+                <input 
+                    id="theTitle" 
+                    type="text" 
+                    className="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                    autoComplete='off' 
+                    placeholder='What title should this schedule have?' 
+                    onKeyDown={(e)=>{
+                        if(e.key === "Enter"){
+                            e.preventDefault();
+                            handleAddTitle();
+                        }
+                    }}
+                    required
+                />
             
                 <button onClick={()=>handleAddTitle()} type='button' className='bg-green-400 p-2 rounded-xl -translate-y-0.5 hover:translate-none duration-500 cursor-pointer'>
                     <Check className='text-[rgb(22,22,22)]'/>
@@ -434,16 +521,41 @@ const Addtime = () => {
                     { item.status === "Empty" || item.status === "Editing" ? (
                             <>
                                 <div className='relative'>
-                                    <input type="time" id={`input${index}`} className="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" min={index > 0 ? arr[index - 1].timeValue : "00:00"} defaultValue={item.timeValue} required />
+                                    <input 
+                                        type="time" 
+                                        id={`input${index}`} 
+                                        className="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                                        min={index > 0 ? arr[index - 1].timeValue : "00:00"} 
+                                        defaultValue={item.timeValue} 
+                                        onKeyDown={(e)=>{
+                                            if(e.key === "Enter"){
+                                                e.preventDefault();
+                                                handleAdd(index, item?.id)
+                                            }
+                                        }}
+                                        required 
+                                    />
                                     <div className="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
                                         <Clock className='text-white' size={20}/>
                                     </div>
                                 </div>
 
-                                <h1 className='text-white font-bold'>to</h1>
+                                <h1 className='text-white font-bold'>to abcdefg</h1>
 
                                 <div className='relative'>
-                                    <input type="time" id={`nextInput${index}`} className="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" min={index > 0 ? arr[index - 1].timeValue : "00:00"} defaultValue={item.timeValue} required />
+                                    <input 
+                                        type="time" 
+                                        id={`nextInput${index}`} 
+                                        className="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                                        min={index > 0 ? arr[index - 1].timeValue : "00:00"} 
+                                        defaultValue={item.timeValue} 
+                                        onKeyDown={(e)=>{
+                                            if(e.key === "Enter"){
+                                                e.preventDefault();
+                                                handleAdd(index, item?.id)
+                                            }
+                                        }}
+                                        required />
                                     <div className="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
                                         <Clock className='text-white' size={20}/>
                                     </div>
@@ -451,7 +563,20 @@ const Addtime = () => {
 
                                 <h1 className='text-white font-bold'>:</h1>
 
-                                <input id={`activity${index}`} type="text" className="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" defaultValue={item.activity} autoComplete='off' required/>
+                                <input 
+                                    id={`activity${index}`} 
+                                    type="text" 
+                                    className="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                                    defaultValue={item.activity} 
+                                    autoComplete='off' 
+                                    onKeyDown={(e)=>{
+                                        if(e.key === "Enter"){
+                                            e.preventDefault();
+                                            handleAdd(index, item?.id);
+                                        }
+                                    }}
+                                    required
+                                />
                             </>
                         ) : 
                             <>
@@ -480,9 +605,165 @@ const Addtime = () => {
                     }
                 </div>
             )) : (
-                arr.map((item, index)=>(
+                arr.map((item, index)=> totalMinutes != 1440 ? (
                     <div key={item?.id} className='flex items-center gap-3 border border-white p-5 rounded justify-between'>
-                        { item.status === "Empty" ? (
+                        { item.status === "Empty" && totalMinutes != 1440 ? (
+                                <>
+                                    <h1 className='text-white whitespace-nowrap'>{to12Hour(item.timeValue)}</h1>
+
+                                    <h1 className='text-white font-bold'>to</h1>
+
+                                    <div className='relative'>
+                                        <input 
+                                            type="time" 
+                                            id={`nextInput${index}`} 
+                                            className="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                                            min={index > 0 ? arr[index - 1].timeValue : "00:00"} 
+                                            defaultValue={item.timeValue2} 
+                                            onKeyDown={(e)=>{
+                                                if(e.key === "Enter"){
+                                                    e.preventDefault();
+                                                    handleAdd(index, item?.id);
+                                                }
+                                            }}
+                                            required 
+                                        />
+                                        <div className="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
+                                            <Clock className='text-white' size={20}/>
+                                        </div>
+                                    </div>
+
+                                    <h1 className='text-white font-bold'>:</h1>
+
+                                    <input 
+                                        id={`activity${index}`} 
+                                        type="text" 
+                                        className="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                                        defaultValue={item.activity} 
+                                        autoComplete='off' 
+                                        onKeyDown={(e)=>{
+                                            if(e.key === "Enter"){
+                                                e.preventDefault();
+                                                handleAdd(index, item?.id);
+                                            }
+                                        }}
+                                        required
+                                    />
+                                </>
+                            ) : item.status === "Editing" ? (
+                                <>  
+                                    {item.editingVal ? (
+                                        <>
+                                            <div className='relative'>
+                                                <input type="time" id={`input${index}`} className="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" min={index > 0 ? arr[index - 1].timeValue : "00:00"} defaultValue={item.timeValue} required />
+                                                <div className="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
+                                                    <Clock className='text-white' size={20}/>
+                                                </div>
+                                            </div>
+
+                                            <h1 className='text-white font-bold text-4xl flex gap-1 items-center whitespace-nowrap'>
+                                                <span className='text-lg font-normal mx-2'> to </span>
+                                                    
+                                                {to12Hour(item.timeValue2)}
+                                            </h1>
+                                        </>
+                                    ) : item.editingVal2 ? ( 
+                                        <>
+                                            <h1 className='text-white font-bold text-4xl flex gap-1 items-center whitespace-nowrap'>
+                                                {to12Hour(item.timeValue)}
+                                                
+                                                <span className='text-lg font-normal mx-2'> to </span>
+                                            </h1>
+
+                                            <div className='relative'>
+                                                <input type="time" id={`nextInput${index}`} className="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" min={index > 0 ? arr[index - 1].timeValue : "00:00"} defaultValue={item.timeValue2} required />
+                                                <div className="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
+                                                    <Clock className='text-white' size={20}/>
+                                                </div>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <div className='flex'>
+                                            <h1 className='text-white font-bold text-4xl flex gap-1 items-center whitespace-nowrap'>
+                                                <button onClick={()=>handleEditVal(index, item?.id)} type='button' className='bg-blue-500 p-3 rounded-xl -translate-y-0.5 hover:translate-none duration-500 cursor-pointer text-[rgb(22,22,22)]'>
+                                                    {to12Hour(item.timeValue)}
+                                                </button>
+
+                                                <span className='text-lg font-normal mx-2'> to </span>
+                                                
+                                                <button onClick={()=>handleEditVal2(index, item?.id)} type='button' className='bg-blue-500 p-3 rounded-xl -translate-y-0.5 hover:translate-none duration-500 cursor-pointer text-[rgb(22,22,22)]'>
+                                                    {to12Hour(item.timeValue2)}
+                                                </button>
+                                            </h1>
+                                        </div>
+                                    )}
+
+                                    <h1 className='text-white font-bold'>:</h1>
+
+                                    <input 
+                                        id={`activity${index}`} 
+                                        type="text" 
+                                        className="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                                        defaultValue={item.activity} 
+                                        autoComplete='off' 
+                                        onKeyDown={(e)=>{
+                                            if(e.key === "Enter"){
+                                                e.preventDefault();
+                                                handleUpdate(index, item?.id)
+                                            }
+                                        }}
+                                        required
+                                    />
+                                </>
+                            ) : (
+                                <div className='flex items-center gap-3'>
+                                    <h1 className='text-white font-bold text-3xl flex items-center whitespace-nowrap'>
+                                        {to12Hour(item.timeValue)}
+                                    </h1>
+                                    
+                                    <span className='text-lg font-normal text-white'> to </span>
+                                    
+                                    <h1 className='text-white font-bold text-3xl flex items-center whitespace-nowrap'>
+                                        {to12Hour(item.timeValue2)}
+                                    </h1>
+                                    
+                                    <h1 className='text-white font-bold text-3xl flex items-center'>
+                                        :
+                                    </h1>
+                                    
+                                    <p className='text-white font-normal text-3xl inline-block whitespace-normal break-all'>{item.activity}</p>
+                                </div>
+                            )
+                        }
+                        
+                        { item.status === "Empty" && totalMinutes != 1440 ? (
+                                <button onClick={()=>handleAdd(index, item?.id)} type='button' className='bg-green-400 p-2 rounded-xl -translate-y-0.5 hover:translate-none duration-500 cursor-pointer'>
+                                    <Plus className='text-[rgb(22,22,22)]'/>
+                                </button>
+                            ) : item.status === "Done" || (item.status === "Empty" && totalMinutes == 1440) ? (
+                                <div className='flex items-center gap-2'>
+                                    <button onClick={()=>handleEdit(index, item?.id)} type='button' className='bg-blue-500 p-2 rounded-xl -translate-y-0.5 hover:translate-none duration-500 cursor-pointer'>
+                                        <Pencil className='text-[rgb(22,22,22)]'/>
+                                    </button>
+                                    <button onClick={()=>handleModal(index, item?.id)} type='button' className='bg-red-500 p-2 rounded-xl cursor-pointer -translate-y-0.5 hover:translate-none duration-500 cursor-pointer'>
+                                        <Trash2 className='text-[rgb(22,22,22)]'/>
+                                    </button>
+                                </div>
+                            ) : (
+                                <>
+                                    <button onClick={()=>handleUpdate(index, item?.id)} type='button' className='bg-green-400 p-2 rounded-xl -translate-y-0.5 hover:translate-none duration-500 cursor-pointer'>
+                                        <Check className='text-[rgb(22,22,22)]'/>
+                                    </button>
+                                    <button onClick={()=>handleCancel(index, item?.id)} type='button' className='bg-red-500 p-2 rounded-xl -translate-y-0.5 hover:translate-none duration-500 cursor-pointer'>
+                                        <X className='text-[rgb(22,22,22)]'/>
+                                    </button>
+                                </>
+                            )
+                        }
+                    </div>
+                ) : index != arr.length - 1 ? (
+                    <div key={item?.id} className='flex items-center gap-3 border border-white p-5 rounded justify-between'>
+                        { item.status === "Empty" && totalMinutes != 1440 ? (
                                 <>
                                     <h1 className='text-white whitespace-nowrap'>{to12Hour(item.timeValue)}</h1>
 
@@ -497,7 +778,14 @@ const Addtime = () => {
 
                                     <h1 className='text-white font-bold'>:</h1>
 
-                                    <input id={`activity${index}`} type="text" className="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" defaultValue={item.activity} autoComplete='off' required/>
+                                    <input 
+                                        id={`activity${index}`} 
+                                        type="text" 
+                                        className="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                                        defaultValue={item.activity} 
+                                        autoComplete='off' 
+                                        required
+                                    />
                                 </>
                             ) : item.status === "Editing" ? (
                                 <>  
@@ -553,13 +841,13 @@ const Addtime = () => {
                                 </>
                             ) : (
                                 <div className='flex items-center gap-3'>
-                                    <h1 className='text-white font-bold text-4xl flex items-center whitespace-nowrap'>
+                                    <h1 className='text-white font-bold text-3xl flex items-center whitespace-nowrap'>
                                         {to12Hour(item.timeValue)}
                                     </h1>
                                     
                                     <span className='text-lg font-normal text-white'> to </span>
                                     
-                                    <h1 className='text-white font-bold text-4xl flex items-center whitespace-nowrap'>
+                                    <h1 className='text-white font-bold text-3xl flex items-center whitespace-nowrap'>
                                         {to12Hour(item.timeValue2)}
                                     </h1>
                                     
@@ -567,21 +855,21 @@ const Addtime = () => {
                                         :
                                     </h1>
                                     
-                                    <p className='text-white font-normal text-2xl inline-block whitespace-normal break-all'>{item.activity}</p>
+                                    <p className='text-white font-normal text-4xl inline-block whitespace-normal break-all'>{item.activity}</p>
                                 </div>
                             )
                         }
                         
-                        { item.status === "Empty" ? (
+                        { item.status === "Empty" && totalMinutes != 1440 ? (
                                 <button onClick={()=>handleAdd(index, item?.id)} type='button' className='bg-green-400 p-2 rounded-xl -translate-y-0.5 hover:translate-none duration-500 cursor-pointer'>
                                     <Plus className='text-[rgb(22,22,22)]'/>
                                 </button>
-                            ) : item.status === "Done" ? (
+                            ) : item.status === "Done" || (item.status === "Empty" && totalMinutes == 1440) ? (
                                 <div className='flex items-center gap-2'>
                                     <button onClick={()=>handleEdit(index, item?.id)} type='button' className='bg-blue-500 p-2 rounded-xl -translate-y-0.5 hover:translate-none duration-500 cursor-pointer'>
                                         <Pencil className='text-[rgb(22,22,22)]'/>
                                     </button>
-                                    <button onClick={()=>handleDelete(index, item?.id)} type='button' className='bg-red-500 p-2 rounded-xl cursor-pointer -translate-y-0.5 hover:translate-none duration-500 cursor-pointer'>
+                                    <button onClick={()=>handleModal(index, item?.id)} type='button' className='bg-red-500 p-2 rounded-xl cursor-pointer -translate-y-0.5 hover:translate-none duration-500 cursor-pointer'>
                                         <Trash2 className='text-[rgb(22,22,22)]'/>
                                     </button>
                                 </div>
@@ -597,7 +885,7 @@ const Addtime = () => {
                             )
                         }
                     </div>
-                ))
+                ) : null)
             )
         }
 
@@ -607,6 +895,25 @@ const Addtime = () => {
             null
         )}
         <ToastContainer theme='dark'/>
+        <Dialog open={isOpen} onClose={() => setIsOpen(false)}>
+            <div className='fixed inset-0 bg-black/30'></div>
+
+            <div className='fixed inset-0 flex w-screen items-center justify-center p-4'>
+                <Dialog.Panel className="mx-auto max-w-sm rounded bg-white p-5 w-[50%]">
+                    <div className='flex justify-center flex-col items-center gap-3'>
+                        <CircleAlert size={100} className='text-red-500'/>
+                        <div>
+                            <Dialog.Title className="text-2xl font-bold">Confirm Delete</Dialog.Title>
+                            <Dialog.Description className="text-gray-500">This action is irreversible.</Dialog.Description>
+                        </div>
+                        <div className='flex gap-3'>
+                            <button className='px-5 py-2 bg-red-500 text-white rounded-full cursor-pointer hover:bg-red-600 duration-200 -translate-y-0.25 hover:translate-none shadow hover:shadow-none' onClick={() => handleDelete(selectedDelete.theIndex, selectedDelete.theId)}>Yes</button>
+                            <button className='px-5 py-2 bg-gray-500 text-white rounded-full cursor-pointer hover:bg-gray-600 duration-200 -translate-y-0.25 hover:translate-none shadow hover:shadow-none' onClick={() => setIsOpen(false)}>Cancel</button>
+                        </div>
+                    </div>
+                </Dialog.Panel>
+            </div>
+        </Dialog>
     </div>
     )
 }
