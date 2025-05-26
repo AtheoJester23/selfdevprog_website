@@ -1,32 +1,40 @@
 "use client"
 
 import { Check, CircleAlert, Clock, ConstructionIcon, Pencil, Plus, Trash2, X } from 'lucide-react'
-import React, { useState } from 'react'
+import React, { useActionState, useState } from 'react'
 import { format, parse } from 'date-fns'
 import 'react-toastify/dist/ReactToastify.css'
 import { toast, ToastContainer } from 'react-toastify'
 import { Dialog } from '@headlessui/react'
+import { validation } from 'sanity'
+import { formSchema } from '@/sanity/lib/validation'
+import { createSchedule } from '@/lib/actions'
+import { nanoid } from 'nanoid'
 
-
-const Addtime = () => {
-    const [arr, setArr] = useState<Array<Entry>>([]);
-    const [started, setStarted] = useState(false);
-    const [totalMinutes, setTotalMinutes] = useState(0);
-    const [title, setTitle] = useState<any>(null);
-    const [isOpen, setIsOpen] = useState(false)
-    const [selectedDelete, setSelectedDelete] = useState<object | null>(null);
-
-    type Entry = {
+export type Entry = {
+        _key: string;
         id: number;
         timeValue: string;
         timeValue2: string;
         activityVal?: string;
-        prevTimeDiff?: string;
         status: string;
         activity: string;
         editingVal: boolean;
         editingVal2: boolean;
     };
+
+export type wholeData = {
+    title: string,
+    allTime: Entry[]
+}
+
+const Addtime = () => {
+    const [arr, setArr] = useState<Array<Entry>>([]);
+    const [totalMinutes, setTotalMinutes] = useState(0);
+    const [title, setTitle] = useState<any>(null);
+    const [isOpen, setIsOpen] = useState(false)
+    const [selectedDelete, setSelectedDelete] = useState<{theId: number, theIndex:number} | null>(null);
+    const [isPending, setIsPending] = useState<boolean>(false);
 
     const handleModal = (theIndex: number, theId: number) => {
         console.log('modal closed...');
@@ -36,25 +44,45 @@ const Addtime = () => {
         console.log(selectedDelete);
     }
 
-    const handleSubmit = () => {
-        const timeOne = document.getElementById("time") as HTMLInputElement;
-        const theActivity = document.getElementById("activity") as HTMLInputElement;
+    const handleSubmit = async (isPending: boolean) => {        
+        const copy: Entry[] = JSON.parse(JSON.stringify(arr));
 
-        console.log({time: timeOne?.value, act: `${theActivity?.value}`});
-
-        // console.log(timeOne?.value.slice(0, 2));
-
-        // const amPm1 = timeOne?.value.slice(0, 2) >= 12 ? 'PM' : 'AM'
+        const allTime: Entry[] = copy.filter((_, index) => index !== arr.length - 1)
         
-        // const [hourFirst, minuteFirst] = timeOne?.value?.split(':');
-        // const hourOne = hourFirst % 12 == 0 ? 12 : hourFirst % 12;
-        
-        // console.log(`${hourOne}:${minuteFirst} ${amPm1}`);
-    
-        // arr.push(`${hourOne}:${minuteFirst} ${amPm1}`)
+        if(!title){
+            toast.error("Title is required...");
+            return;
+        }
 
-        // console.log(arr);
+        try {
+            const theData: wholeData = {title, allTime};            
+
+            await formSchema.parseAsync(theData);
+
+            console.log(theData);
+
+            const result = await createSchedule(theData)
+
+            toast.success("Schedule Created");
+
+            if(!result.ok)throw result;
+
+            // toast.success("Schedule Created");
+
+            setIsPending(true);
+
+            console.log(isPending);
+        } catch(e) {
+            toast.error((e as Error).message);
+        }finally{
+            // setIsPending(false);
+        }
     }
+
+    // const [state, , isPending] = useActionState(handleSubmit, {
+    //     error: "",
+    //     status: "INITIAL",
+    // });
 
     const to12Hour = (timeStr: string) => {
         const date = parse(timeStr, 'HH:mm', new Date());
@@ -157,12 +185,10 @@ const Addtime = () => {
     
                 const hourDiff = Math.floor(Math.floor(timeDiff / 60));
                 const minsDiff = timeDiff % 60;
-    
-                const prevTimeDiff = `${String(hourDiff).padStart(2,"0")}:${String(minsDiff).padStart(2, "0")}`;
             
                 console.log(`This is new time: ${newHour}:${newMin}`);
 
-                const updateArr = arr.map((item,index) => item.id == theId ? {...item, activity: actVal, status: 'Done', prevTimeDiff, timeValue2: timeVal2} : item)
+                const updateArr = arr.map((item,index) => item.id == theId ? {...item, activity: actVal, status: 'Done', timeValue2: timeVal2} : item)
 
                 const totalMinutesSoFar = arr.reduce((sum, item) => {
                     return sum + getTimeDifferenceInDayCycle(item.timeValue, item.timeValue2);
@@ -186,7 +212,7 @@ const Addtime = () => {
                     return;
                 }
             
-                updateArr.push({id: Date.now(), status: "Empty", activity: "", timeValue: `${newHour}:${newMin}`, timeValue2: `${nextHour}:${nextMin}`, editingVal: false, editingVal2: false});
+                updateArr.push({_key: nanoid() ,id: Date.now(), status: "Empty", activity: "", timeValue: `${newHour}:${newMin}`, timeValue2: `${nextHour}:${nextMin}`, editingVal: false, editingVal2: false});
 
                 setArr(updateArr);
                 recalculateTotalMinutes(updateArr)
@@ -205,7 +231,7 @@ const Addtime = () => {
 
                 const updateArr = arr.map((item,index) => item.id == theId ? {...item, activity: actVal, timeValue: timeVal, status: 'Done', timeValue2: timeVal2} : item)
     
-                updateArr.push({id: Date.now(), status: "Empty", activity: "", timeValue: `${newHour}:${newMin}`, timeValue2: `${nextHour}:${nextMin}`, editingVal: false, editingVal2: false});
+                updateArr.push({_key: nanoid() ,id: Date.now(), status: "Empty", activity: "", timeValue: `${newHour}:${newMin}`, timeValue2: `${nextHour}:${nextMin}`, editingVal: false, editingVal2: false});
     
                 setArr(updateArr);
                 recalculateTotalMinutes(updateArr)
@@ -218,7 +244,7 @@ const Addtime = () => {
 
             const updateArr = arr.map(item => item.id == theId ? {...item, timeValue: timeVal, activity: actVal, status: 'Done', timeValue2: timeVal2} : item)
 
-            updateArr.push({id: Date.now(), status: "Empty", activity: "", timeValue: `${newHour}:${newMin}`, timeValue2: `${nextHour}:${nextMin}`, editingVal: false, editingVal2: false});
+            updateArr.push({_key: nanoid() ,id: Date.now(), status: "Empty", activity: "", timeValue: `${newHour}:${newMin}`, timeValue2: `${nextHour}:${nextMin}`, editingVal: false, editingVal2: false});
 
             setArr(updateArr);
             recalculateTotalMinutes(updateArr);
@@ -229,7 +255,7 @@ const Addtime = () => {
     }
 
     const handleStart = () => {
-        setArr([...arr, { id: Date.now(), status: "Empty", activity: "", timeValue: "00:00", timeValue2: "00:00", editingVal: false, editingVal2: false}]);
+        setArr([...arr, {_key: nanoid(), id: Date.now(), status: "Empty", activity: "", timeValue: "00:00", timeValue2: "00:00", editingVal: false, editingVal2: false}]);
     }
 
     const handleEdit = (theIndex: number, theId: number) => {
@@ -422,7 +448,7 @@ const Addtime = () => {
         console.log(updateArr);
     }
 
-    const recalculateTotalMinutes = (updatedArr: object) => {
+    const recalculateTotalMinutes = (updatedArr: Entry[]) => {
         const total = updatedArr.reduce((sum, item) => {
             return sum + getTimeDifferenceInDayCycle(item.timeValue, item.timeValue2);
         }, 0);
@@ -540,7 +566,7 @@ const Addtime = () => {
                                     </div>
                                 </div>
 
-                                <h1 className='text-white font-bold'>to abcdefg</h1>
+                                <h1 className='text-white font-bold'>to</h1>
 
                                 <div className='relative'>
                                     <input 
@@ -576,6 +602,7 @@ const Addtime = () => {
                                         }
                                     }}
                                     required
+                                    placeholder='What will you be doing during this time?'
                                 />
                             </>
                         ) : 
@@ -648,6 +675,7 @@ const Addtime = () => {
                                             }
                                         }}
                                         required
+                                        placeholder='What will you be doing during this time?'
                                     />
                                 </>
                             ) : item.status === "Editing" ? (
@@ -684,7 +712,7 @@ const Addtime = () => {
                                         </>
                                     ) : (
                                         <div className='flex'>
-                                            <h1 className='text-white font-bold text-4xl flex gap-1 items-center whitespace-nowrap'>
+                                            <h1 className='text-white font-bold text-3xl flex gap-1 items-center whitespace-nowrap'>
                                                 <button onClick={()=>handleEditVal(index, item?.id)} type='button' className='bg-blue-500 p-3 rounded-xl -translate-y-0.5 hover:translate-none duration-500 cursor-pointer text-[rgb(22,22,22)]'>
                                                     {to12Hour(item.timeValue)}
                                                 </button>
@@ -713,6 +741,7 @@ const Addtime = () => {
                                             }
                                         }}
                                         required
+                                        placeholder='What will you be doing during this time?'
                                     />
                                 </>
                             ) : (
@@ -783,7 +812,8 @@ const Addtime = () => {
                                         type="text" 
                                         className="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
                                         defaultValue={item.activity} 
-                                        autoComplete='off' 
+                                        autoComplete='off'
+                                        placeholder='What will you be doing during this time?'
                                         required
                                     />
                                 </>
@@ -837,7 +867,21 @@ const Addtime = () => {
 
                                     <h1 className='text-white font-bold'>:</h1>
 
-                                    <input id={`activity${index}`} type="text" className="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" defaultValue={item.activity} autoComplete='off' required/>
+                                    <input 
+                                        id={`activity${index}`} 
+                                        type="text" 
+                                        className="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                                        defaultValue={item.activity} 
+                                        autoComplete='off' 
+                                        required
+                                        onKeyDown={(e)=>{
+                                            if(e.key === "Enter"){
+                                                e.preventDefault();
+                                                handleUpdate(index, item?.id)
+                                            }
+                                        }}
+                                        placeholder="What will you be doing during this time?"
+                                    />
                                 </>
                             ) : (
                                 <div className='flex items-center gap-3'>
@@ -890,7 +934,13 @@ const Addtime = () => {
         }
 
         {arr.length > 1 ? (
-            <button className='text-[rgb(22,22,22)] hover:cursor-pointer mt-2 -translate-y-2 hover:translate-none duration-500 bg-green-400 rounded p-5 font-bold '>Submit</button>
+            <button 
+                onClick={()=>handleSubmit(isPending)} 
+                className='text-[rgb(22,22,22)] hover:cursor-pointer mt-2 -translate-y-2 hover:translate-none duration-500 bg-green-400 rounded p-5 font-bold '
+                disabled={isPending}
+            >
+                {isPending ? 'Submitting' : 'Submit'}
+            </button>
         ) : (
             null
         )}
@@ -907,7 +957,15 @@ const Addtime = () => {
                             <Dialog.Description className="text-gray-500">This action is irreversible.</Dialog.Description>
                         </div>
                         <div className='flex gap-3'>
-                            <button className='px-5 py-2 bg-red-500 text-white rounded-full cursor-pointer hover:bg-red-600 duration-200 -translate-y-0.25 hover:translate-none shadow hover:shadow-none' onClick={() => handleDelete(selectedDelete.theIndex, selectedDelete.theId)}>Yes</button>
+                            <button 
+                                className='px-5 py-2 bg-red-500 text-white rounded-full cursor-pointer hover:bg-red-600 duration-200 -translate-y-0.25 hover:translate-none shadow hover:shadow-none' 
+                                onClick={() => {
+                                    if(selectedDelete){
+                                        handleDelete(selectedDelete.theIndex, selectedDelete.theId)
+                                    }
+                                }}>
+                                    Yes
+                            </button>
                             <button className='px-5 py-2 bg-gray-500 text-white rounded-full cursor-pointer hover:bg-gray-600 duration-200 -translate-y-0.25 hover:translate-none shadow hover:shadow-none' onClick={() => setIsOpen(false)}>Cancel</button>
                         </div>
                     </div>

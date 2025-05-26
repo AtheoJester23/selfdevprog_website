@@ -16,17 +16,23 @@
   "dependencies": {
     "@headlessui/react": "^2.2.4",
     "@radix-ui/react-avatar": "^1.1.9",
+    "@sanity/image-url": "^1.1.0",
+    "@sanity/vision": "^3.89.0",
     "@tailwindcss/typography": "^0.5.16",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "flowbite": "^3.1.2",
     "lucide-react": "^0.510.0",
+    "nanoid": "^5.1.5",
     "next": "15.3.2",
     "next-auth": "^5.0.0-beta.28",
+    "next-sanity": "^9.8.58-canary.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-toastify": "^11.0.5",
+    "sanity": "^3.89.0",
+    "styled-components": "^6.1.18",
     "tailwind-merge": "^3.3.0"
   },
   "devDependencies": {
