@@ -1,7 +1,7 @@
 "use client"
 
 import { Check, CircleAlert, Clock, ConstructionIcon, Pencil, Plus, Trash2, X } from 'lucide-react'
-import React, { useActionState, useState } from 'react'
+import React, { useActionState, useRef, useState } from 'react'
 import { format, parse } from 'date-fns'
 import 'react-toastify/dist/ReactToastify.css'
 import { toast, ToastContainer } from 'react-toastify'
@@ -10,6 +10,7 @@ import { validation } from 'sanity'
 import { formSchema } from '@/sanity/lib/validation'
 import { createSchedule } from '@/lib/actions'
 import { nanoid } from 'nanoid'
+import { useRouter } from 'next/navigation'
 
 export type Entry = {
         _key: string;
@@ -35,6 +36,10 @@ const Addtime = () => {
     const [isOpen, setIsOpen] = useState(false)
     const [selectedDelete, setSelectedDelete] = useState<{theId: number, theIndex:number} | null>(null);
     const [isPending, setIsPending] = useState<boolean>(false);
+    const router = useRouter();
+
+    const inputRef = useRef<HTMLInputElement>(null);
+
 
     const handleModal = (theIndex: number, theId: number) => {
         console.log('modal closed...');
@@ -59,23 +64,23 @@ const Addtime = () => {
 
             await formSchema.parseAsync(theData);
 
-            console.log(theData);
-
             const result = await createSchedule(theData)
+            
+            console.log(result);
 
-            toast.success("Schedule Created");
+            console.log("Result: ",result.error)
 
-            if(!result.ok)throw result;
-
-            // toast.success("Schedule Created");
+            if(result.error.trim() != ""){
+                throw result.error;
+            }
 
             setIsPending(true);
 
-            console.log(isPending);
+            // router.push(`/schedule/${result._id}`);
+            
+            toast.success("Schedule Created");
         } catch(e) {
             toast.error((e as Error).message);
-        }finally{
-            // setIsPending(false);
         }
     }
 
@@ -133,6 +138,10 @@ const Addtime = () => {
         let actVal = (document.getElementById(`activity${theIndex}`) as HTMLInputElement)?.value        
 
         console.log(timeVal2);
+
+        setTimeout(()=>{
+            inputRef.current?.focus();
+        }, 100)
 
         let [hour,min] = timeVal2.split(":");
 
@@ -663,6 +672,7 @@ const Addtime = () => {
                                     <h1 className='text-white font-bold'>:</h1>
 
                                     <input 
+                                        autoFocus
                                         id={`activity${index}`} 
                                         type="text" 
                                         className="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
@@ -675,7 +685,8 @@ const Addtime = () => {
                                             }
                                         }}
                                         required
-                                        placeholder='What will you be doing during this time?'
+                                        placeholder='What will you be doing abcdefg during this time?'
+                                        
                                     />
                                 </>
                             ) : item.status === "Editing" ? (
@@ -936,10 +947,10 @@ const Addtime = () => {
         {arr.length > 1 ? (
             <button 
                 onClick={()=>handleSubmit(isPending)} 
-                className='text-[rgb(22,22,22)] hover:cursor-pointer mt-2 -translate-y-2 hover:translate-none duration-500 bg-green-400 rounded p-5 font-bold '
+                className={`text-[rgb(22,22,22)] mt-2 rounded p-5 font-bold ${isPending ? 'bg-green-300' : '-translate-y-2 hover:translate-none duration-500 bg-green-400 hover:cursor-pointer'} `}
                 disabled={isPending}
             >
-                {isPending ? 'Submitting' : 'Submit'}
+                {isPending ? 'Submitting...' : 'Submit'}
             </button>
         ) : (
             null

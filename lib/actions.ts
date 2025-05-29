@@ -18,7 +18,15 @@ export const createSchedule = async (data: wholeData) => {
     }
 
     try {
-        const result = await writeClient.create({_type: "schedule", ...data})
+        const submitData = {
+            ...data, 
+            user: {
+                _type: 'reference',
+                _ref: session?.id
+            },
+        }
+
+        const result = await writeClient.create({_type: "schedule", ...submitData})
     
         return parseServerActionResponse({
             ...result,

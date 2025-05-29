@@ -95,19 +95,19 @@ const Navbar = ({isSession}:{isSession: object}) => {
 
         <a 
           href="/dashboard" 
-          className='bg-[rgb(191,4,38)] text-[rgb(22,22,22)] text-center font-bold py-3 rounded-xl'
+          className='bg-[rgb(191,4,38)] text-[rgb(22,22,22)] text-center font-bold py-3 rounded'
         >
           Dashboard
         </a>
 
         <a 
-          href="/createSchedule" 
-          className='bg-[rgb(191,4,38)] text-[rgb(22,22,22)] text-center font-bold py-3 rounded-xl'
+          href="/schedule/createSchedule" 
+          className='bg-[rgb(191,4,38)] text-[rgb(22,22,22)] text-center font-bold py-3 rounded'
         >
           Create Schedule
         </a>
 
-        <button onClick={() => signOut({ callbackUrl: "/" })} className='font-bold text-white border border-white rounded-xl py-3 hover:bg-[white] hover:text-[rgb(22,22,22)] cursor-pointer'>Logout</button>
+        <button onClick={() => signOut({ callbackUrl: "/" })} className='font-bold text-white border border-white rounded py-3 hover:bg-[white] hover:text-[rgb(22,22,22)] cursor-pointer'>Logout</button>
       </div>
     </div>
   );

@@ -56,6 +56,12 @@ export const schedule = defineType({
                     ]
                 }
             ]
+        }),
+        defineField({
+            name: 'user',
+            title: 'User',
+            type: 'reference',
+            to: [{type: 'user'}]
         })
     ],
     preview: {
