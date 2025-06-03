@@ -24,6 +24,7 @@ export const SCHEDULE_BY_AUTHOR_QUERY = defineQuery(`
 export const SCHEDULE_BY_ID = defineQuery(`
         *[_type == "schedule" && _id == $id]{
             title,
-            allTime
+            allTime,
+            totalMinutes
         }
     `)

@@ -9,15 +9,11 @@ const page = async () => {
 
     if(!session) redirect('/');
 
-    const handleSubmit = () => {
-        console.log("Testing")
-    }
-
   return (
     <div className='p-5 mt-[70px]'>
         <h1 className='text-5xl text-white font-bold'>Create Schedule Page</h1>
     
-        <Addtime/>
+        <Addtime schedule={null}/>
     </div>
   )
 }

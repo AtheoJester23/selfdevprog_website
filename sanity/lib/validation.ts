@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 export const formSchema = z.object({
-    title: z.string().min(3).max(100),
+    title: z.string().min(3).max(50),
     allTime: z.array(
         z.object({
             activity: z.string(),

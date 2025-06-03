@@ -58,3 +58,47 @@
   bottom: 120px;
   left: 50px;
 }
+
+@media print{
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  body{
+    visibility: hidden;
+    background-color: white;
+  }
+
+  .printable-area {
+    visibility: visible;
+    margin-top: 0px !important;
+  }
+
+  .theTitle{
+    color: black;
+  }
+
+  .excludePrint *{
+    visibility: hidden;
+  }
+
+  .time *{
+    background-color: black !important;
+    color: white;
+    font-size: 16px;
+    padding: 5px;
+    WebkitPrintColorAdjust: "exact";
+  }
+
+  .action *{
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    color: black;
+  }
+
+  .theTitle{
+    font-size: 32px;
+  }
+}

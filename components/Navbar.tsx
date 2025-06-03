@@ -7,12 +7,21 @@ import { AlignJustify, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { signIn, signOut } from 'next-auth/react';
+import { Session } from 'next-auth';
 
+interface NavbarProps{
+  isSession: Session | null
+}
 
-const Navbar = ({isSession}:{isSession: object}) => {  
+const Navbar = ({isSession}: NavbarProps) => {  
   useEffect(()=>{
     if(isSession) initFlowbite();
   },[]);
+
+  const closeDrawer = () => {
+    const drawer = document.getElementById("my-drawer");
+    drawer?.classList.add('-translate-x-full')
+  }
   
   return (
     <div>
@@ -32,9 +41,9 @@ const Navbar = ({isSession}:{isSession: object}) => {
               ''
           }
           <div className='flex items-center gap-4'>
-            <Link href={'/'} className='inline-flex items-center w-[200px]'>
+            <a href={'/'} className='inline-flex items-center w-[200px]'>
                 <img src="Logo.png" alt="logo" className='w-full'/>
-            </Link>
+            </a>
           </div>
         </div>
 
@@ -57,7 +66,7 @@ const Navbar = ({isSession}:{isSession: object}) => {
                     aria-controls="my-drawer"
                   >
                     <Avatar>
-                        <AvatarImage src={isSession?.user?.image} />
+                        <AvatarImage src={isSession?.user?.image ?? undefined} />
                         <AvatarFallback>X</AvatarFallback>
                     </Avatar>
                   </button>
@@ -93,19 +102,27 @@ const Navbar = ({isSession}:{isSession: object}) => {
           <AlignJustify className='text-white'/>
         </button>
 
-        <a 
-          href="/dashboard" 
-          className='bg-[rgb(191,4,38)] text-[rgb(22,22,22)] text-center font-bold py-3 rounded'
-        >
-          Dashboard
-        </a>
+        <Link href="/dashboard" passHref>
+          <button
+            type="button"
+            data-drawer-hide="my-drawer"
+            aria-controls="my-drawer"
+            className='w-full text-left bg-[rgb(191,4,38)] text-[rgb(22,22,22)] text-center font-bold py-3 rounded cursor-pointer justify-center flex'
+          >
+            Dashboard
+          </button>
+        </Link>
 
-        <a 
-          href="/schedule/createSchedule" 
-          className='bg-[rgb(191,4,38)] text-[rgb(22,22,22)] text-center font-bold py-3 rounded'
-        >
-          Create Schedule
-        </a>
+        <Link href="/schedule/createSchedule" passHref>
+          <button
+            type="button"
+            data-drawer-hide="my-drawer"
+            aria-controls="my-drawer"
+            className='w-full text-left bg-[rgb(191,4,38)] text-[rgb(22,22,22)] text-center font-bold py-3 rounded cursor-pointer justify-center flex'
+          >
+            Create Schedule
+          </button>
+        </Link>
 
         <button onClick={() => signOut({ callbackUrl: "/" })} className='font-bold text-white border border-white rounded py-3 hover:bg-[white] hover:text-[rgb(22,22,22)] cursor-pointer'>Logout</button>
       </div>

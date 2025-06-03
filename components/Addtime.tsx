@@ -11,6 +11,9 @@ import { formSchema } from '@/sanity/lib/validation'
 import { createSchedule } from '@/lib/actions'
 import { nanoid } from 'nanoid'
 import { useRouter } from 'next/navigation'
+import { to12Hour, toMinutes, getTimeDifferenceInDayCycle } from '@/lib/utils'
+import { client } from '@/sanity/lib/client'
+import { UpdateEdit } from '@/actions/updateSchedule'
 
 export type Entry = {
         _key: string;
@@ -26,13 +29,15 @@ export type Entry = {
 
 export type wholeData = {
     title: string,
-    allTime: Entry[]
+    allTime: Entry[],
 }
 
-const Addtime = () => {
-    const [arr, setArr] = useState<Array<Entry>>([]);
+const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | null; id: string}) => {
+    const [arr, setArr] = useState<Array<Entry>>(schedule?.allTime ?? []);
+
+    console.log("arr: ", schedule?.title);
     const [totalMinutes, setTotalMinutes] = useState(0);
-    const [title, setTitle] = useState<any>(null);
+    const [title, setTitle] = useState<any>(schedule?.title ?? null);
     const [isOpen, setIsOpen] = useState(false)
     const [selectedDelete, setSelectedDelete] = useState<{theId: number, theIndex:number} | null>(null);
     const [isPending, setIsPending] = useState<boolean>(false);
@@ -52,12 +57,18 @@ const Addtime = () => {
     const handleSubmit = async (isPending: boolean) => {        
         const copy: Entry[] = JSON.parse(JSON.stringify(arr));
 
-        const allTime: Entry[] = copy.filter((_, index) => index !== arr.length - 1)
+        const filteredTime: Entry[] = copy.filter((_, index) => index !== arr.length - 1)
         
+        const allTime = copy[copy.length - 1].status === "Empty" ? filteredTime : copy
+
         if(!title){
             toast.error("Title is required...");
             return;
         }
+
+        console.log(totalMinutes);
+
+        console.log(allTime);
 
         try {
             const theData: wholeData = {title, allTime};            
@@ -76,28 +87,12 @@ const Addtime = () => {
 
             setIsPending(true);
 
-            // router.push(`/schedule/${result._id}`);
+            router.push(`/schedule/${result._id}`);
             
             toast.success("Schedule Created");
         } catch(e) {
             toast.error((e as Error).message);
         }
-    }
-
-    // const [state, , isPending] = useActionState(handleSubmit, {
-    //     error: "",
-    //     status: "INITIAL",
-    // });
-
-    const to12Hour = (timeStr: string) => {
-        const date = parse(timeStr, 'HH:mm', new Date());
-        return format(date, 'hh:mm a'); // '12:00 AM', '01:45 PM', etc.
-    };
-
-    // Convert "HH:MM" to total minutes
-    function toMinutes(timeStr: string) {
-        const [h, m] = timeStr.split(":").map(Number);
-        return h * 60 + m;
     }
 
     const handleEditVal = (theIndex: number, theID: number) => {
@@ -118,18 +113,6 @@ const Addtime = () => {
         const switchVal = arr.map((item, index) => index == theIndex ? {...item, editingVal2: !theSwitch} : item);
 
         setArr(switchVal);
-    }
-
-    function getTimeDifferenceInDayCycle(start: string, end: string): number {
-        const startMin = toMinutes(start);
-        const endMin = toMinutes(end);
-
-        if (endMin >= startMin) {
-            return endMin - startMin;
-        } else {
-            // Wrap around midnight
-            return (1440 - startMin) + endMin;
-        }
     }
 
     const handleAdd = (theIndex: number, theId: number) => {
@@ -212,27 +195,19 @@ const Addtime = () => {
 
                 console.log("")
                 console.log("Added Duration: ", addedDuration);
+                
+                console.log("TotalMinutes: ", totalMinutes);
+                console.log(`TotalMinutes + Added Duration = ${totalMinutes + addedDuration}`)
                 console.log("")
 
-                if ((totalMinutes + addedDuration) > 1440) {
-                    toast.error("Total schedule exceeds 24 hours.")
-                    
-                    console.log("totalMins: ",totalMinutes)
-                    return;
-                }
-            
-                updateArr.push({_key: nanoid() ,id: Date.now(), status: "Empty", activity: "", timeValue: `${newHour}:${newMin}`, timeValue2: `${nextHour}:${nextMin}`, editingVal: false, editingVal2: false});
+                updateArr.push({_key: nanoid() ,id: Date.now(), status: "Empty", activity: "", timeValue: `${updateArr[updateArr.length -1].timeValue2}`, timeValue2: `${nextHour}:${nextMin}`, editingVal: false, editingVal2: false});
 
                 setArr(updateArr);
                 recalculateTotalMinutes(updateArr)
 
                 console.log(updateArr);
-
-                console.log("1. arr.length: ", arr.length);
-                console.log("current overall: ", recalculateTotalMinutes(updateArr))
-                
+                return;
             }else{
-
                 if(toMinutes(timeVal2) < toMinutes(timeVal)){
                     toast.error("Time must be later than the previous one...");
                     return;
@@ -240,7 +215,7 @@ const Addtime = () => {
 
                 const updateArr = arr.map((item,index) => item.id == theId ? {...item, activity: actVal, timeValue: timeVal, status: 'Done', timeValue2: timeVal2} : item)
     
-                updateArr.push({_key: nanoid() ,id: Date.now(), status: "Empty", activity: "", timeValue: `${newHour}:${newMin}`, timeValue2: `${nextHour}:${nextMin}`, editingVal: false, editingVal2: false});
+                updateArr.push({_key: nanoid() ,id: Date.now(), status: "Empty", activity: "", timeValue: `${updateArr[updateArr.length -1].timeValue2}`, timeValue2: `${nextHour}:${nextMin}`, editingVal: false, editingVal2: false});
     
                 setArr(updateArr);
                 recalculateTotalMinutes(updateArr)
@@ -253,7 +228,7 @@ const Addtime = () => {
 
             const updateArr = arr.map(item => item.id == theId ? {...item, timeValue: timeVal, activity: actVal, status: 'Done', timeValue2: timeVal2} : item)
 
-            updateArr.push({_key: nanoid() ,id: Date.now(), status: "Empty", activity: "", timeValue: `${newHour}:${newMin}`, timeValue2: `${nextHour}:${nextMin}`, editingVal: false, editingVal2: false});
+            updateArr.push({_key: nanoid() ,id: Date.now(), status: "Empty", activity: "", timeValue: `${updateArr[updateArr.length -1].timeValue2}`, timeValue2: `${nextHour}:${nextMin}`, editingVal: false, editingVal2: false});
 
             setArr(updateArr);
             recalculateTotalMinutes(updateArr);
@@ -264,7 +239,27 @@ const Addtime = () => {
     }
 
     const handleStart = () => {
-        setArr([...arr, {_key: nanoid(), id: Date.now(), status: "Empty", activity: "", timeValue: "00:00", timeValue2: "00:00", editingVal: false, editingVal2: false}]);
+        if(arr.length < 1){
+            setArr([...arr, {_key: nanoid(), id: Date.now(), status: "Empty", activity: "", timeValue: "00:00", timeValue2: "00:00", editingVal: false, editingVal2: false}]);
+        }else{
+            const timeVal2 = arr[arr.length - 1].timeValue2
+
+            let [hour,min] = timeVal2.split(":");
+
+            let [hour2, min2] = timeVal2.split(":");
+
+            let nextMin =
+                min === "59"
+                    ? "00"
+                    : String(Number(min2) + 1).padStart(2, "0");
+            
+            let nextHour = 
+                min === "59"
+                    ? String((Number(hour2) + 1) % 24).padStart(2, "0") // wrap around to 00 if hour == 23
+                    : hour;
+
+            setArr([...arr, {_key: nanoid(), id: Date.now(), status: "Empty", activity: "", timeValue: `${timeVal2}`, timeValue2: `${nextHour}:${nextMin}`, editingVal: false, editingVal2: false}]);
+        }
     }
 
     const handleEdit = (theIndex: number, theId: number) => {
@@ -339,14 +334,18 @@ const Addtime = () => {
                     return sum + getTimeDifferenceInDayCycle(item.timeValue, item.timeValue2);
                 }, 0);
 
-                const fromMin = toMinutes(timeVal);
-                const toMin = toMinutes(arr[theIndex]?.timeValue2);
+                const fromMin = toMinutes(arr[theIndex]?.timeValue);
+                const toMin = toMinutes(timeVal);
                 const toMin2 = toMinutes(arr[theIndex]?.timeValue);
 
-                const addedDuration = (toMin - fromMin + 1440) % 1440;
+                const addedDuration = (toMin - fromMin);
                 const addedDuration2 = (toMin2 - fromMin + 1440) % 1440;
 
                 const newTotal = totalMinutesSoFar + addedDuration;
+
+                console.log("")
+                console.log(`fromMin(${fromMin}) - toMin${toMin} = ${toMin - fromMin}`)
+                console.log("")
 
                 // console.log(`The real new total: ${newTotal}`)
             
@@ -358,6 +357,7 @@ const Addtime = () => {
                         const updateArr = arr.map((item,index) => item.id == theId ? {...item, timeValue: updated[index], editingVal: false, activity: actVal, status: 'Done', timeValue2: updated[index + 1]} : index != arr.length - 1 ? ({...item, timeValue: updated[index], timeValue2: updated[index + 1], editingVal: false}) : ({...item, timeValue: updated[index], editingVal: false}));
         
                         setArr(updateArr);
+                        recalculateTotalMinutes(updateArr)
                     }else{
                         toast.error("Total schedule exceeds 24 hours. abcdefg");
                         return;
@@ -369,28 +369,11 @@ const Addtime = () => {
                     const updateArr = arr.map((item,index) => item.id == theId ? {...item, timeValue: updated[index], editingVal: false, activity: actVal, status: 'Done', timeValue2: updated[index + 1]} : index != arr.length - 1 ? ({...item, timeValue: updated[index], timeValue2: updated[index + 1], editingVal: false}) : ({...item, timeValue: updated[index], editingVal: false}));
         
                     setArr(updateArr);
+                    recalculateTotalMinutes(updateArr)
                 }
 
             }else if(arr[theIndex]?.editingVal2){
                 let timeVal2 = (document.getElementById(`nextInput${theIndex}`) as HTMLInputElement)?.value
-
-                const currentTimeDiff = toMinutes(timeVal2) - toMinutes(arr[theIndex]?.timeValue);
-
-                if(arr.length > 1){
-                    if(theIndex != 0){
-                        const prevTime = arr[theIndex - 1]?.timeValue;
-        
-                        if(toMinutes(timeVal2) < toMinutes(prevTime)){
-                            toast.error("Time must be later than the previous one...");
-                            return;
-                        }
-                    }else{
-                        if(toMinutes(timeVal2) < toMinutes(arr[theIndex]?.timeValue)){
-                            toast.error("Time must be later than the next one...");
-                            return;
-                        }
-                    }
-                }
 
                 // Get all the current time:
                 const currentTimes = arr.map((item: {timeValue: string}) => item.timeValue);
@@ -400,43 +383,9 @@ const Addtime = () => {
                 const durationTimes = updateArr.map((item: {timeValue2: string}) => item.timeValue2);
                 const updatedDuration = updateTimes(durationTimes, theIndex, timeVal2);
 
-                const totalMinutesSoFar = arr.reduce((sum, item) => {
-                    return sum + getTimeDifferenceInDayCycle(item.timeValue, item.timeValue2);
-                }, 0);
+                const updateArr2 = updateArr.map((item, index) => index < theIndex ? {...item, timeValue: updated[index], timeValue2: updatedDuration[index], editingVal2: false} : item.id == theId ? {...item, status: 'Done', timeValue2: updatedDuration[index], editingVal2: false, activity: actVal} : index != arr.length - 1 ? {...item, timeValue: updatedDuration[index - 1], timeValue2: updatedDuration[index], editingVal2: false} : {...item, timeValue: updatedDuration[index - 1], timeValue2: updatedDuration[index], editingVal2: false})
 
-                const fromMin = toMinutes(arr[theIndex]?.timeValue2);
-                const toMin = toMinutes(timeVal2);
-
-                console.log(`This is the fromMin: ${arr[theIndex]?.timeValue}`);
-
-
-                console.log(`fromMin & toMin: ${fromMin} - ${toMin}`)
-
-                const addedDurationb = (toMin - fromMin + 1440) % 1440;
-
-                const newTotal = totalMinutesSoFar + addedDurationb;
-
-                console.log("")
-                console.log("TotalMins: ", totalMinutes);
-                console.log("Added Duration: ", addedDurationb);
-                console.log("")
-
-                if((totalMinutes + addedDurationb) > 1440){
-                    if(toMin < fromMin){
-                        console.log("minus: ", (toMin - fromMin) )
-                        const updateArr2 = updateArr.map((item, index) => index < theIndex ? {...item, timeValue: updated[index], timeValue2: updatedDuration[index], editingVal2: false} : item.id == theId ? {...item, status: 'Done', timeValue2: updatedDuration[index], editingVal2: false, activity: actVal} : index != arr.length - 1 ? {...item, timeValue: updatedDuration[index - 1], timeValue2: updatedDuration[index], editingVal2: false} : {...item, timeValue: updatedDuration[index - 1], timeValue2: updatedDuration[index], editingVal2: false})
-    
-                        setArr(updateArr2);
-                    }else{
-                        toast.error("Total schedule exceeds 24 hours.");
-                        return;
-                    }
-                }else{
-                    const updateArr2 = updateArr.map((item, index) => index < theIndex ? {...item, timeValue: updated[index], timeValue2: updatedDuration[index], editingVal2: false} : item.id == theId ? {...item, status: 'Done', timeValue2: updatedDuration[index], editingVal2: false, activity: actVal} : index != arr.length - 1 ? {...item, timeValue: updatedDuration[index - 1], timeValue2: updatedDuration[index], editingVal2: false} : {...item, timeValue: updatedDuration[index - 1], timeValue2: updatedDuration[index], editingVal2: false})
-    
-                    setArr(updateArr2);
-                }
-
+                setArr(updateArr2);
             }else{
                 console.log("This is for the first index of array...");
 
@@ -444,6 +393,10 @@ const Addtime = () => {
             
                 setArr(updateArr3);
             }
+        }else{
+            const updatedArr4 = arr.map(item => item.id === theId ? {...item, activity: actVal, status: 'Done'} : item);
+
+            setArr(updatedArr4);
         }
     }
 
@@ -462,6 +415,8 @@ const Addtime = () => {
             return sum + getTimeDifferenceInDayCycle(item.timeValue, item.timeValue2);
         }, 0);
         setTotalMinutes(total);
+
+        console.log("The total: ", total);
         return total;
     };
 
@@ -473,12 +428,15 @@ const Addtime = () => {
         
         console.log("total time removed: ", timeRemoved);
         
+        console.log("There's a problem on the last index, it don't recalibrate the setTimeout when you deleted that last index of a full 1439 totalMinutes")
+
+        
+        // return;
+        
         const updatedArr = arr.filter(item => item.id !== theId);
         setArr(updatedArr);
-        setTotalMinutes(prev => prev - timeRemoved);
-
+        
         console.log(totalMinutes);
-
         // Optional: Fix next entry’s timeValue if needed (relinking continuity)
         if (theIndex > 0 && theIndex < arr.length - 1) {
             const prevItem = arr[theIndex - 1];
@@ -508,6 +466,31 @@ const Addtime = () => {
         }
 
     }
+
+    const handleUpdateEdit = async () => {
+        if(!title){
+            toast.error("Title is required...");
+            return;
+        }
+
+        const copy: Entry[] = JSON.parse(JSON.stringify(arr));
+
+        const filteredTime: Entry[] = copy.filter((_, index) => index !== arr.length - 1)
+        
+        const allTime = copy[copy.length - 1].status === "Empty" ? filteredTime : copy
+        
+        try {
+            const response = await UpdateEdit(id, title, allTime)
+
+            console.log('Updated:', response);
+        
+            toast.success("Updated Successfully...")
+
+            router.push(`/schedule/${id}`)
+        } catch (error) {
+            console.error('Update failed:', error);
+        }
+    };
 
   return (
     <div className='mt-[10px] p-5 flex flex-col gap-3' id="theForm">
@@ -552,7 +535,7 @@ const Addtime = () => {
                 </button>
             ) : arr.length === 1 ?
             arr.map((item, index) => (
-                <div key={item?.id} className='flex items-center gap-3'>
+                <div key={item?.id} className='flex items-center gap-3 border border-white p-5 rounded justify-between'>
                     { item.status === "Empty" || item.status === "Editing" ? (
                             <>
                                 <div className='relative'>
@@ -615,19 +598,40 @@ const Addtime = () => {
                                 />
                             </>
                         ) : 
-                            <>
-                                <h1 className='text-white font-bold text-4xl'>{to12Hour(item.timeValue)}<span className='text-sm'> to </span>{to12Hour(item.timeValue2)}: {item.activity}</h1>
-                            </>
+                            <div className='flex items-center gap-3'>
+                                <h1 className='text-white font-bold text-3xl flex items-center whitespace-nowrap'>
+                                    {to12Hour(item.timeValue)}
+                                </h1>
+                                
+                                <span className='text-lg font-normal text-white'> to </span>
+                                
+                                <h1 className='text-white font-bold text-3xl flex items-center whitespace-nowrap'>
+                                    {to12Hour(item.timeValue2)}
+                                </h1>
+                                
+                                <h1 className='text-white font-bold text-3xl flex items-center'>
+                                    :
+                                </h1>
+                                
+                                <p className='text-white font-normal text-3xl inline-block whitespace-normal break-all'>{item.activity}</p>
+                            </div>
                     }
                     
                     { item.status === "Empty" ? (
-                            <button onClick={()=>handleAdd(index, item?.id)} type='button' className='bg-green-400 p-2 rounded-xl -translate-y-0.5 hover:translate-none duration-500 cursor-pointer'>
-                                <Plus className='text-[rgb(22,22,22)]'/>
-                            </button>
+                            <>
+                                <button onClick={()=>handleAdd(index, item?.id)} type='button' className='bg-green-400 p-2 rounded-xl -translate-y-0.5 hover:translate-none duration-500 cursor-pointer'>
+                                    <Plus className='text-[rgb(22,22,22)]'/>
+                                </button>
+                            </>
                         ) : item.status === "Done" ? (
-                            <button onClick={()=>handleEdit(index, item?.id)} type='button' className='bg-blue-500 p-2 rounded-xl'>
-                                <Pencil className='text-[rgb(22,22,22)]'/>
-                            </button>
+                            <div className='flex items-center gap-2'>
+                                <button onClick={()=>handleEdit(index, item?.id)} type='button' className='bg-blue-500 p-2 rounded-xl -translate-y-0.5 hover:translate-none duration-500 cursor-pointer'>
+                                    <Pencil className='text-[rgb(22,22,22)]'/>
+                                </button>
+                                <button onClick={()=>handleModal(index, item?.id)} type='button' className='bg-red-500 p-2 rounded-xl cursor-pointer -translate-y-0.5 hover:translate-none duration-500 cursor-pointer'>
+                                    <Trash2 className='text-[rgb(22,22,22)]'/>
+                                </button>
+                            </div>
                         ) : (
                             <>
                                 <button onClick={()=>handleUpdate(index, item?.id)} type='button' className='bg-green-400 p-2 rounded-xl'>
@@ -643,7 +647,7 @@ const Addtime = () => {
             )) : (
                 arr.map((item, index)=> totalMinutes != 1440 ? (
                     <div key={item?.id} className='flex items-center gap-3 border border-white p-5 rounded justify-between'>
-                        { item.status === "Empty" && totalMinutes != 1440 ? (
+                        { item.status === "Empty" ? (
                                 <>
                                     <h1 className='text-white whitespace-nowrap'>{to12Hour(item.timeValue)}</h1>
 
@@ -685,8 +689,7 @@ const Addtime = () => {
                                             }
                                         }}
                                         required
-                                        placeholder='What will you be doing abcdefg during this time?'
-                                        
+                                        placeholder='What will you be doing abcdefg during this time?'  
                                     />
                                 </>
                             ) : item.status === "Editing" ? (
@@ -776,11 +779,16 @@ const Addtime = () => {
                             )
                         }
                         
-                        { item.status === "Empty" && totalMinutes != 1440 ? (
-                                <button onClick={()=>handleAdd(index, item?.id)} type='button' className='bg-green-400 p-2 rounded-xl -translate-y-0.5 hover:translate-none duration-500 cursor-pointer'>
-                                    <Plus className='text-[rgb(22,22,22)]'/>
-                                </button>
-                            ) : item.status === "Done" || (item.status === "Empty" && totalMinutes == 1440) ? (
+                        { item.status === "Empty" ? (
+                                <>
+                                    <button onClick={()=>handleAdd(index, item?.id)} type='button' className='bg-green-400 p-2 rounded-xl -translate-y-0.5 hover:translate-none duration-500 cursor-pointer'>
+                                        <Plus className='text-[rgb(22,22,22)]'/>
+                                    </button>
+                                    <button onClick={()=>handleDelete(index, item?.id)} type='button' className='bg-red-400 p-2 rounded-xl cursor-pointer'>
+                                        <X className='text-[rgb(22,22,22)]'/>
+                                    </button>
+                                </>
+                            ) : item.status === "Done" ? (
                                 <div className='flex items-center gap-2'>
                                     <button onClick={()=>handleEdit(index, item?.id)} type='button' className='bg-blue-500 p-2 rounded-xl -translate-y-0.5 hover:translate-none duration-500 cursor-pointer'>
                                         <Pencil className='text-[rgb(22,22,22)]'/>
@@ -944,14 +952,41 @@ const Addtime = () => {
             )
         }
 
-        {arr.length > 1 ? (
-            <button 
-                onClick={()=>handleSubmit(isPending)} 
-                className={`text-[rgb(22,22,22)] mt-2 rounded p-5 font-bold ${isPending ? 'bg-green-300' : '-translate-y-2 hover:translate-none duration-500 bg-green-400 hover:cursor-pointer'} `}
-                disabled={isPending}
-            >
-                {isPending ? 'Submitting...' : 'Submit'}
-            </button>
+        {arr.length >= 1 ? ( 
+            <>
+                {schedule ? (
+                    <>
+                        { arr[arr.length - 1].status != "Empty" &&
+                            <button onClick={()=>handleStart()} type='button' className='bg-green-400 p-2 rounded-xl w-full flex justify-center -translate-y-0.5 hover:translate-none duration-500 cursor-pointer'>
+                                <Plus className='text-[rgb(22,22,22)]'/>
+                            </button>
+                        }
+                        <button
+                            onClick={()=>handleUpdateEdit()} 
+                            className={`text-[rgb(22,22,22)] mt-2 rounded p-5 font-bold ${isPending ? 'bg-green-300' : '-translate-y-2 hover:translate-none duration-500 bg-blue-400 hover:cursor-pointer'} `}
+                            disabled={isPending}
+                        >
+                            Update
+                        </button>
+                    </>
+
+                ) : (
+                    <>
+                        { arr[arr.length - 1].status != "Empty" &&
+                            <button onClick={()=>handleStart()} type='button' className='bg-green-400 p-2 rounded-xl w-full flex justify-center -translate-y-0.5 hover:translate-none duration-500 cursor-pointer'>
+                                <Plus className='text-[rgb(22,22,22)]'/>
+                            </button>
+                        }
+                        <button 
+                            onClick={()=>handleSubmit(isPending)} 
+                            className={`text-[rgb(22,22,22)] mt-2 rounded p-5 font-bold ${isPending ? 'bg-green-300' : '-translate-y-2 hover:translate-none duration-500 bg-green-400 hover:cursor-pointer'} `}
+                            disabled={isPending}
+                        >
+                            {isPending ? 'Submitting...' : 'Submit'}
+                        </button>
+                    </>
+                )}
+            </>
         ) : (
             null
         )}

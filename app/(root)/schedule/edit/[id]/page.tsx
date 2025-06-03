@@ -1,11 +1,20 @@
+import Addtime from '@/components/Addtime'
+import { client } from '@/sanity/lib/client'
+import { SCHEDULE_BY_ID } from '@/sanity/lib/queries'
 import React from 'react'
 
-const page = ({params}: {params: {id: string}}) => {
-    const { id } = params
+const page = async ({params}: {params: {id: string}}) => {
+    const { id } = await params
+
+    const sched = await client.fetch(SCHEDULE_BY_ID, {id});
+
+    console.log(sched[0]);
 
   return (
     <div className='mt-[70px] p-5'>
         <h1 className="text-white font-bold text-4xl">This is edit page</h1>
+
+        <Addtime schedule={sched[0]} id={id}/>
     </div>
   )
 }

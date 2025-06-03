@@ -43,13 +43,13 @@ const ActionButtons = ({id}: {id: string}) => {
         }
     }
   return (
-    <div>
+    <div className='excludePrint'>
       <div className='mt-5 flex justify-center'>
         <button onClick={()=>handleModal()} className='bg-red-500 p-5 text-white font-bold rounded-bl-xl -translate-y-0.25 hover:translate-none cursor-pointer duration-200'>
           <Trash2 className='text-white'/>
         </button>
 
-        <button className='bg-cyan-200 p-5 text-white font-bold -translate-y-0.25 hover:translate-none cursor-pointer duration-200'>
+        <button type="button" onClick={()=>window.print()} className='bg-cyan-200 p-5 text-white font-bold -translate-y-0.25 hover:translate-none cursor-pointer duration-200'>
           <Printer className='text-[rgb(22,22,22)]'/>
         </button>
 
