@@ -25,7 +25,7 @@ const UserScheds = async ({id}: {id: string}) => {
     <>
         { schedules?.length > 0 ? (
             <div className='grid grid-cols-5 gap-3 sm:grid-cols-2 md:grid-cols-4'>
-                {schedules.map((item: any) => (
+                {schedules.map((item: Sched) => (
                     <Link href={`/schedule/${item._id}`} key={item._id} className='border border-gray-500 rounded p-5 cursor-pointer -translate-y-1 hover:translate-none duration-150'>
                         <div className='flex justify-center flex-col items-center'>
                             <CalendarClock className='text-white' size={150}/>

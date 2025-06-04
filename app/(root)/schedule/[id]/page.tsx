@@ -39,7 +39,7 @@ const page = async ({params}: {params: {id: string}}) => {
       <h1 className="text-white text-5xl font-bold mb-[30px] text-center theTitle">{schedule[0].title}</h1>
       
       <section className='flex flex-col gap-3'>
-        {schedule[0].allTime.map((item: any) => (
+        {schedule[0].allTime.map((item: Entry) => (
           <div key={item.id} className='text-white border-y border-white flex items-center gap-5 justify-start shadow-xl'>
             <div className='time bg-white h-full items-center'>
               <h1 className="bg-white p-5 text-[rgb(22,22,22)] text-3xl font-bold whitespace-nowrap flex items-center gap-3">{to12Hour(item.timeValue)} <span className='text-[rgb(22,22,22)] text-sm'>to</span> {to12Hour(item.timeValue2)}</h1>

@@ -34,7 +34,7 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
 
     console.log("arr: ", schedule?.title);
     const [totalMinutes, setTotalMinutes] = useState(0);
-    const [title, setTitle] = useState<any>(schedule?.title ?? null);
+    const [title, setTitle] = useState<string | null>(schedule?.title ?? null);
     const [isOpen, setIsOpen] = useState(false)
     const [selectedDelete, setSelectedDelete] = useState<{theId: number, theIndex:number} | null>(null);
     const [isPending, setIsPending] = useState<boolean>(false);
@@ -51,7 +51,7 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
         console.log(selectedDelete);
     }
 
-    const handleSubmit = async (isPending: boolean) => {        
+    const handleSubmit = async () => {        
         const copy: Entry[] = JSON.parse(JSON.stringify(arr));
 
         const filteredTime: Entry[] = copy.filter((_, index) => index !== arr.length - 1)
@@ -168,15 +168,9 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
 
                 const addedDuration = (toMin - fromMin + 1440) % 1440;
 
-                const timeDiff = toMinutes(timeVal2) - toMinutes(prevTime);
-    
                 console.log(`This is new time: ${newHour}:${newMin}`);
 
                 const updateArr = arr.map((item) => item.id == theId ? {...item, activity: actVal, status: 'Done', timeValue2: timeVal2} : item)
-
-                const totalMinutesSoFar = arr.reduce((sum, item) => {
-                    return sum + getTimeDifferenceInDayCycle(item.timeValue, item.timeValue2);
-                }, 0);
 
                 if (addedDuration === 0) {
                     toast.error("End time must be after start time.");
@@ -317,15 +311,10 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
                 console.log(updated)
                 console.log("*========================================================================================")
                 console.log("")
-                
-                const totalMinutesSoFar = arr.reduce((sum, item) => {
-                    return sum + getTimeDifferenceInDayCycle(item.timeValue, item.timeValue2);
-                }, 0);
 
                 const fromMin = toMinutes(arr[theIndex]?.timeValue);
                 const toMin = toMinutes(timeVal);
-                const toMin2 = toMinutes(arr[theIndex]?.timeValue);
-
+                
                 const addedDuration = (toMin - fromMin);
                 
                 console.log("")
@@ -963,7 +952,7 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
                             </button>
                         }
                         <button 
-                            onClick={()=>handleSubmit(isPending)} 
+                            onClick={()=>handleSubmit()} 
                             className={`text-[rgb(22,22,22)] mt-2 rounded p-5 font-bold ${isPending ? 'bg-green-300' : '-translate-y-2 hover:translate-none duration-500 bg-green-400 hover:cursor-pointer'} `}
                             disabled={isPending}
                         >

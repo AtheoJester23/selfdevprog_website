@@ -24,7 +24,7 @@ const page = async () => {
 
     console.log(session);
 
-    let schedules = await client.fetch(SCHEDULE_BY_AUTHOR_QUERY, { id: "114953421027495055482" });
+    const schedules = await client.fetch(SCHEDULE_BY_AUTHOR_QUERY, { id: "114953421027495055482" });
     console.log(schedules);
 
   return (
