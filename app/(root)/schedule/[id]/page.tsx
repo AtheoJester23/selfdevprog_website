@@ -19,13 +19,7 @@ export interface scheds{
   allTime: Entry[];
 }
 
-interface PageProps {
-  params: {
-    id: string;
-  };
-}
-
-const page = async (propsPromise: Promise<PageProps>) => {
+const page = async (propsPromise: Promise<{params: {id: string}}>) => {
   const session = await auth();
 
   if(!session) redirect('/');
@@ -33,7 +27,8 @@ const page = async (propsPromise: Promise<PageProps>) => {
   console.log(session.user.name);
 
   const { params } = await propsPromise
-  const { id } = await params
+
+  const { id } = params
 
   console.log(id);
 
