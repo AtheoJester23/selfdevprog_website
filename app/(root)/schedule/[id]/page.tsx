@@ -19,7 +19,13 @@ export interface scheds{
   allTime: Entry[];
 }
 
-const page = async ({params}: {params: {id: string}}) => {
+interface PageProps {
+  params: {
+    id: string;
+  };
+}
+
+const page = async ({ params }: PageProps) => {
   const session = await auth();
 
   if(!session) redirect('/');
