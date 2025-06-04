@@ -1,12 +1,12 @@
-import { defineQuery } from "next-sanity";
+import {groq } from "next-sanity";
 
-export const AUTHOR_BY_GOOGLE_ID_QUERY = defineQuery(`
+export const AUTHOR_BY_GOOGLE_ID_QUERY = groq`
         *[_type == "user" && id == $id][0]{
             _id, id, name, username, email
         }
-    `)
+    `;
 
-export const SCHEDULE_BY_AUTHOR_QUERY = defineQuery(`
+export const SCHEDULE_BY_AUTHOR_QUERY = groq`
         *[_type == "schedule" && user._ref == $id]{
             _id,
             title,
@@ -18,13 +18,13 @@ export const SCHEDULE_BY_AUTHOR_QUERY = defineQuery(`
             },
             allTime
         }
-    `)
+    `;
 
 
-export const SCHEDULE_BY_ID = defineQuery(`
+export const SCHEDULE_BY_ID = groq`
         *[_type == "schedule" && _id == $id]{
             title,
             allTime,
             totalMinutes
         }
-    `)
+    `;

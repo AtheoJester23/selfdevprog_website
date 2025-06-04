@@ -28,7 +28,7 @@
     "nanoid": "^5.1.5",
     "next": "15.3.2",
     "next-auth": "^5.0.0-beta.28",
-    "next-sanity": "^9.8.58-canary.0",
+    "next-sanity": "^4.3.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-toastify": "^11.0.5",
