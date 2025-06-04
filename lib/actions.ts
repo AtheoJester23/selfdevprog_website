@@ -1,7 +1,6 @@
 "use server"
 
 import { auth } from "@/auth"
-import { error } from "console";
 import { wholeData } from "@/components/Addtime";
 import { toast } from "react-toastify";
 import { writeClient } from "@/sanity/lib/write-client";

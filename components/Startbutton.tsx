@@ -7,7 +7,7 @@ const Startbutton = ({isSession}: {isSession: boolean}) => {
   return (
     <>
         { isSession ? (
-            <a href="/dashboard" className="button bg-black text-white px-5 py-3 rounded-xl mt-5 w-[200px] text-center -translate-y-1 hover:translate-none duration-200 hover:text-black hover:bg-white font-bold shadow-lg hover:shadow-none">Let's Go!</a>
+            <a href="/dashboard" className="button bg-black text-white px-5 py-3 rounded-xl mt-5 w-[200px] text-center -translate-y-1 hover:translate-none duration-200 hover:text-black hover:bg-white font-bold shadow-lg hover:shadow-none">Let&apos;s Go!</a>
         ) : 
         <button 
             onClick={() => {
@@ -18,7 +18,7 @@ const Startbutton = ({isSession}: {isSession: boolean}) => {
             }} 
             className="cursor-pointer button bg-black text-white px-5 py-3 rounded-xl mt-5 w-[200px] text-center -translate-y-1 hover:translate-none duration-200 hover:text-black hover:bg-white font-bold shadow-lg hover:shadow-none"
         >
-            Let's Get Started!
+            Let&apos;s Get Started!
         </button>
         }
     </>

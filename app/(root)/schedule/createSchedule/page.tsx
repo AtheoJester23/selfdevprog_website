@@ -1,6 +1,5 @@
 import { auth } from '@/auth'
 import Addtime from '@/components/Addtime';
-import { Clock, Plus } from 'lucide-react';
 import { redirect } from 'next/navigation';
 import React from 'react'
 

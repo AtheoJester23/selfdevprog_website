@@ -1,18 +1,15 @@
 "use client"
 
-import { Check, CircleAlert, Clock, ConstructionIcon, Pencil, Plus, Trash2, X } from 'lucide-react'
-import React, { useActionState, useRef, useState } from 'react'
-import { format, parse } from 'date-fns'
+import { Check, CircleAlert, Clock, Pencil, Plus, Trash2, X } from 'lucide-react'
+import React, { useRef, useState } from 'react'
 import 'react-toastify/dist/ReactToastify.css'
 import { toast, ToastContainer } from 'react-toastify'
 import { Dialog } from '@headlessui/react'
-import { validation } from 'sanity'
 import { formSchema } from '@/sanity/lib/validation'
 import { createSchedule } from '@/lib/actions'
 import { nanoid } from 'nanoid'
 import { useRouter } from 'next/navigation'
 import { to12Hour, toMinutes, getTimeDifferenceInDayCycle } from '@/lib/utils'
-import { client } from '@/sanity/lib/client'
 import { UpdateEdit } from '@/actions/updateSchedule'
 
 export type Entry = {
@@ -96,7 +93,7 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
     }
 
     const handleEditVal = (theIndex: number, theID: number) => {
-        const getSwitchState = arr.filter((item, index) => item.id === theID);
+        const getSwitchState = arr.filter((item) => item.id === theID);
 
         const theSwitch = getSwitchState[0]?.editingVal;
 
@@ -106,7 +103,7 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
     }
 
     const handleEditVal2 = (theIndex: number, theID: number) => {
-        const getSwitchState = arr.filter((item, index) => item.id === theID);
+        const getSwitchState = arr.filter((item) => item.id === theID);
 
         const theSwitch = getSwitchState[0]?.editingVal2;
 
@@ -116,9 +113,9 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
     }
 
     const handleAdd = (theIndex: number, theId: number) => {
-        let timeVal = (document.getElementById(`input${theIndex}`) as HTMLInputElement)?.value 
-        let timeVal2 = (document.getElementById(`nextInput${theIndex}`) as HTMLInputElement)?.value
-        let actVal = (document.getElementById(`activity${theIndex}`) as HTMLInputElement)?.value        
+        const timeVal = (document.getElementById(`input${theIndex}`) as HTMLInputElement)?.value 
+        const timeVal2 = (document.getElementById(`nextInput${theIndex}`) as HTMLInputElement)?.value
+        const actVal = (document.getElementById(`activity${theIndex}`) as HTMLInputElement)?.value        
 
         console.log(timeVal2);
 
@@ -126,9 +123,9 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
             inputRef.current?.focus();
         }, 100)
 
-        let [hour,min] = timeVal2.split(":");
+        const [hour,min] = timeVal2.split(":");
 
-        let newHour =
+        const newHour =
             hour === "11" && min === "59"
                 ? "11"
                 : hour === "23" && min === "59"
@@ -137,7 +134,7 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
                         ? String((Number(hour)) % 24).padStart(2, "0")
                         : hour;
 
-        let newMin = 
+        const newMin = 
             hour === "11" && min === "59"
                 ? "59"
                 : hour === "23" && min === "59"
@@ -146,14 +143,14 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
                         ? "00"
                         : String(Number(min)).padStart(2, "0");
 
-        let [hour2, min2] = timeVal2.split(":");
+        const [hour2, min2] = timeVal2.split(":");
 
-        let nextMin =
+        const nextMin =
             min === "59"
                 ? "00"
                 : String(Number(min2) + 1).padStart(2, "0");
         
-        let nextHour = 
+        const nextHour = 
             min === "59"
                 ? String((Number(hour2) + 1) % 24).padStart(2, "0") // wrap around to 00 if hour == 23
                 : hour;
@@ -166,8 +163,6 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
                 
                 console.log(toMinutes(timeVal2));
                 
-                const startTime = arr[0]?.timeValue; // first item in the schedule
-
                 const fromMin = toMinutes(arr[theIndex]?.timeValue);
                 const toMin = toMinutes(timeVal2);
 
@@ -175,18 +170,13 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
 
                 const timeDiff = toMinutes(timeVal2) - toMinutes(prevTime);
     
-                const hourDiff = Math.floor(Math.floor(timeDiff / 60));
-                const minsDiff = timeDiff % 60;
-            
                 console.log(`This is new time: ${newHour}:${newMin}`);
 
-                const updateArr = arr.map((item,index) => item.id == theId ? {...item, activity: actVal, status: 'Done', timeValue2: timeVal2} : item)
+                const updateArr = arr.map((item) => item.id == theId ? {...item, activity: actVal, status: 'Done', timeValue2: timeVal2} : item)
 
                 const totalMinutesSoFar = arr.reduce((sum, item) => {
                     return sum + getTimeDifferenceInDayCycle(item.timeValue, item.timeValue2);
                 }, 0);
-
-                const newTotal = totalMinutesSoFar + addedDuration;
 
                 if (addedDuration === 0) {
                     toast.error("End time must be after start time.");
@@ -213,7 +203,7 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
                     return;
                 }
 
-                const updateArr = arr.map((item,index) => item.id == theId ? {...item, activity: actVal, timeValue: timeVal, status: 'Done', timeValue2: timeVal2} : item)
+                const updateArr = arr.map((item) => item.id == theId ? {...item, activity: actVal, timeValue: timeVal, status: 'Done', timeValue2: timeVal2} : item)
     
                 updateArr.push({_key: nanoid() ,id: Date.now(), status: "Empty", activity: "", timeValue: `${updateArr[updateArr.length -1].timeValue2}`, timeValue2: `${nextHour}:${nextMin}`, editingVal: false, editingVal2: false});
     
@@ -244,16 +234,16 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
         }else{
             const timeVal2 = arr[arr.length - 1].timeValue2
 
-            let [hour,min] = timeVal2.split(":");
+            const [hour,min] = timeVal2.split(":");
 
-            let [hour2, min2] = timeVal2.split(":");
+            const [hour2, min2] = timeVal2.split(":");
 
-            let nextMin =
+            const nextMin =
                 min === "59"
                     ? "00"
                     : String(Number(min2) + 1).padStart(2, "0");
             
-            let nextHour = 
+            const nextHour = 
                 min === "59"
                     ? String((Number(hour2) + 1) % 24).padStart(2, "0") // wrap around to 00 if hour == 23
                     : hour;
@@ -293,14 +283,12 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
     }
 
     const handleUpdate = (theIndex: number, theId: number) => {
-        let actVal = (document.getElementById(`activity${theIndex}`) as HTMLInputElement )?.value
+        const actVal = (document.getElementById(`activity${theIndex}`) as HTMLInputElement )?.value
 
         if(arr.length - 1 != theIndex){
             
             if(arr[theIndex]?.editingVal){
-                let timeVal = (document.getElementById(`input${theIndex}`) as HTMLInputElement)?.value
-
-                const currentTimeDiff = toMinutes(arr[theIndex]?.timeValue2) - toMinutes(timeVal);
+                const timeVal = (document.getElementById(`input${theIndex}`) as HTMLInputElement)?.value
 
                 console.log(`Current Time Diff: ${toMinutes(arr[theIndex]?.timeValue2)} - ${toMinutes(timeVal)}`);
 
@@ -339,10 +327,7 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
                 const toMin2 = toMinutes(arr[theIndex]?.timeValue);
 
                 const addedDuration = (toMin - fromMin);
-                const addedDuration2 = (toMin2 - fromMin + 1440) % 1440;
-
-                const newTotal = totalMinutesSoFar + addedDuration;
-
+                
                 console.log("")
                 console.log(`fromMin(${fromMin}) - toMin${toMin} = ${toMin - fromMin}`)
                 console.log("")
@@ -373,7 +358,7 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
                 }
 
             }else if(arr[theIndex]?.editingVal2){
-                let timeVal2 = (document.getElementById(`nextInput${theIndex}`) as HTMLInputElement)?.value
+                const timeVal2 = (document.getElementById(`nextInput${theIndex}`) as HTMLInputElement)?.value
 
                 // Get all the current time:
                 const currentTimes = arr.map((item: {timeValue: string}) => item.timeValue);

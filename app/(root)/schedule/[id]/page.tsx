@@ -1,13 +1,23 @@
 import { auth } from '@/auth';
 import ActionButtons from '@/components/ActionButtons';
-import DeleteSched from '@/components/DeleteSched';
+import { Entry } from '@/components/Addtime';
 import { to12Hour } from '@/lib/utils';
 import { client } from '@/sanity/lib/client';
 import { SCHEDULE_BY_ID } from '@/sanity/lib/queries';
-import { Pencil, Printer, Trash2 } from 'lucide-react';
-import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import React from 'react'
+
+export interface scheds{
+  title: string,
+  _id: string,
+  _createdAt: string,
+  user: {
+    _id: string,
+    image: string,
+    name: string,
+  },
+  allTime: Entry[];
+}
 
 const page = async ({params}: {params: {id: string}}) => {
   const session = await auth();
@@ -20,7 +30,7 @@ const page = async ({params}: {params: {id: string}}) => {
 
   console.log(id);
 
-  const schedule = await client.fetch(SCHEDULE_BY_ID, {id});
+  const schedule: scheds[] = await client.fetch(SCHEDULE_BY_ID, {id});
 
   console.log(schedule);
 

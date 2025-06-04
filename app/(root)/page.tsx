@@ -1,6 +1,5 @@
 import { auth } from "@/auth";
 import Startbutton from "@/components/Startbutton";
-import { signIn, signOut } from 'next-auth/react';
 
 export default async function Home() {
   const session = await auth();

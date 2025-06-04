@@ -8,21 +8,18 @@ import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { signIn, signOut } from 'next-auth/react';
 import { Session } from 'next-auth';
+import Image from 'next/image';
 
 interface NavbarProps{
   isSession: Session | null
 }
 
 const Navbar = ({isSession}: NavbarProps) => {  
+  // I added isSession as dependency... remove if there's an error
   useEffect(()=>{
     if(isSession) initFlowbite();
-  },[]);
+  },[isSession]);
 
-  const closeDrawer = () => {
-    const drawer = document.getElementById("my-drawer");
-    drawer?.classList.add('-translate-x-full')
-  }
-  
   return (
     <div>
       <div className='p-3 bg-[rgb(12,12,12)] flex h-[66px] fixed top-0 left-0 right-0 z-10 justify-between shadow-lg'>
@@ -42,7 +39,7 @@ const Navbar = ({isSession}: NavbarProps) => {
           }
           <div className='flex items-center gap-4'>
             <a href={'/'} className='inline-flex items-center w-[200px]'>
-                <img src="Logo.png" alt="logo" className='w-full'/>
+                <Image src="/Logo.png" width={200} height={20} alt="logo" className='w-full'/>
             </a>
           </div>
         </div>

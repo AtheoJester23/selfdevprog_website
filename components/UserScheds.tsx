@@ -4,7 +4,6 @@ import { CalendarClock, CalendarX, Plus } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react'
 import { Entry } from './Addtime';
-import { schedule } from '@/sanity/schemaTypes/schedules';
 
 export type Sched = {
     allTime: Entry[],

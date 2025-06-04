@@ -1,7 +1,6 @@
 "use client"
 
 import { modalDelete } from '@/atoms/actionAtoms'
-import { client } from '@/sanity/lib/client'
 import { Dialog } from '@headlessui/react'
 import { useAtom } from 'jotai'
 import { Pencil, Printer, Trash2, TriangleAlert } from 'lucide-react'
