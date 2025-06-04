@@ -32,7 +32,7 @@ const page = async ({ params }: PageProps) => {
 
   console.log(session.user.name);
 
-  const { id } = await params
+  const { id } = params
 
   console.log(id);
 
