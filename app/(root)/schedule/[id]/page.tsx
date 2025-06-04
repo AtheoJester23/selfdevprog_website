@@ -25,14 +25,15 @@ interface PageProps {
   };
 }
 
-const page = async ({ params }: PageProps) => {
+const page = async (propsPromise: Promise<PageProps>) => {
   const session = await auth();
 
   if(!session) redirect('/');
 
   console.log(session.user.name);
 
-  const { id } = params
+  const { params } = await propsPromise
+  const { id } = await params
 
   console.log(id);
 
