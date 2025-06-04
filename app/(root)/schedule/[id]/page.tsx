@@ -19,14 +19,16 @@ export interface scheds{
   allTime: Entry[];
 }
 
-const page = async ({ params }: { params: { id: string } }) => {
+type Params = Promise<{id: string}>
+
+const page = async ({ params }: { params: Params }) => {
   const session = await auth();
 
   if(!session) redirect('/');
 
   console.log(session.user.name);
 
-  const { id } = params
+  const { id } = await params
 
   const schedule: scheds[] = await client.fetch(SCHEDULE_BY_ID, {id});
 
