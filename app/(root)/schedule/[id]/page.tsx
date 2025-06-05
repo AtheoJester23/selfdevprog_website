@@ -21,7 +21,7 @@ export interface scheds{
 
 type Params = Promise<{id: string}>
 
-const page = async (prop: { params: Params }) => {
+export default async function(prop: { params: Params }){
   const session = await auth();
 
   if(!session) redirect('/');
@@ -57,5 +57,3 @@ const page = async (prop: { params: Params }) => {
     </div>
   )
 }
-
-export default page
