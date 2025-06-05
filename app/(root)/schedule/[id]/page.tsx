@@ -21,7 +21,7 @@ export interface scheds{
 
 type Params = Promise<{id: string}>
 
-export default async function(prop: { params: Params }){
+export default async function page(prop: { params: Params }){
   const session = await auth();
 
   if(!session) redirect('/');
