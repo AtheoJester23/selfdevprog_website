@@ -18,13 +18,7 @@ export interface scheds {
   allTime: Entry[];
 }
 
-interface PageProps {
-  params: {
-    id: string;
-  };
-}
-
-export default async function Page({ params }: PageProps) {
+export default async function Page({ params }: { params: { id: string } }) {
   const session = await auth();
 
   if (!session) redirect('/');
