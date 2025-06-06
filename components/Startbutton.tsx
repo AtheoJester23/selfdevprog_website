@@ -1,9 +1,10 @@
 'use client'
 
+import { Session } from 'next-auth';
 import { signIn, signOut } from 'next-auth/react';
 import React from 'react'
 
-const Startbutton = ({isSession}: {isSession: boolean}) => {
+const Startbutton = ({isSession}: {isSession: Session | null}) => {
   return (
     <>
         { isSession ? (
