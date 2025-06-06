@@ -29,7 +29,7 @@ export type wholeData = {
     allTime: Entry[],
 }
 
-const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | null; id: string}) => {
+const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | null; id: string | null}) => {
     const [arr, setArr] = useState<Array<Entry>>(schedule?.allTime ?? []);
 
     console.log("arr: ", schedule?.title);
@@ -454,7 +454,7 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
         const allTime = copy[copy.length - 1].status === "Empty" ? filteredTime : copy
         
         try {
-            const response = await UpdateEdit(id, title, allTime)
+            const response = await UpdateEdit(id!, title, allTime)
 
             console.log('Updated:', response);
         
