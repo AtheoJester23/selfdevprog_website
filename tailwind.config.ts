@@ -1,5 +1,6 @@
 import type {Config} from "tailwindcss";
 import typography from "@tailwindcss/typography";
+import defaultTheme from "tailwindcss/defaultTheme";
 
 const config: Config = {
   darkMode: "class",
@@ -11,10 +12,14 @@ const config: Config = {
       "./node_modules/flowbite/**/*.js"
   ],
   theme: {
+    screens: {
+      xxs: '360px',
+      ...defaultTheme.screens
+    },
     extend: {
       colors:{
         backdrop: 'rgba(0,0,0,0.7)'
-      }
+      },
     },
   },
   plugins: [

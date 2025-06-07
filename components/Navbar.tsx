@@ -38,13 +38,13 @@ const Navbar = ({isSession}: NavbarProps) => {
               ''
           }
           <div className='flex items-center gap-4'>
-            <a href={'/'} className='inline-flex items-center w-[200px]'>
+            <a href={'/'} className='inline-flex items-center w-[150px]'>
                 <Image src="/Logo.png" width={200} height={20} alt="logo" className='w-full'/>
             </a>
           </div>
         </div>
 
-        <div className='flex items-center gap-2'>
+        <div className='flex items-center gap-2 xs:invisible md:visible'>
           { isSession ? (
               <>
                   <div className=''>
