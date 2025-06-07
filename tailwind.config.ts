@@ -13,7 +13,7 @@ const config: Config = {
   ],
   theme: {
     screens: {
-      xxs: '360px',
+      "xs": '359px',
       ...defaultTheme.screens
     },
     extend: {

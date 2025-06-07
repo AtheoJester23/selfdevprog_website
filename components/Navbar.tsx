@@ -38,36 +38,38 @@ const Navbar = ({isSession}: NavbarProps) => {
               ''
           }
           <div className='flex items-center gap-4'>
-            <a href={'/'} className='inline-flex items-center w-[150px]'>
+            <a href={'/'} className='inline-flex items-center max-sm:w-[150px] md:w-[200px]'>
                 <Image src="/Logo.png" width={200} height={20} alt="logo" className='w-full'/>
             </a>
           </div>
         </div>
 
-        <div className='flex items-center gap-2 xs:invisible md:visible'>
+        <div className='flex items-center gap-2'>
           { isSession ? (
-              <>
-                  <div className=''>
-                      <div className='border border-white rounded-full p-1 flex px-3 cursor-pointer hover:bg-white hover:text-black text-white duration-200 items-center'>
-                          <Plus/>
-                          <p>Create</p>
-                      </div>
-                  </div>
-                
-      
-                  <button 
-                    className='cursor-pointer'
-                    type='button'
-                    data-drawer-target="my-drawer"
-                    data-drawer-show="my-drawer"
-                    aria-controls="my-drawer"
-                  >
-                    <Avatar>
-                        <AvatarImage src={isSession?.user?.image ?? undefined} />
-                        <AvatarFallback>X</AvatarFallback>
-                    </Avatar>
-                  </button>
-              </>
+              <div className='max-sm:hidden'>
+                <div className='flex items-center'>
+                    <div className=''>
+                        <div className='border border-white rounded-full p-1 flex px-3 cursor-pointer hover:bg-white hover:text-black text-white duration-200 items-center'>
+                            <Plus/>
+                            <p>Create</p>
+                        </div>
+                    </div>
+                  
+        
+                    <button 
+                      className='cursor-pointer'
+                      type='button'
+                      data-drawer-target="my-drawer"
+                      data-drawer-show="my-drawer"
+                      aria-controls="my-drawer"
+                    >
+                      <Avatar>
+                          <AvatarImage src={isSession?.user?.image ?? undefined} />
+                          <AvatarFallback>X</AvatarFallback>
+                      </Avatar>
+                    </button>
+                </div>
+              </div>
           ) : 
               <button 
                   onClick={() => {
