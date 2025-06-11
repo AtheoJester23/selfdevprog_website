@@ -10,9 +10,7 @@ const page = async () => {
 
   return (
     <div className='p-5 mt-[70px]'>
-        <h1 className='text-5xl text-white font-bold'>Create Schedule Page</h1>
-    
-        <Addtime schedule={null} id={null}/>
+      <Addtime schedule={null} id={null}/>
     </div>
   )
 }
