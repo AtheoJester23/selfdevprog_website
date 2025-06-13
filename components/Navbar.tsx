@@ -47,7 +47,7 @@ const Navbar = ({isSession}: NavbarProps) => {
         <div className='flex items-center gap-2'>
           { isSession ? (
               <div className='max-sm:hidden'>
-                <div className='flex items-center'>
+                <div className='flex items-center gap-2'>
                     <div className=''>
                         <div className='border border-white rounded-full p-1 flex px-3 cursor-pointer hover:bg-white hover:text-black text-white duration-200 items-center'>
                             <Plus/>

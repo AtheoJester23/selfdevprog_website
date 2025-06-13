@@ -401,7 +401,7 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
 
                 console.log(timeVal2);
 
-                const updatedArr = arr.map((item, index) => item.id == theId ? {...item, timeValue2: timeVal2, status: "Done", editingVal2: false} : item);
+                const updatedArr = arr.map(item => item.id == theId ? {...item, timeValue2: timeVal2, status: "Done", editingVal2: false} : item);
 
                 console.log(updatedArr);
 
