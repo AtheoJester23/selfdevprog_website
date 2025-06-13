@@ -469,16 +469,16 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
   return (
     <div className='p-5 flex flex-col gap-3' id="theForm">
         {title ? (
-            <div className='shadow-xl rounded p-5 mb-3 flex gap-2 max-sm:justify-center sm:justify-between items-center'>
-                <h1 className='text-white font-bold max-sm:text-[15px] sm:text-3xl flex items-center'>Title: {title}</h1>
+            <div className='shadow-xl rounded max-sm:p-2 sm:p-5 mb-3 flex gap-2 max-sm:justify-center sm:justify-between items-center'>
+                <h1 className='text-white font-bold max-sm:text-[19px] sm:text-3xl flex items-center'>Title: {title}</h1>
                 <div>
-                    <button onClick={()=>handleAddTitle()} type='button' className='bg-blue-500 p-2 max-sm:rounded-sm sm:rounded-xl -translate-y-0.5 hover:translate-none duration-500 cursor-pointer'>
+                    <button onClick={()=>handleAddTitle()} type='button' className='bg-blue-500 p-2 sm:rounded-xl -translate-y-0.5 hover:translate-none duration-500 cursor-pointer'>
                         <Pencil className='text-[rgb(22,22,22)]'/>
                     </button>
                 </div>
             </div>
         ) : (
-            <div className='flex gap-2 items-center mb-5 max-sm:text-[10px]'>
+            <div className='flex gap-2 items-center mb-5 max-sm:text-[16px]'>
                 <h1 className='text-white font-bold max-sm:text-[1em] sm:text-3xl flex items-center'>Title: </h1>
                 <input 
                     id="theTitle" 
@@ -511,8 +511,8 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
             arr.map((item, index) => (
                 <div key={item?.id} className='flex sm:items-center max-sm:gap-1 sm:gap-1 md:gap-3 border border-white p-1 md:p-5 rounded justify-between'>
                     { item.status === "Empty" || item.status === "Editing" ? (
-                            <div className='flex max-sm:flex-col sm:flex-row gap-2 flex-1 max-sm:text-[10px]'>
-                                <div className='flex justify-center items-center gap-2 max-sm:text-[10px]'>
+                            <div className='flex max-sm:flex-col sm:flex-row gap-2 flex-1 max-sm:text-[12px]'>
+                                <div className='flex justify-center items-center gap-2 max-sm:text-[12px] whitespace-nowrap'>
                                     <div className='relative'>
                                         <input 
                                             type="time" 
@@ -529,8 +529,8 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
                                                 sm:rounded-lg 
                                                 focus:ring-blue-500 
                                                 focus:border-blue-500
-                                                max-sm:w-[82px]
-                                                md:w-full 
+                                                max-sm:w-[95px]
+                                                sm:w-full 
                                                 max-sm:p-1
                                                 md:p-2.5 
                                                 dark:bg-gray-700 
@@ -538,7 +538,7 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
                                                 dark:placeholder-gray-400 
                                                 dark:text-white 
                                                 dark:focus:ring-blue-500 
-                                                dark:focus:border-blue-500" 
+                                                dark:focus:border-blue-500"
                                             min={index > 0 ? arr[index - 1].timeValue : "00:00"} 
                                             defaultValue={item.timeValue} 
                                             onKeyDown={(e)=>{
@@ -582,8 +582,8 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
                                                 sm:rounded-lg 
                                                 focus:ring-blue-500 
                                                 focus:border-blue-500
-                                                max-sm:w-[82px]
-                                                md:w-full 
+                                                max-sm:w-[95px]
+                                                sm:w-full 
                                                 max-sm:p-1
                                                 md:p-2.5 
                                                 dark:bg-gray-700 
@@ -768,16 +768,14 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
                 </div>
             )) : (
                 arr.map((item, index)=> totalMinutes != 1440 ? (
-                    <div key={item?.id} className='flex items-center max-sm:gap-1 sm:gap-3 border border-white max-sm:p-1 sm:p-5 rounded justify-between max-sm:text-[10px]'>
+                    <div key={item?.id} className='flex items-center max-sm:gap-1 sm:gap-3 border border-white max-sm:p-1 sm:p-5 rounded justify-between max-sm:text-[12px]'>
                         { item.status === "Empty" ? (
                                 <div className='flex max-sm:flex-col sm:flex-row flex-1 max-sm:gap-1'>
-                                    <div className='flex max-sm:justify-center items-center'>
-                                        <h1 className='text-white whitespace-nowrap'>
+                                    <div className='flex justify-center max-sm:p-1 items-center'>
+                                        <h1 className='text-white font-bold max-sm:text-[1em] sm:text-4xl flex gap-1 items-center whitespace-nowrap'>
                                             {to12Hour(item.timeValue)}
-
-                                            <span className='max-sm:mx-1 sm:mx-2'>
-                                                to
-                                            </span>
+                                            
+                                            <span className='max-sm:text-[1em] sm:text-lg font-normal max-sm:me-1 sm:mx-2'>to</span>
                                         </h1>
 
                                         <div className='relative'>
@@ -785,37 +783,31 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
                                                 type="time" 
                                                 id={`nextInput${index}`} 
                                                 className="
-                                                            bg-gray-50 
-                                                            border 
-                                                            leading-none 
-                                                            border-gray-300 
-                                                            text-gray-900 
-                                                            max-sm:text-[10px]
-                                                            sm:text-sm
-                                                            max-sm:rounded-sm
-                                                            sm:rounded-lg 
-                                                            focus:ring-blue-500 
-                                                            focus:border-blue-500
-                                                            max-sm:w-[82px]
-                                                            md:w-full 
-                                                            max-sm:p-1
-                                                            md:p-2.5 
-                                                            dark:bg-gray-700 
-                                                            dark:border-gray-600 
-                                                            dark:placeholder-gray-400 
-                                                            dark:text-white 
-                                                            dark:focus:ring-blue-500 
-                                                            dark:focus:border-blue-500" 
-                                                min={index > 0 ? arr[index - 1].timeValue : "00:00"} 
-                                                defaultValue={item.timeValue2} 
-                                                onKeyDown={(e)=>{
-                                                    if(e.key === "Enter"){
-                                                        e.preventDefault();
-                                                        handleAdd(index, item?.id);
-                                                    }
-                                                }}
-                                                required 
-                                            />
+                                                    bg-gray-50 
+                                                    border 
+                                                    leading-none 
+                                                    border-gray-300 
+                                                    text-gray-900 
+                                                    max-sm:text-[1em]
+                                                    sm:text-sm
+                                                    max-sm:rounded-sm
+                                                    sm:rounded-lg 
+                                                    focus:ring-blue-500 
+                                                    focus:border-blue-500
+                                                    max-sm:w-[95px]
+                                                    md:w-full 
+                                                    max-sm:p-1
+                                                    md:p-2.5 
+                                                    dark:bg-gray-700 
+                                                    dark:border-gray-600 
+                                                    dark:placeholder-gray-400 
+                                                    dark:text-white 
+                                                    dark:focus:ring-blue-500 
+                                                    dark:focus:border-blue-500" 
+                                                    min={index > 0 ? arr[index - 1].timeValue : "00:00"} 
+                                                    defaultValue={item.timeValue2} 
+                                                    required 
+                                                />
                                             <div className="
                                                 absolute 
                                                 inset-y-0 
@@ -830,10 +822,9 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
                                                 <Clock className='text-white max-sm:w-[15px] w-[20px]' size="100%"/>
                                             </div>
                                         </div>
-                                        
+                                    
                                         <h1 className='text-white font-bold max-sm:hidden sm:visible mx-2'>:</h1>
                                     </div>
-
 
                                     <input 
                                         autoFocus
@@ -874,7 +865,7 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
                                     />
                                 </div>
                             ) : item.status === "Editing" ? (
-                                <div className='flex max-sm:flex-col flex-1 max-sm:gap-1 items-center text-[10px]'>  
+                                <div className='flex max-sm:flex-col flex-1 max-sm:gap-1 items-center text-[12px]'>  
                                     {item.editingVal ? (
                                         <div className='flex'>
                                             <div className='relative'>
@@ -887,13 +878,13 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
                                                         leading-none 
                                                         border-gray-300 
                                                         text-gray-900 
-                                                        max-sm:text-[10px]
+                                                        max-sm:text-[1em]
                                                         sm:text-sm
                                                         max-sm:rounded-sm
                                                         sm:rounded-lg 
                                                         focus:ring-blue-500 
                                                         focus:border-blue-500
-                                                        max-sm:w-[82px]
+                                                        max-sm:w-[95px]
                                                         md:w-full 
                                                         max-sm:p-1
                                                         md:p-2.5 
@@ -920,7 +911,7 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
                                             </div>
 
                                             <h1 className='text-white font-bold max-sm:text-[1em] sm:text-4xl flex gap-1 items-center whitespace-nowrap'>
-                                                <span className='text-[1em] sm:text-lg font-normal mx-2'> to </span>
+                                                <span className='text-[1em] sm:text-lg font-normal max-sm:ms-1 sm:mx-2'> to </span>
                                                     
                                                 {to12Hour(item.timeValue2)}
                                             </h1>
@@ -930,7 +921,7 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
                                             <h1 className='text-white font-bold max-sm:text-[1em] sm:text-4xl flex gap-1 items-center whitespace-nowrap'>
                                                 {to12Hour(item.timeValue)}
                                                 
-                                                <span className='max-sm:text-[1em] sm:text-lg font-normal mx-2'> to </span>
+                                                <span className='max-sm:text-[1em] sm:text-lg font-normal max-sm:me-1 sm:mx-2'> to </span>
                                             </h1>
 
                                             <div className='relative'>
@@ -943,13 +934,13 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
                                                         leading-none 
                                                         border-gray-300 
                                                         text-gray-900 
-                                                        max-sm:text-[10px]
+                                                        max-sm:text-[1em]
                                                         sm:text-sm
                                                         max-sm:rounded-sm
                                                         sm:rounded-lg 
                                                         focus:ring-blue-500 
                                                         focus:border-blue-500
-                                                        max-sm:w-[82px]
+                                                        max-sm:w-[95px]
                                                         md:w-full 
                                                         max-sm:p-1
                                                         md:p-2.5 
@@ -981,7 +972,7 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
                                         </div>
                                     ) : (
                                         <div className='flex'>
-                                            <h1 className='text-white font-bold flex gap-1 items-center whitespace-nowrap max-sm:text-[10px] sm:text-3xl'>
+                                            <h1 className='text-white font-bold flex gap-1 items-center whitespace-nowrap max-sm:text-[1em] sm:text-3xl'>
                                                 <button onClick={()=>handleEditVal(index, item?.id)} type='button' className='bg-blue-500 max-sm:p-1 sm:p-3 max-sm:rounded-sm sm:rounded-xl -translate-y-0.5 hover:translate-none duration-500 cursor-pointer text-[rgb(22,22,22)]'>
                                                     {to12Hour(item.timeValue)}
                                                 </button>
@@ -1035,7 +1026,7 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
                                     />
                                 </div>
                             ) : (
-                                <div className='flex max-sm:flex-col sm:flex-row items-center max-sm:gap-1 sm:gap-3 flex-1 max-sm:text-[10px]'>
+                                <div className='flex max-sm:flex-col sm:flex-row items-center max-sm:gap-1 sm:gap-3 flex-1 max-sm:text-[1em]'>
                                     <div className='max-sm:bg-white max-sm:p-1 max-sm:text-[rgb(22,22,22)] sm:text-white flex items-center max-sm:gap-1 sm:gap-3'>
                                         <h1 className='max-sm:bg-white font-bold max-sm:text-[1em] sm:text-3xl flex items-center whitespace-nowrap'>
                                             {to12Hour(item.timeValue)}
