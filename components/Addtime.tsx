@@ -267,6 +267,18 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
         const oldTime = times[changedIndex];
         const diff = toMinutes(newTime) - toMinutes(oldTime);
 
+        console.log("")
+        console.log("")
+        console.log("")
+        console.log("")
+        console.log("oldTime: ", oldTime);
+        console.log("diff", diff);
+        console.log("newTime", newTime);
+        console.log("")
+        console.log("")
+        console.log("")
+        console.log("")
+
         // Create new array with updated times
         return times.map((time, index) => {
             if (index < changedIndex) return time; // No change
@@ -326,26 +338,18 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
                 console.log("Total Minutes: ", totalMinutes)
                 console.log(`addedDuration: ${addedDuration}`);
 
-                if((totalMinutes + addedDuration) > 1440){
-                    if(fromMin > toMin && theIndex == 0){
-                        const updateArr = arr.map((item,index) => item.id == theId ? {...item, timeValue: updated[index], editingVal: false, activity: actVal, status: 'Done', timeValue2: updated[index + 1]} : index != arr.length - 1 ? ({...item, timeValue: updated[index], timeValue2: updated[index + 1], editingVal: false}) : ({...item, timeValue: updated[index], editingVal: false}));
-        
-                        setArr(updateArr);
-                        recalculateTotalMinutes(updateArr)
-                    }else{
-                        toast.error("Total schedule exceeds 24 hours. abcdefg");
-                        return;
-                    }
-                    // const updateArr = arr.map((item,index) => item.id == theId ? {...item, timeValue: updated[index], editingVal: false, activity: actVal, status: 'Done', timeValue2: updated[index + 1]} : index == arr.length - 1 ? ({...item, editingVal: false}) : index == arr.length - 2 ? ({...item, timeValue: updated[index], editingVal: false}) : index != arr.length - 1 ? ({...item, timeValue: updated[index], timeValue2: updated[index + 1], editingVal: false}) : ({...item, timeValue: updated[index], editingVal: false}));
-        
-                    // setArr(updateArr);
-                }else{
+                
+                if(theIndex == 0){
                     const updateArr = arr.map((item,index) => item.id == theId ? {...item, timeValue: updated[index], editingVal: false, activity: actVal, status: 'Done', timeValue2: updated[index + 1]} : index != arr.length - 1 ? ({...item, timeValue: updated[index], timeValue2: updated[index + 1], editingVal: false}) : ({...item, timeValue: updated[index], editingVal: false}));
-        
+    
                     setArr(updateArr);
                     recalculateTotalMinutes(updateArr)
-                }
-
+                }else{
+                    const updateArr = arr.map((item,index) => item.id == theId ? {...item, timeValue: updated[index], editingVal: false, activity: actVal, status: 'Done', timeValue2: updated[index + 1]} : index != arr.length - 1 ? ({...item, timeValue: updated[index], timeValue2: updated[index + 1], editingVal: false}) : ({...item, timeValue: updated[index], editingVal: false}));
+    
+                    setArr(updateArr);
+                    recalculateTotalMinutes(updateArr)
+                }            
             }else if(arr[theIndex]?.editingVal2){
                 const timeVal2 = (document.getElementById(`nextInput${theIndex}`) as HTMLInputElement)?.value
 
@@ -368,9 +372,47 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
                 setArr(updateArr3);
             }
         }else{
-            const updatedArr4 = arr.map(item => item.id === theId ? {...item, activity: actVal, status: 'Done'} : item);
+            //Fix this... this is the cause why there's no changes on the last index.
+            
+            if(arr[theIndex]?.editingVal){
+                const timeVal = (document.getElementById(`input${theIndex}`) as HTMLInputElement)?.value
 
-            setArr(updatedArr4);
+                console.log(`Current Time Diff: ${toMinutes(arr[theIndex]?.timeValue2)} - ${toMinutes(timeVal)}`);
+
+                // Get all the current time:
+                const currentTimes = arr.map((item: {timeValue: string}) => item.timeValue);
+
+                const lastTime = arr[theIndex].timeValue2;
+
+                const fromMin = toMinutes(arr[theIndex]?.timeValue);
+                const toMin = toMinutes(timeVal);
+                
+                const addedDuration = (toMin - fromMin);
+    
+                const newTimeVal2 = toTimeString(toMinutes(lastTime) + addedDuration);
+            
+                const updated = updateTimes(currentTimes, theIndex, timeVal);
+                
+                const updateArr = arr.map((item,index) => item.id == theId ? {...item, timeValue: updated[index], editingVal: false, activity: actVal, status: 'Done', timeValue2: newTimeVal2} : index != arr.length - 2 ? ({...item, timeValue: updated[index], timeValue2: updated[index + 1], editingVal: false}) : ({...item, timeValue: updated[index], editingVal: false}));
+
+                setArr(updateArr);
+            }else if(arr[theIndex]?.editingVal2){
+                const timeVal2 = (document.getElementById(`nextInput${theIndex}`) as HTMLInputElement)?.value
+
+                console.log(timeVal2);
+
+                const updatedArr = arr.map((item, index) => item.id == theId ? {...item, timeValue2: timeVal2, status: "Done", editingVal2: false} : item);
+
+                console.log(updatedArr);
+
+                setArr(updatedArr);
+            }else{
+                console.log("This is for the first index of array...");
+
+                const updateArr3 = arr.map(item => item.id == theId ? {...item, activity: actVal, status: 'Done'} : item);
+            
+                setArr(updateArr3);
+            }
         }
     }
 
