@@ -24,19 +24,23 @@ const UserScheds = async ({id}: {id: string}) => {
   return (
     <>
         { schedules?.length > 0 ? (
-            <div className='grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-4 xl:grid-cols-5 gap-3'>
+            <ul className='grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-4 xl:grid-cols-5 gap-3'>
                 {schedules.map((item: Sched) => (
-                    <Link href={`/schedule/${item._id}`} key={item._id} className='border border-gray-500 rounded p-5 cursor-pointer -translate-y-1 hover:translate-none duration-150'>
-                        <div className='flex justify-center flex-col items-center'>
-                            <CalendarClock className='text-white w-17 md:w-32' size="100%"/>
-                            <h1 className='text-white text-lg font-bold'>{item.title}</h1>
-                        </div>
-                    </Link>
+                    <li key={item._id}>
+                        <Link href={`/schedule/${item._id}`} className='block border border-gray-500 p-5 rounded cursor-pointer -translate-y-1 hover:translate-none duration-150'>
+                            <div className='flex justify-center flex-col items-center'>
+                                <CalendarClock className='text-white w-17 md:w-32' size="100%"/>
+                                <h1 className='text-white text-lg font-bold'>{item.title}</h1>
+                            </div>
+                        </Link>
+                    </li>
                 ))} 
-                <Link href={`/schedule/createSchedule`} className='border border-gray-500 rounded p-5 cursor-pointer flex justify-center items-center justify-center -translate-y-1 hover:translate-none duration-150'>
-                    <Plus className='text-white w-17 md:w-32' size="100%"/>
-                </Link>
-            </div>
+                <li>
+                    <Link href={`/schedule/createSchedule`} className='block h-full border border-gray-500 p-5 rounded cursor-pointer -translate-y-1 hover:translate-none duration-150'>
+                        <Plus className='text-white w-17 md:w-32 mx-auto' size="100%"/>
+                    </Link>
+                </li>
+            </ul>
         ): (
             <div className='flex justify-center items-center flex-col gap-3'>
                 <div className='flex justify-center flex-col items-center'>

@@ -28,15 +28,15 @@ const page = async () => {
     console.log(schedules);
 
   return (
-    <div className='mt-[70px] p-5'>
-      <h1 className='font-bold text-white text-5xl mb-3'>Schedule</h1>
+    <section className='mt-[70px] p-5'>
+      <h1 className='font-bold text-white text-5xl mb-3'>Schedules</h1>
     
-      <section className='border border-gray-500 p-5 rounded-2xl'>
+      <div className='border border-gray-500 p-5 rounded-2xl'>
     
         <UserScheds id={userId}/>
 
-      </section>
-    </div>
+      </div>
+    </section>
   )
 }
 
