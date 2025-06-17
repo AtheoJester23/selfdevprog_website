@@ -9,9 +9,13 @@ const page = async () => {
     if(!session) redirect('/');
 
   return (
-    <div className='p-5 mt-[70px]'>
+    <section className='p-5 mt-[70px]'>
+      <div className='flex justify-center'>
+        <h1 className='text-[rgb(22,22,22)] bg-white font-bold text-center sm:text-4xl px-5 py-2 border border-white rounded inline'>Create Schedule</h1>
+      </div>
+
       <Addtime schedule={null} id={null}/>
-    </div>
+    </section>
   )
 }
 

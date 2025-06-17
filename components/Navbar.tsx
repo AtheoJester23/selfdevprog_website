@@ -21,8 +21,8 @@ const Navbar = ({isSession}: NavbarProps) => {
   },[isSession]);
 
   return (
-    <div>
-      <div className='p-3 bg-[rgb(12,12,12)] flex h-[66px] fixed top-0 left-0 right-0 z-10 justify-between shadow-lg'>
+    <header>
+      <nav className='p-3 bg-[rgb(12,12,12)] flex h-[66px] fixed top-0 left-0 right-0 z-10 justify-between shadow-lg'>
         <div className='flex items-center'>
           {isSession ? (
               <button 
@@ -84,7 +84,7 @@ const Navbar = ({isSession}: NavbarProps) => {
               </button>
           }
         </div>
-      </div>
+      </nav>
 
       <div
         id="my-drawer"
@@ -125,7 +125,7 @@ const Navbar = ({isSession}: NavbarProps) => {
 
         <button onClick={() => signOut({ callbackUrl: "/" })} className='font-bold text-white border border-white rounded py-3 hover:bg-[white] hover:text-[rgb(22,22,22)] cursor-pointer'>Logout</button>
       </div>
-    </div>
+    </header>
   );
 }
 
