@@ -30,37 +30,40 @@ export default async function Page(prop: { params: paramsType}) {
   const schedule: scheds[] = await client.fetch(SCHEDULE_BY_ID, { id });
 
   return (
-    <article className="mt-[80px] p-5 printable-area">
+    <div className="mt-[80px] p-5 printable-area">
 
-      <section className="flex flex-col gap-3">
-        <h1 className="text-white text-2xl md:text-5xl font-bold mb-[30px] text-center theTitle">
-          {schedule[0]?.title ?? 'Untitled'}
-        </h1>
-        
-        <ul className='flex flex-col gap-3'>
-          {schedule[0]?.allTime?.map((item: Entry) => (
-            <li
-              key={item.id}
-              className="border-y border-white flex flex-col sm:flex-row items-center sm:gap-1 md:gap-5 justify-start shadow-xl"
-            >
-              <div className="time bg-white h-full items-center">
-                <h1 className="bg-white p-2 md:p-5 text-[rgb(22,22,22)] sm:text-3xl md:text-3xl lg:text-3xl font-bold whitespace-nowrap flex items-center gap-3">
-                  {to12Hour(item.timeValue)}{' '}
-                  <span className="text-[rgb(22,22,22)] text-sm">to</span>{' '}
-                  {to12Hour(item.timeValue2)}
-                </h1>
-              </div>
-              <div className="py-3 action">
-                <h1 className="text-white mb-2 md:mb-none sm:text-3xl font-bold break-all">
-                  {item.activity}
-                </h1>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </section>
+      <article>
+
+        <section className="flex flex-col gap-3">
+          <h1 className="text-white text-2xl md:text-5xl font-bold mb-[30px] text-center theTitle">
+            {schedule[0]?.title ?? 'Untitled'}
+          </h1>
+          
+          <ul className='flex flex-col gap-3'>
+            {schedule[0]?.allTime?.map((item: Entry) => (
+              <li
+                key={item.id}
+                className="border-y border-white flex flex-col sm:flex-row items-center sm:gap-1 md:gap-5 justify-start shadow-xl"
+              >
+                <div className="time bg-white h-full items-center">
+                  <h1 className="bg-white p-2 md:p-5 text-[rgb(22,22,22)] sm:text-3xl md:text-3xl lg:text-3xl font-bold whitespace-nowrap flex items-center gap-3">
+                    {to12Hour(item.timeValue)}{' '}
+                    <span className="text-[rgb(22,22,22)] text-sm">to</span>{' '}
+                    {to12Hour(item.timeValue2)}
+                  </h1>
+                </div>
+                <div className="py-3 action">
+                  <h1 className="text-white mb-2 md:mb-none sm:text-3xl font-bold break-all">
+                    {item.activity}
+                  </h1>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </section>
+      </article>
 
       <ActionButtons id={id} />
-    </article>
+    </div>
   );
 }

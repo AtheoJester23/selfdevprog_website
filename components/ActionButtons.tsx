@@ -42,8 +42,8 @@ const ActionButtons = ({id}: {id: string}) => {
         }
     }
   return (
-    <footer className='excludePrint'>
-      <div className='mt-5 flex justify-center'>
+    <footer className='excludePrint mt-5 flex justify-center'>
+      <div className='flex'>
         <button onClick={()=>handleModal()} className='bg-red-500 p-5 text-white font-bold rounded-bl-xl -translate-y-0.25 hover:translate-none cursor-pointer duration-200'>
           <Trash2 className='text-white'/>
         </button>
@@ -52,7 +52,7 @@ const ActionButtons = ({id}: {id: string}) => {
           <Printer className='text-[rgb(22,22,22)]'/>
         </button>
 
-        <Link href={`/schedule/edit/${id}`} className='bg-blue-500 p-5 text-white font-bold rounded-br-xl -translate-y-0.25 hover:translate-none cursor-pointer duration-200'>
+        <Link href={`/schedule/edit/${id}`} className='block bg-blue-500 p-5 text-white font-bold rounded-br-xl -translate-y-0.25 hover:translate-none cursor-pointer duration-200'>
           <Pencil className='text-white'/>
         </Link>
       </div>
