@@ -42,7 +42,7 @@ const ActionButtons = ({id}: {id: string}) => {
         }
     }
   return (
-    <div className='excludePrint'>
+    <footer className='excludePrint'>
       <div className='mt-5 flex justify-center'>
         <button onClick={()=>handleModal()} className='bg-red-500 p-5 text-white font-bold rounded-bl-xl -translate-y-0.25 hover:translate-none cursor-pointer duration-200'>
           <Trash2 className='text-white'/>
@@ -80,7 +80,7 @@ const ActionButtons = ({id}: {id: string}) => {
                 </Dialog.Panel>
             </div>
         </Dialog> 
-    </div>
+    </footer>
   )
 }
 
