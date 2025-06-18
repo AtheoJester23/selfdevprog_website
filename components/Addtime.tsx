@@ -34,7 +34,8 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
 
     const [totalMinutes, setTotalMinutes] = useState(0);
     const [title, setTitle] = useState<string | null>(schedule?.title ?? null);
-    const [isOpen, setIsOpen] = useState(false)
+    const [isOpen, setIsOpen] = useState(false);
+    const [isTitle, setIsTitle] = useState(title ? true : false);
     const [selectedDelete, setSelectedDelete] = useState<{theId: number, theIndex:number} | null>(null);
     const [isPending, setIsPending] = useState<boolean>(false);
     const router = useRouter();
@@ -297,7 +298,6 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
 
                 setArr(updateArr);
 
-                console.log("This that 2")
             }else if(arr[theIndex]?.editingVal2){
                 const timeVal2 = (document.getElementById(`nextInput${theIndex}`) as HTMLInputElement)?.value
 
@@ -305,8 +305,6 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
 
                 setArr(updatedArr);
             }else{
-                console.log("This that...")
-
                 const updateArr3 = arr.map(item => item.id == theId ? {...item, activity: actVal, status: 'Done'} : item);
             
                 setArr(updateArr3);
@@ -354,13 +352,18 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
     };
 
     const handleAddTitle = () => {
-        if(title){
-            setTitle(null);
+        const title = (document.getElementById("theTitle") as HTMLInputElement)?.value
+
+        if(!title){
+            toast.error("Title is required...")
         }else{
-            const title = (document.getElementById("theTitle") as HTMLInputElement)?.value
-    
             setTitle(title);
+            setIsTitle(true);
         }
+    }
+
+    const handleEditTitle = () => {
+        isTitle ? setIsTitle(false) : setIsTitle(true);
     }
 
     const handleUpdateEdit = async () => {
@@ -390,10 +393,10 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
 
   return (
     <section aria-label='Schedule Edit Section' className='p-5 flex flex-col gap-3' id="theForm">
-        {title ? (
+        {isTitle ? (
             <div className='shadow-xl rounded max-sm:p-2 sm:p-5 mb-3 flex gap-2 max-sm:justify-center sm:justify-between items-center'>
                 <h1 className='text-white font-bold max-sm:text-[19px] sm:text-3xl flex items-center'>Title: {title}</h1>
-                <button onClick={()=>handleAddTitle()} type='button' className='bg-blue-500 p-2 sm:rounded-xl -translate-y-0.5 hover:translate-none duration-500 cursor-pointer'>
+                <button onClick={()=>handleEditTitle()} type='button' className='bg-blue-500 p-2 sm:rounded-xl -translate-y-0.5 hover:translate-none duration-500 cursor-pointer'>
                     <Pencil className='text-[rgb(22,22,22)]'/>
                 </button>
             </div>
@@ -405,7 +408,7 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
                     type="text" 
                     className="bg-gray-50 border leading-none border-gray-300 text-gray-900 max-sm:text-[1em] sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
                     autoComplete='off' 
-                    placeholder='What title should this schedule have?' 
+                    placeholder={title ? title : "What title should this schedule have?"} 
                     onKeyDown={(e)=>{
                         if(e.key === "Enter"){
                             e.preventDefault();
@@ -418,6 +421,29 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
                 <button onClick={()=>handleAddTitle()} type='button' className='bg-green-400 p-2 rounded-xl -translate-y-0.5 hover:translate-none duration-500 cursor-pointer'>
                     <Check className='text-[rgb(22,22,22)]'/>
                 </button>
+                
+                {title ? (
+                    <button
+                        onClick={()=>{handleEditTitle()}}
+                        type='button' 
+                        className='
+                            bg-red-500 
+                            p-2 
+                            max-sm:rounded-sm
+                            sm:rounded-xl 
+                            cursor-pointer 
+                            -translate-y-0.5 
+                            hover:translate-none 
+                            duration-500 
+                            cursor-pointer
+                            h-full
+                        '>
+                        <X className='text-[rgb(22,22,22)]'/>
+                    </button>
+                ): (
+                    null
+                )}
+                
             </form>
             
         )}
