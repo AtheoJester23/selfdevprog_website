@@ -11,6 +11,8 @@ import { nanoid } from 'nanoid'
 import { useRouter } from 'next/navigation'
 import { to12Hour, toMinutes, getTimeDifferenceInDayCycle, toTimeString } from '@/lib/utils'
 import { UpdateEdit } from '@/actions/updateSchedule'
+import { z } from 'zod'
+
 
 export type Entry = {
         _key: string;
@@ -77,7 +79,15 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
             
             toast.success("Schedule Created");
         } catch(e) {
-            toast.error((e as Error).message);
+            if(e instanceof z.ZodError){
+                const fieldError = e.flatten().fieldErrors;
+
+                const theError = fieldError as unknown as Record<string, string>
+
+                toast.error(`${theError.title}`);
+            }else{
+                toast.error((e as Error).message);
+            }
         }
     }
 
@@ -395,7 +405,7 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
     <section aria-label='Schedule Edit Section' className='p-5 flex flex-col gap-3' id="theForm">
         {isTitle ? (
             <div className='shadow-xl rounded max-sm:p-2 sm:p-5 mb-3 flex gap-2 max-sm:justify-center sm:justify-between items-center'>
-                <h1 className='text-white font-bold max-sm:text-[19px] sm:text-3xl flex items-center'>Title: {title}</h1>
+                <h1 className='text-white font-bold max-sm:text-[19px] sm:text-3xl inline-block whitespace-normal break-all'>Title: {title}</h1>
                 <button onClick={()=>handleEditTitle()} type='button' className='bg-blue-500 p-2 sm:rounded-xl -translate-y-0.5 hover:translate-none duration-500 cursor-pointer'>
                     <Pencil className='text-[rgb(22,22,22)]'/>
                 </button>
@@ -717,12 +727,12 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
                     arr.map((item, index)=> totalMinutes != 1440 ? (
                         <li key={item?.id} className='flex items-center max-sm:gap-1 sm:gap-3 border border-white max-sm:p-1 sm:p-5 rounded justify-between max-sm:text-[12px]'>
                             { item.status === "Empty" ? (
-                                    <form className='flex max-sm:flex-col sm:flex-row flex-1 max-sm:gap-1'>
-                                        <div className='flex justify-center max-sm:p-1 items-center'>
-                                            <h1 className='text-white font-bold max-sm:text-[1em] sm:text-4xl flex gap-1 items-center whitespace-nowrap'>
+                                    <form className='flex max-sm:flex-col sm:flex-row flex-1 max-sm:gap-1 sm:gap-2'>
+                                        <div className='flex justify-center max-sm:p-1 items-center sm:gap-2'>
+                                            <h1 className='text-white font-bold max-sm:text-[1em] sm:text-4xl flex max-sm:gap-1 sm:gap-2 items-center whitespace-nowrap'>
                                                 {to12Hour(item.timeValue)}
                                                 
-                                                <span className='max-sm:text-[1em] sm:text-lg font-normal max-sm:me-1 sm:mx-2'>to</span>
+                                                <span className='max-sm:text-[1em] sm:text-lg font-normal max-sm:me-1'>to</span>
                                             </h1>
 
                                             <div className='relative'>
@@ -770,7 +780,7 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
                                                 </div>
                                             </div>
                                         
-                                            <h1 className='text-white font-bold max-sm:hidden sm:visible mx-2'>:</h1>
+                                            <h1 className='text-white font-bold max-sm:hidden sm:visible'>:</h1>
                                         </div>
 
                                         <input 
@@ -810,9 +820,45 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
                                             required
                                             placeholder='What will you be doing abcdefg during this time?'  
                                         />
+
+                                        <div className="flex items-center justify-center max-sm:gap-1 sm:gap-2">
+                                            <button 
+                                                onClick={()=>handleAdd(index, item?.id)} 
+                                                type='button' 
+                                                className='
+                                                bg-green-500 
+                                                p-2 
+                                                max-sm:rounded-sm
+                                                sm:rounded-xl
+                                                -translate-y-0.5 
+                                                hover:translate-none 
+                                                duration-500 
+                                                cursor-pointer
+                                                h-full
+                                            '>
+                                                <Plus className='text-[rgb(22,22,22)]'/>
+                                            </button>
+                                            <button 
+                                                onClick={()=>handleDelete(index, item?.id)} 
+                                                type='button' 
+                                                className='
+                                                bg-red-500 
+                                                p-2 
+                                                max-sm:rounded-sm
+                                                sm:rounded-xl 
+                                                cursor-pointer 
+                                                -translate-y-0.5 
+                                                hover:translate-none 
+                                                duration-500 
+                                                cursor-pointer
+                                                h-full
+                                            '>
+                                                <X className='text-[rgb(22,22,22)]'/>
+                                            </button>
+                                        </div>
                                     </form>
                                 ) : item.status === "Editing" ? (
-                                    <form className='flex max-sm:flex-col flex-1 max-sm:gap-1 items-center text-[12px]'>  
+                                    <form className='flex max-sm:flex-col flex-1 max-sm:gap-1 items-center max-sm:text-[12px] gap-2'>  
                                         {item.editingVal ? (
                                             <div className='flex'>
                                                 <div className='relative'>
@@ -933,7 +979,7 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
                                             </div>
                                         )}
 
-                                        <h1 className='text-white font-bold max-sm:hidden sm:visible mx-2'>:</h1>
+                                        <h1 className='text-white font-bold max-sm:hidden sm:visible text-[1em]'>:</h1>
 
                                         <input 
                                             id={`activity${index}`} 
@@ -971,6 +1017,15 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
                                             required
                                             placeholder='What will you be doing during this time?'
                                         />
+
+                                        <div className='flex items-center max-sm:gap-1 sm:gap-2'>
+                                            <button onClick={()=>handleUpdate(index, item?.id)} type='button' className='bg-green-400 p-2 max-sm:rounded-sm sm:rounded-xl -translate-y-0.5 hover:translate-none duration-500 cursor-pointer h-full'>
+                                                <Check className='text-[rgb(22,22,22)]'/>
+                                            </button>
+                                            <button onClick={()=>handleCancel(index, item?.id)} type='button' className='bg-red-500 p-2 max-sm:rounded-sm sm:rounded-xl -translate-y-0.5 hover:translate-none duration-500 cursor-pointer h-full'>
+                                                <X className='text-[rgb(22,22,22)]'/>
+                                            </button>
+                                        </div>
                                     </form>
                                 ) : (
                                     <div className='flex max-sm:flex-col sm:flex-row items-center max-sm:gap-1 sm:gap-3 flex-1 max-sm:text-[1em]'>
@@ -987,234 +1042,47 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
                                             
                                         </div>
 
-                                        <p className='text-white font-normal max-sm:text-[1em] sm:text-3xl inline-block whitespace-normal break-all'>{item.activity}</p>
-                                    </div>
-                                )
-                            }
-                            
-                            { item.status === "Empty" ? (
-                                    <div className="flex items-center max-sm:gap-1 sm:gap-2">
-                                        <button 
-                                            onClick={()=>handleAdd(index, item?.id)} 
-                                            type='button' 
-                                            className='
-                                            bg-green-500 
-                                            p-2 
-                                            max-sm:rounded-sm
-                                            sm:rounded-xl
-                                            -translate-y-0.5 
-                                            hover:translate-none 
-                                            duration-500 
-                                            cursor-pointer
-                                            h-full
-                                        '>
-                                            <Plus className='text-[rgb(22,22,22)]'/>
-                                        </button>
-                                        <button 
-                                            onClick={()=>handleDelete(index, item?.id)} 
-                                            type='button' 
-                                            className='
-                                            bg-red-500 
-                                            p-2 
-                                            max-sm:rounded-sm
-                                            sm:rounded-xl 
-                                            cursor-pointer 
-                                            -translate-y-0.5 
-                                            hover:translate-none 
-                                            duration-500 
-                                            cursor-pointer
-                                            h-full
-                                        '>
-                                            <X className='text-[rgb(22,22,22)]'/>
-                                        </button>
-                                    </div>
-                                ) : item.status === "Done" ? (
-                                    <div className='flex items-center max-sm:gap-1 sm:gap-2'>
-                                        <button 
-                                            onClick={()=>handleEdit(index, item?.id)} 
-                                            type='button' 
-                                            className='
-                                                bg-blue-500 
-                                                p-2 
-                                                max-sm:rounded-sm
-                                                sm:rounded-xl 
-                                                -translate-y-0.5 
-                                                hover:translate-none 
-                                                duration-500 
-                                                cursor-pointer
-                                                h-full
-                                            '>
-                                            <Pencil className='text-[rgb(22,22,22)]'/>
-                                        </button>
-                                        <button 
-                                            onClick={()=>handleModal(index, item?.id)} 
-                                            type='button' 
-                                            className='
-                                                bg-red-500 
-                                                p-2 
-                                                max-sm:rounded-sm
-                                                sm:rounded-xl  
-                                                cursor-pointer 
-                                                -translate-y-0.5 
-                                                hover:translate-none 
-                                                duration-500 
-                                                cursor-pointer
-                                                h-full
-                                            '>
-                                            <Trash2 className='text-[rgb(22,22,22)]'/>
-                                        </button>
-                                    </div>
-                                ) : (
-                                    <div className='flex items-center max-sm:gap-1 sm:gap-2'>
-                                        <button onClick={()=>handleUpdate(index, item?.id)} type='button' className='bg-green-400 p-2 max-sm:rounded-sm sm:rounded-xl -translate-y-0.5 hover:translate-none duration-500 cursor-pointer h-full'>
-                                            <Check className='text-[rgb(22,22,22)]'/>
-                                        </button>
-                                        <button onClick={()=>handleCancel(index, item?.id)} type='button' className='bg-red-500 p-2 max-sm:rounded-sm sm:rounded-xl -translate-y-0.5 hover:translate-none duration-500 cursor-pointer h-full'>
-                                            <X className='text-[rgb(22,22,22)]'/>
-                                        </button>
+                                        <p className='text-white font-normal max-sm:text-[1em] sm:text-3xl inline-block whitespace-normal break-all flex-1'>{item.activity}</p>
+
+                                        <div className='flex items-center max-sm:gap-1 sm:gap-2'>
+                                            <button 
+                                                onClick={()=>handleEdit(index, item?.id)} 
+                                                type='button' 
+                                                className='
+                                                    bg-blue-500 
+                                                    p-2 
+                                                    max-sm:rounded-sm
+                                                    sm:rounded-xl 
+                                                    -translate-y-0.5 
+                                                    hover:translate-none 
+                                                    duration-500 
+                                                    cursor-pointer
+                                                    h-full
+                                                '>
+                                                <Pencil className='text-[rgb(22,22,22)]'/>
+                                            </button>
+                                            <button 
+                                                onClick={()=>handleModal(index, item?.id)} 
+                                                type='button' 
+                                                className='
+                                                    bg-red-500 
+                                                    p-2 
+                                                    max-sm:rounded-sm
+                                                    sm:rounded-xl  
+                                                    cursor-pointer 
+                                                    -translate-y-0.5 
+                                                    hover:translate-none 
+                                                    duration-500 
+                                                    cursor-pointer
+                                                    h-full
+                                                '>
+                                                <Trash2 className='text-[rgb(22,22,22)]'/>
+                                            </button>
+                                        </div>
                                     </div>
                                 )
                             }
                         </li>
-                    ) : index != arr.length - 1 ? (
-                        <div key={item?.id} className='flex items-center gap-3 border border-white p-5 rounded justify-between'>
-                            { item.status === "Empty" && totalMinutes != 1440 ? (
-                                    <>
-                                        <h1 className='text-white whitespace-nowrap'>{to12Hour(item.timeValue)}</h1>
-
-                                        <h1 className='text-white font-bold'>to</h1>
-
-                                        <div className='relative'>
-                                            <input type="time" id={`nextInput${index}`} className="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" min={index > 0 ? arr[index - 1].timeValue : "00:00"} defaultValue={item.timeValue2} required />
-                                            <div className="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
-                                                <Clock className='text-white' size={20}/>
-                                            </div>
-                                        </div>
-
-                                        <h1 className='text-white font-bold'>:</h1>
-
-                                        <input 
-                                            id={`activity${index}`} 
-                                            type="text" 
-                                            className="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
-                                            defaultValue={item.activity} 
-                                            autoComplete='off'
-                                            placeholder='What will you be doing during this time?'
-                                            required
-                                        />
-                                    </>
-                                ) : item.status === "Editing" ? (
-                                    <>  
-                                        {item.editingVal ? (
-                                            <>
-                                                <div className='relative'>
-                                                    <input type="time" id={`input${index}`} className="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" min={index > 0 ? arr[index - 1].timeValue : "00:00"} defaultValue={item.timeValue} required />
-                                                    <div className="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
-                                                        <Clock className='text-white' size={20}/>
-                                                    </div>
-                                                </div>
-
-                                                <h1 className='text-white font-bold text-4xl flex gap-1 items-center whitespace-nowrap'>
-                                                    <span className='text-lg font-normal mx-2'> to </span>
-                                                        
-                                                    {to12Hour(item.timeValue2)}
-                                                </h1>
-                                            </>
-                                        ) : item.editingVal2 ? ( 
-                                            <>
-                                                <h1 className='text-white font-bold text-4xl flex gap-1 items-center whitespace-nowrap'>
-                                                    {to12Hour(item.timeValue)}
-                                                    
-                                                    <span className='text-lg font-normal mx-2'> to </span>
-                                                </h1>
-
-                                                <div className='relative'>
-                                                    <input type="time" id={`nextInput${index}`} className="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" min={index > 0 ? arr[index - 1].timeValue : "00:00"} defaultValue={item.timeValue2} required />
-                                                    <div className="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
-                                                        <Clock className='text-white' size={20}/>
-                                                    </div>
-                                                </div>
-                                            </>
-                                        ) : (
-                                            <div className='flex'>
-                                                <h1 className='text-white font-bold text-4xl flex gap-1 items-center whitespace-nowrap'>
-                                                    <button onClick={()=>handleEditVal(index, item?.id)} type='button' className='bg-blue-500 p-3 rounded-xl -translate-y-0.5 hover:translate-none duration-500 cursor-pointer text-[rgb(22,22,22)]'>
-                                                        {to12Hour(item.timeValue)}
-                                                    </button>
-
-                                                    <span className='text-lg font-normal mx-2'> to </span>
-                                                    
-                                                    <button onClick={()=>handleEditVal2(index, item?.id)} type='button' className='bg-blue-500 p-3 rounded-xl -translate-y-0.5 hover:translate-none duration-500 cursor-pointer text-[rgb(22,22,22)]'>
-                                                        {to12Hour(item.timeValue2)}
-                                                    </button>
-                                                </h1>
-                                            </div>
-                                        )}
-
-                                        <h1 className='text-white font-bold'>:</h1>
-
-                                        <input 
-                                            id={`activity${index}`} 
-                                            type="text" 
-                                            className="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
-                                            defaultValue={item.activity} 
-                                            autoComplete='off' 
-                                            required
-                                            onKeyDown={(e)=>{
-                                                if(e.key === "Enter"){
-                                                    e.preventDefault();
-                                                    handleUpdate(index, item?.id)
-                                                }
-                                            }}
-                                            placeholder="What will you be doing during this time?"
-                                        />
-                                    </>
-                                ) : (
-                                    <div className='flex items-center gap-3'>
-                                        <h1 className='text-white font-bold text-3xl flex items-center whitespace-nowrap'>
-                                            {to12Hour(item.timeValue)}
-                                        </h1>
-                                        
-                                        <span className='text-lg font-normal text-white'> to </span>
-                                        
-                                        <h1 className='text-white font-bold text-3xl flex items-center whitespace-nowrap'>
-                                            {to12Hour(item.timeValue2)}
-                                        </h1>
-                                        
-                                        <h1 className='text-white font-bold text-4xl flex items-center'>
-                                            :
-                                        </h1>
-                                        
-                                        <p className='text-white font-normal text-4xl inline-block whitespace-normal break-all'>{item.activity}</p>
-                                    </div>
-                                )
-                            }
-                            
-                            { item.status === "Empty" && totalMinutes != 1440 ? (
-                                    <button onClick={()=>handleAdd(index, item?.id)} type='button' className='bg-green-400 p-2 rounded-xl -translate-y-0.5 hover:translate-none duration-500 cursor-pointer'>
-                                        <Plus className='text-[rgb(22,22,22)]'/>
-                                    </button>
-                                ) : item.status === "Done" || (item.status === "Empty" && totalMinutes == 1440) ? (
-                                    <div className='flex items-center gap-2'>
-                                        <button onClick={()=>handleEdit(index, item?.id)} type='button' className='bg-blue-500 p-2 rounded-xl -translate-y-0.5 hover:translate-none duration-500 cursor-pointer'>
-                                            <Pencil className='text-[rgb(22,22,22)]'/>
-                                        </button>
-                                        <button onClick={()=>handleModal(index, item?.id)} type='button' className='bg-red-500 p-2 rounded-xl cursor-pointer -translate-y-0.5 hover:translate-none duration-500 cursor-pointer'>
-                                            <Trash2 className='text-[rgb(22,22,22)]'/>
-                                        </button>
-                                    </div>
-                                ) : (
-                                    <>
-                                        <button onClick={()=>handleUpdate(index, item?.id)} type='button' className='bg-green-400 p-2 rounded-xl -translate-y-0.5 hover:translate-none duration-500 cursor-pointer'>
-                                            <Check className='text-[rgb(22,22,22)]'/>
-                                        </button>
-                                        <button onClick={()=>handleCancel(index, item?.id)} type='button' className='bg-red-500 p-2 rounded-xl -translate-y-0.5 hover:translate-none duration-500 cursor-pointer'>
-                                            <X className='text-[rgb(22,22,22)]'/>
-                                        </button>
-                                    </>
-                                )
-                            }
-                        </div>
                     ) : null)
                 )
             }
