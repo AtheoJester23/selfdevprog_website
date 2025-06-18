@@ -373,7 +373,7 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
     }
 
     const handleEditTitle = () => {
-        isTitle ? setIsTitle(false) : setIsTitle(true);
+        setIsTitle(!isTitle);
     }
 
     const handleUpdateEdit = async () => {
