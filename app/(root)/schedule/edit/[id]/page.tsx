@@ -3,6 +3,7 @@ import { client } from '@/sanity/lib/client'
 import { SCHEDULE_BY_ID } from '@/sanity/lib/queries'
 import React from 'react'
 import { paramsType } from '../../[id]/page'
+import { to12Hour, toMinutes, toTimeString } from '@/lib/utils'
 
 const page = async (prop: {params: paramsType} ) => {
     const { id } = await prop.params
@@ -10,6 +11,11 @@ const page = async (prop: {params: paramsType} ) => {
     const sched = await client.fetch(SCHEDULE_BY_ID, {id});
 
     console.log(sched[0]);
+
+    const eleven = "24:00"
+    const newTime: number = toMinutes(eleven) + (-60);
+    console.log(toTimeString(newTime));
+
 
   return (
     <section className='mt-[70px] p-5'>

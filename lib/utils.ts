@@ -16,6 +16,12 @@ export function toMinutes(timeStr: string) {
     return h * 60 + m;
 }
 
+export function toTimeString(totalMinutes: number) {
+    const h = Math.floor(totalMinutes / 60) % 24;
+    const m = totalMinutes % 60;
+    return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+}
+
 //Convert Military time to standard time:
 export function to12Hour (timeStr: string){
     const date = parse(timeStr, 'HH:mm', new Date());

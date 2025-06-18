@@ -9,7 +9,7 @@ import { formSchema } from '@/sanity/lib/validation'
 import { createSchedule } from '@/lib/actions'
 import { nanoid } from 'nanoid'
 import { useRouter } from 'next/navigation'
-import { to12Hour, toMinutes, getTimeDifferenceInDayCycle } from '@/lib/utils'
+import { to12Hour, toMinutes, getTimeDifferenceInDayCycle, toTimeString } from '@/lib/utils'
 import { UpdateEdit } from '@/actions/updateSchedule'
 
 export type Entry = {
@@ -256,13 +256,6 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
         console.log(updateArr);
     }
 
-    // Convert total minutes to "HH:MM"
-    function toTimeString(totalMinutes: number) {
-    const h = Math.floor(totalMinutes / 60) % 24;
-        const m = totalMinutes % 60;
-        return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
-    }
-
     function updateTimes(times: string[], changedIndex: number, newTime: string): string[]{
         const oldTime = times[changedIndex];
         const diff = toMinutes(newTime) - toMinutes(oldTime);
@@ -283,6 +276,12 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
         return times.map((time, index) => {
             if (index < changedIndex) return time; // No change
 
+            if(time.slice(0,2) == "00"){
+                const updated = 1440 + (toMinutes(time) + diff);
+
+                console.log("This that: ", updated)
+                return toTimeString(updated);
+            }
             const updated = toMinutes(time) + diff;
             return toTimeString(updated);
         });
