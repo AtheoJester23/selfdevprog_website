@@ -12,11 +12,13 @@ const page = async (prop: {params: paramsType} ) => {
     console.log(sched[0]);
 
   return (
-    <div className='mt-[70px] p-5'>
-        <h1 className="text-white font-bold text-4xl">This is edit page</h1>
+    <section className='mt-[70px] p-5'>
+        <div className='flex justify-center'>
+          <h1 className="font-bold rounded p-3 max-sm:text-[20px] sm:text-4xl text-center bg-white text-[rgb(22,22,22)]">Edit Schedule</h1>
+        </div>
 
         <Addtime schedule={sched[0]} id={id}/>
-    </div>
+    </section>
   )
 }
 

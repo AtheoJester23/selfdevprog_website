@@ -509,7 +509,7 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
     };
 
   return (
-    <div className='p-5 flex flex-col gap-3' id="theForm">
+    <section aria-label='Schedule Edit Section' className='p-5 flex flex-col gap-3' id="theForm">
         {title ? (
             <div className='shadow-xl rounded max-sm:p-2 sm:p-5 mb-3 flex gap-2 max-sm:justify-center sm:justify-between items-center'>
                 <h1 className='text-white font-bold max-sm:text-[19px] sm:text-3xl flex items-center'>Title: {title}</h1>
@@ -542,7 +542,7 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
             
         )}
         
-        <section className='flex flex-col gap-2'>
+        <ul className='flex flex-col gap-2'>
             { arr.length === 0 ? 
                 (
                     <button onClick={()=>handleStart()} type='button' className='bg-green-400 p-2 rounded-xl w-full flex justify-center -translate-y-0.5 hover:translate-none duration-500 cursor-pointer'>
@@ -809,9 +809,9 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
                     </div>
                 )) : (
                     arr.map((item, index)=> totalMinutes != 1440 ? (
-                        <div key={item?.id} className='flex items-center max-sm:gap-1 sm:gap-3 border border-white max-sm:p-1 sm:p-5 rounded justify-between max-sm:text-[12px]'>
+                        <li key={item?.id} className='flex items-center max-sm:gap-1 sm:gap-3 border border-white max-sm:p-1 sm:p-5 rounded justify-between max-sm:text-[12px]'>
                             { item.status === "Empty" ? (
-                                    <div className='flex max-sm:flex-col sm:flex-row flex-1 max-sm:gap-1'>
+                                    <form className='flex max-sm:flex-col sm:flex-row flex-1 max-sm:gap-1'>
                                         <div className='flex justify-center max-sm:p-1 items-center'>
                                             <h1 className='text-white font-bold max-sm:text-[1em] sm:text-4xl flex gap-1 items-center whitespace-nowrap'>
                                                 {to12Hour(item.timeValue)}
@@ -904,9 +904,9 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
                                             required
                                             placeholder='What will you be doing abcdefg during this time?'  
                                         />
-                                    </div>
+                                    </form>
                                 ) : item.status === "Editing" ? (
-                                    <div className='flex max-sm:flex-col flex-1 max-sm:gap-1 items-center text-[12px]'>  
+                                    <form className='flex max-sm:flex-col flex-1 max-sm:gap-1 items-center text-[12px]'>  
                                         {item.editingVal ? (
                                             <div className='flex'>
                                                 <div className='relative'>
@@ -1065,7 +1065,7 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
                                             required
                                             placeholder='What will you be doing during this time?'
                                         />
-                                    </div>
+                                    </form>
                                 ) : (
                                     <div className='flex max-sm:flex-col sm:flex-row items-center max-sm:gap-1 sm:gap-3 flex-1 max-sm:text-[1em]'>
                                         <div className='max-sm:bg-white max-sm:p-1 max-sm:text-[rgb(22,22,22)] sm:text-white flex items-center max-sm:gap-1 sm:gap-3'>
@@ -1169,7 +1169,7 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
                                     </div>
                                 )
                             }
-                        </div>
+                        </li>
                     ) : index != arr.length - 1 ? (
                         <div key={item?.id} className='flex items-center gap-3 border border-white p-5 rounded justify-between'>
                             { item.status === "Empty" && totalMinutes != 1440 ? (
@@ -1312,7 +1312,7 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
                     ) : null)
                 )
             }
-        </section>
+        </ul>
 
         {arr.length >= 1 ? ( 
             <>
@@ -1380,7 +1380,7 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
                 </Dialog.Panel>
             </div>
         </Dialog>
-    </div>
+    </section>
     )
 }
 
