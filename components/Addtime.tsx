@@ -32,7 +32,6 @@ export type wholeData = {
 const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | null; id: string | null}) => {
     const [arr, setArr] = useState<Array<Entry>>(schedule?.allTime ?? []);
 
-    console.log("arr: ", schedule?.title);
     const [totalMinutes, setTotalMinutes] = useState(0);
     const [title, setTitle] = useState<string | null>(schedule?.title ?? null);
     const [isOpen, setIsOpen] = useState(false)
@@ -44,11 +43,8 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
 
 
     const handleModal = (theIndex: number, theId: number) => {
-        console.log('modal closed...');
         setSelectedDelete({theIndex, theId});
         setIsOpen(!isOpen);
-
-        console.log(selectedDelete);
     }
 
     const handleSubmit = async () => {        
@@ -63,20 +59,12 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
             return;
         }
 
-        console.log(totalMinutes);
-
-        console.log(allTime);
-
         try {
             const theData: wholeData = {title, allTime};            
 
             await formSchema.parseAsync(theData);
 
             const result = await createSchedule(theData)
-            
-            console.log(result);
-
-            console.log("Result: ",result.error)
 
             if(result.error.trim() != ""){
                 throw result.error;
@@ -117,31 +105,11 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
         const timeVal2 = (document.getElementById(`nextInput${theIndex}`) as HTMLInputElement)?.value
         const actVal = (document.getElementById(`activity${theIndex}`) as HTMLInputElement)?.value        
 
-        console.log(timeVal2);
-
         setTimeout(()=>{
             inputRef.current?.focus();
         }, 100)
 
         const [hour,min] = timeVal2.split(":");
-
-        const newHour =
-            hour === "11" && min === "59"
-                ? "11"
-                : hour === "23" && min === "59"
-                ? "23"
-                    : min === "59"
-                        ? String((Number(hour)) % 24).padStart(2, "0")
-                        : hour;
-
-        const newMin = 
-            hour === "11" && min === "59"
-                ? "59"
-                : hour === "23" && min === "59"
-                ? "59"
-                    : min === "59"
-                        ? "00"
-                        : String(Number(min)).padStart(2, "0");
 
         const [hour2, min2] = timeVal2.split(":");
 
@@ -157,18 +125,11 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
 
         if(arr.length >= 1){
 
-            if(arr.length > 1){
-                const prevTime = arr[theIndex - 1]?.timeValue;
-                console.log("This is the prevTime: ", prevTime);
-                
-                console.log(toMinutes(timeVal2));
-                
+            if(arr.length > 1){                
                 const fromMin = toMinutes(arr[theIndex]?.timeValue);
                 const toMin = toMinutes(timeVal2);
 
                 const addedDuration = (toMin - fromMin + 1440) % 1440;
-
-                console.log(`This is new time: ${newHour}:${newMin}`);
 
                 const updateArr = arr.map((item) => item.id == theId ? {...item, activity: actVal, status: 'Done', timeValue2: timeVal2} : item)
 
@@ -177,19 +138,11 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
                     return;
                 }
 
-                console.log("")
-                console.log("Added Duration: ", addedDuration);
-                
-                console.log("TotalMinutes: ", totalMinutes);
-                console.log(`TotalMinutes + Added Duration = ${totalMinutes + addedDuration}`)
-                console.log("")
-
                 updateArr.push({_key: nanoid() ,id: Date.now(), status: "Empty", activity: "", timeValue: `${updateArr[updateArr.length -1].timeValue2}`, timeValue2: `${nextHour}:${nextMin}`, editingVal: false, editingVal2: false});
 
                 setArr(updateArr);
                 recalculateTotalMinutes(updateArr)
 
-                console.log(updateArr);
                 return;
             }else{
                 if(toMinutes(timeVal2) < toMinutes(timeVal)){
@@ -216,9 +169,6 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
 
             setArr(updateArr);
             recalculateTotalMinutes(updateArr);
-
-            console.log(updateArr);
-            console.log("3. The length is: ", arr.length)
         }
     }
 
@@ -249,28 +199,12 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
     const handleEdit = (theIndex: number, theId: number) => {
         const updateArr = arr.map(item => item.id === theId ? { ...item, status: "Editing"} : item)
 
-        console.log(updateArr[theIndex].status);
-
         setArr(updateArr);
-
-        console.log(updateArr);
     }
 
     function updateTimes(times: string[], changedIndex: number, newTime: string): string[]{
         const oldTime = times[changedIndex];
         const diff = toMinutes(newTime) - toMinutes(oldTime);
-
-        console.log("")
-        console.log("")
-        console.log("")
-        console.log("")
-        console.log("oldTime: ", oldTime);
-        console.log("diff", diff);
-        console.log("newTime", newTime);
-        console.log("")
-        console.log("")
-        console.log("")
-        console.log("")
 
         // Create new array with updated times
         return times.map((time, index) => {
@@ -279,9 +213,9 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
             if(time.slice(0,2) == "00"){
                 const updated = 1440 + (toMinutes(time) + diff);
 
-                console.log("This that: ", updated)
                 return toTimeString(updated);
             }
+            
             const updated = toMinutes(time) + diff;
             return toTimeString(updated);
         });
@@ -294,8 +228,6 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
             
             if(arr[theIndex]?.editingVal){
                 const timeVal = (document.getElementById(`input${theIndex}`) as HTMLInputElement)?.value
-
-                console.log(`Current Time Diff: ${toMinutes(arr[theIndex]?.timeValue2)} - ${toMinutes(timeVal)}`);
 
                 if(arr.length > 1){
                     if(theIndex != 0){
@@ -310,33 +242,8 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
 
                 // Get all the current time:
                 const currentTimes = arr.map((item: {timeValue: string}) => item.timeValue);
-    
-                console.log("========================================================================================")
-                console.log("currentTimes: ", currentTimes);
-                console.log("========================================================================================")
-                
+
                 const updated = updateTimes(currentTimes, theIndex, timeVal);
-    
-                console.log("")
-                console.log("*========================================================================================")
-                console.log(updated)
-                console.log("*========================================================================================")
-                console.log("")
-
-                const fromMin = toMinutes(arr[theIndex]?.timeValue);
-                const toMin = toMinutes(timeVal);
-                
-                const addedDuration = (toMin - fromMin);
-                
-                console.log("")
-                console.log(`fromMin(${fromMin}) - toMin${toMin} = ${toMin - fromMin}`)
-                console.log("")
-
-                // console.log(`The real new total: ${newTotal}`)
-            
-                console.log("Total Minutes: ", totalMinutes)
-                console.log(`addedDuration: ${addedDuration}`);
-
                 
                 if(theIndex == 0){
                     const updateArr = arr.map((item,index) => item.id == theId ? {...item, timeValue: updated[index], editingVal: false, activity: actVal, status: 'Done', timeValue2: updated[index + 1]} : index != arr.length - 1 ? ({...item, timeValue: updated[index], timeValue2: updated[index + 1], editingVal: false}) : ({...item, timeValue: updated[index], editingVal: false}));
@@ -364,19 +271,13 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
 
                 setArr(updateArr2);
             }else{
-                console.log("This is for the first index of array...");
-
                 const updateArr3 = arr.map(item => item.id == theId ? {...item, activity: actVal, status: 'Done'} : item);
             
                 setArr(updateArr3);
             }
         }else{
-            //Fix this... this is the cause why there's no changes on the last index.
-            
             if(arr[theIndex]?.editingVal){
                 const timeVal = (document.getElementById(`input${theIndex}`) as HTMLInputElement)?.value
-
-                console.log(`Current Time Diff: ${toMinutes(arr[theIndex]?.timeValue2)} - ${toMinutes(timeVal)}`);
 
                 // Get all the current time:
                 const currentTimes = arr.map((item: {timeValue: string}) => item.timeValue);
@@ -392,21 +293,19 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
             
                 const updated = updateTimes(currentTimes, theIndex, timeVal);
                 
-                const updateArr = arr.map((item,index) => item.id == theId ? {...item, timeValue: updated[index], editingVal: false, activity: actVal, status: 'Done', timeValue2: newTimeVal2} : index != arr.length - 2 ? ({...item, timeValue: updated[index], timeValue2: updated[index + 1], editingVal: false}) : ({...item, timeValue: updated[index], editingVal: false}));
+                const updateArr = arr.map((item,index) => item.id == theId ? {...item, timeValue: updated[index], editingVal: false, activity: actVal, status: 'Done', timeValue2: newTimeVal2} : index != arr.length - 2 ? ({...item, timeValue: updated[index], timeValue2: updated[index + 1], editingVal: false}) : index == arr.length - 2 ? ({...item, timeValue: updated[index], timeValue2: updated[index + 1], editingVal: false}) : ({...item, timeValue: updated[index], editingVal: false}));
 
                 setArr(updateArr);
+
+                console.log("This that 2")
             }else if(arr[theIndex]?.editingVal2){
                 const timeVal2 = (document.getElementById(`nextInput${theIndex}`) as HTMLInputElement)?.value
 
-                console.log(timeVal2);
-
                 const updatedArr = arr.map(item => item.id == theId ? {...item, timeValue2: timeVal2, status: "Done", editingVal2: false} : item);
-
-                console.log(updatedArr);
 
                 setArr(updatedArr);
             }else{
-                console.log("This is for the first index of array...");
+                console.log("This that...")
 
                 const updateArr3 = arr.map(item => item.id == theId ? {...item, activity: actVal, status: 'Done'} : item);
             
@@ -418,11 +317,7 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
     const handleCancel = (theIndex: number, theId: number) => {
         const updateArr = arr.map(item => item.id === theId ? { ...item, status: "Done", editingVal: false, editingVal2: false} : item)
 
-        console.log(updateArr[theIndex].status);
-
         setArr(updateArr);
-
-        console.log(updateArr);
     }
 
     const recalculateTotalMinutes = (updatedArr: Entry[]) => {
@@ -431,27 +326,16 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
         }, 0);
         setTotalMinutes(total);
 
-        console.log("The total: ", total);
         return total;
     };
 
     const handleDelete = (theIndex: number, theId: number) => {
         const itemToDelete = arr.find(item => item.id === theId);
         if (!itemToDelete) return;
-
-        const timeRemoved = getTimeDifferenceInDayCycle(itemToDelete.timeValue, itemToDelete.timeValue2);
-        
-        console.log("total time removed: ", timeRemoved);
-        
-        console.log("There's a problem on the last index, it don't recalibrate the setTimeout when you deleted that last index of a full 1439 totalMinutes")
-
-        
-        // return;
         
         const updatedArr = arr.filter(item => item.id !== theId);
         setArr(updatedArr);
         
-        console.log(totalMinutes);
         // Optional: Fix next entry’s timeValue if needed (relinking continuity)
         if (theIndex > 0 && theIndex < arr.length - 1) {
             const prevItem = arr[theIndex - 1];
@@ -476,10 +360,7 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
             const title = (document.getElementById("theTitle") as HTMLInputElement)?.value
     
             setTitle(title);
-    
-            console.log("testing")
         }
-
     }
 
     const handleUpdateEdit = async () => {
