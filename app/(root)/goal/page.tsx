@@ -1,4 +1,4 @@
-import { Plus, PlusCircle } from 'lucide-react';
+import { PlusCircle } from 'lucide-react';
 import Link from 'next/link'
 import React from 'react'
 
