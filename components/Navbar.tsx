@@ -123,6 +123,17 @@ const Navbar = ({isSession}: NavbarProps) => {
           </button>
         </Link>
 
+        <Link href="/goal" passHref>
+          <button
+            type="button"
+            data-drawer-hide="my-drawer"
+            aria-controls="my-drawer"
+            className='w-full text-left bg-[rgb(191,4,38)] text-[rgb(22,22,22)] text-center font-bold py-3 rounded cursor-pointer justify-center flex hover:bg-white duration-200'
+          >
+            Create Goal
+          </button>
+        </Link>
+
         <button onClick={() => signOut({ callbackUrl: "/" })} className='font-bold text-white border border-white rounded py-3 hover:bg-[white] hover:text-[rgb(22,22,22)] cursor-pointer'>Logout</button>
       </div>
     </header>

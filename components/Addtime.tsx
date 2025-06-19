@@ -1087,7 +1087,7 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
                                                 '>
                                                 <Pencil className='text-[rgb(22,22,22)]'/>
                                             </button>
-                                            {arr[index + 1].status != "Empty" &&
+                                            {arr[index + 1]?.status != "Empty" &&
                                                 <button 
                                                     onClick={()=>handleInsert(index)} 
                                                     type='button' 
