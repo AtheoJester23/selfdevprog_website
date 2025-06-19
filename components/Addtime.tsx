@@ -52,7 +52,7 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
     const handleSubmit = async () => {        
         const copy: Entry[] = JSON.parse(JSON.stringify(arr));
         
-        const allTime = copy.filter((item, index) => item.status != "Empty")
+        const allTime = copy.filter((item) => item.status != "Empty")
 
         console.log(allTime);
 
@@ -218,7 +218,7 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
                 ? String((Number(hour) + 1) % 24).padStart(2, "0") // wrap around to 00 if hour == 23
                 : hour;
 
-        const newThing = copy.splice(theIndex + 1, 0, {_key: nanoid() ,id: Date.now(), status: "Empty", activity: "", timeValue: timeVal2, timeValue2: `${nextHour}:${nextMin}`, editingVal: false, editingVal2: false})
+        copy.splice(theIndex + 1, 0, {_key: nanoid() ,id: Date.now(), status: "Empty", activity: "", timeValue: timeVal2, timeValue2: `${nextHour}:${nextMin}`, editingVal: false, editingVal2: false})
 
         setArr(copy);
     
