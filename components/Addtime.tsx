@@ -9,7 +9,7 @@ import { formSchema } from '@/sanity/lib/validation'
 import { createSchedule } from '@/lib/actions'
 import { nanoid } from 'nanoid'
 import { useRouter } from 'next/navigation'
-import { to12Hour, toMinutes, getTimeDifferenceInDayCycle, toTimeString } from '@/lib/utils'
+import { to12Hour, toMinutes, toTimeString } from '@/lib/utils'
 import { UpdateEdit } from '@/actions/updateSchedule'
 import { z } from 'zod'
 
@@ -34,7 +34,6 @@ export type wholeData = {
 const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | null; id: string | null}) => {
     const [arr, setArr] = useState<Array<Entry>>(schedule?.allTime ?? []);
 
-    const [totalMinutes, setTotalMinutes] = useState(0);
     const [title, setTitle] = useState<string | null>(schedule?.title ?? null);
     const [isOpen, setIsOpen] = useState(false);
     const [isTitle, setIsTitle] = useState(title ? true : false);
@@ -52,10 +51,10 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
 
     const handleSubmit = async () => {        
         const copy: Entry[] = JSON.parse(JSON.stringify(arr));
-
-        const filteredTime: Entry[] = copy.filter((_, index) => index !== arr.length - 1)
         
-        const allTime = copy[copy.length - 1].status === "Empty" ? filteredTime : copy
+        const allTime = copy.filter((item, index) => item.status != "Empty")
+
+        console.log(allTime);
 
         if(!title){
             toast.error("Title is required...");
@@ -112,75 +111,117 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
     }
 
     const handleAdd = (theIndex: number, theId: number) => {
-        const timeVal = (document.getElementById(`input${theIndex}`) as HTMLInputElement)?.value 
-        const timeVal2 = (document.getElementById(`nextInput${theIndex}`) as HTMLInputElement)?.value
-        const actVal = (document.getElementById(`activity${theIndex}`) as HTMLInputElement)?.value        
+        if(theIndex != arr.length - 1){
+            const actVal = (document.getElementById(`activity${theIndex}`) as HTMLInputElement)?.value     
+            const timeVal2 = (document.getElementById(`nextInput${theIndex}`) as HTMLInputElement)?.value
 
-        setTimeout(()=>{
-            inputRef.current?.focus();
-        }, 100)
+            // Get all the current time:
+            const currentTimes = arr.map((item: {timeValue: string}) => item.timeValue);
+            const updated = updateTimes(currentTimes, theIndex, arr[theIndex]?.timeValue);
+            const updateArr = arr.map((item,index) => item.id == theId ? {...item, timeValue: updated[index], editingVal: false, activity: actVal, status: 'Done', timeValue2: updated[index + 1]} : index != arr.length - 1 ? ({...item, timeValue: updated[index], timeValue2: updated[index + 1], editingVal: false}) : ({...item, timeValue: updated[index], editingVal: false}));
 
+            const durationTimes = updateArr.map((item: {timeValue2: string}) => item.timeValue2);
+            const updatedDuration = updateTimes(durationTimes, theIndex, timeVal2);
+
+            const updateArr2 = updateArr.map((item, index) => index < theIndex ? {...item, timeValue: updated[index], timeValue2: updatedDuration[index], editingVal2: false} : item.id == theId ? {...item, status: 'Done', timeValue2: updatedDuration[index], editingVal2: false, activity: actVal} : index != arr.length - 1 ? {...item, timeValue: updatedDuration[index - 1], timeValue2: updatedDuration[index], editingVal2: false} : {...item, timeValue: updatedDuration[index - 1], timeValue2: updatedDuration[index], editingVal2: false})
+
+            setArr(updateArr2)
+        }else{
+            const timeVal = (document.getElementById(`input${theIndex}`) as HTMLInputElement)?.value 
+            const timeVal2 = (document.getElementById(`nextInput${theIndex}`) as HTMLInputElement)?.value
+            const actVal = (document.getElementById(`activity${theIndex}`) as HTMLInputElement)?.value        
+    
+            setTimeout(()=>{
+                inputRef.current?.focus();
+            }, 100)
+    
+            const [hour,min] = timeVal2.split(":");
+    
+            const nextMin =
+                min === "59"
+                    ? "00"
+                    : String(Number(min) + 1).padStart(2, "0");
+            
+            const nextHour = 
+                min === "59"
+                    ? String((Number(hour) + 1) % 24).padStart(2, "0") // wrap around to 00 if hour == 23
+                    : hour;
+    
+            if(arr.length >= 1){
+                if(arr.length > 1){                
+                    const fromMin = toMinutes(arr[theIndex]?.timeValue);
+                    const toMin = toMinutes(timeVal2);
+    
+                    const addedDuration = (toMin - fromMin + 1440) % 1440;
+    
+                    const updateArr = arr.map((item) => item.id == theId ? {...item, activity: actVal, status: 'Done', timeValue2: timeVal2} : item)
+    
+                    if(theIndex != arr.length - 1){
+                        console.log("testing testing...")
+                    }
+    
+                    if (addedDuration === 0) {
+                        toast.error("End time must be after start time.");
+                        return;
+                    }
+    
+                    updateArr.push({_key: nanoid() ,id: Date.now(), status: "Empty", activity: "", timeValue: `${updateArr[updateArr.length -1].timeValue2}`, timeValue2: `${nextHour}:${nextMin}`, editingVal: false, editingVal2: false});
+    
+                    setArr(updateArr);
+    
+                    return;
+                }else{
+                    if(theIndex != arr.length - 1){
+                        console.log("Plus from the first index...")
+                    }
+    
+                    if(toMinutes(timeVal2) < toMinutes(timeVal)){
+                        toast.error("Time must be later than the previous one...");
+                        return;
+                    }
+    
+                    const updateArr = arr.map((item) => item.id == theId ? {...item, activity: actVal, timeValue: timeVal, status: 'Done', timeValue2: timeVal2} : item)
+        
+                    updateArr.push({_key: nanoid() ,id: Date.now(), status: "Empty", activity: "", timeValue: `${updateArr[updateArr.length -1].timeValue2}`, timeValue2: `${nextHour}:${nextMin}`, editingVal: false, editingVal2: false});
+        
+                    setArr(updateArr);
+                }
+            }else{
+                if(toMinutes(timeVal2) < toMinutes(timeVal)){
+                    toast.error("Time must be later than the previous one... abcd");
+                    return;
+                }
+    
+                const updateArr = arr.map(item => item.id == theId ? {...item, timeValue: timeVal, activity: actVal, status: 'Done', timeValue2: timeVal2} : item)
+    
+                updateArr.push({_key: nanoid() ,id: Date.now(), status: "Empty", activity: "", timeValue: `${updateArr[updateArr.length -1].timeValue2}`, timeValue2: `${nextHour}:${nextMin}`, editingVal: false, editingVal2: false});
+    
+                setArr(updateArr);
+            }
+        }
+    }
+
+    const handleInsert = (theIndex: number) => {
+        const copy = JSON.parse(JSON.stringify(arr));
+
+        const timeVal2 = copy[theIndex].timeValue2
+        
         const [hour,min] = timeVal2.split(":");
-
-        const [hour2, min2] = timeVal2.split(":");
 
         const nextMin =
             min === "59"
                 ? "00"
-                : String(Number(min2) + 1).padStart(2, "0");
+                : String(Number(min) + 1).padStart(2, "0");
         
         const nextHour = 
             min === "59"
-                ? String((Number(hour2) + 1) % 24).padStart(2, "0") // wrap around to 00 if hour == 23
+                ? String((Number(hour) + 1) % 24).padStart(2, "0") // wrap around to 00 if hour == 23
                 : hour;
 
-        if(arr.length >= 1){
+        const newThing = copy.splice(theIndex + 1, 0, {_key: nanoid() ,id: Date.now(), status: "Empty", activity: "", timeValue: timeVal2, timeValue2: `${nextHour}:${nextMin}`, editingVal: false, editingVal2: false})
 
-            if(arr.length > 1){                
-                const fromMin = toMinutes(arr[theIndex]?.timeValue);
-                const toMin = toMinutes(timeVal2);
-
-                const addedDuration = (toMin - fromMin + 1440) % 1440;
-
-                const updateArr = arr.map((item) => item.id == theId ? {...item, activity: actVal, status: 'Done', timeValue2: timeVal2} : item)
-
-                if (addedDuration === 0) {
-                    toast.error("End time must be after start time.");
-                    return;
-                }
-
-                updateArr.push({_key: nanoid() ,id: Date.now(), status: "Empty", activity: "", timeValue: `${updateArr[updateArr.length -1].timeValue2}`, timeValue2: `${nextHour}:${nextMin}`, editingVal: false, editingVal2: false});
-
-                setArr(updateArr);
-                recalculateTotalMinutes(updateArr)
-
-                return;
-            }else{
-                if(toMinutes(timeVal2) < toMinutes(timeVal)){
-                    toast.error("Time must be later than the previous one...");
-                    return;
-                }
-
-                const updateArr = arr.map((item) => item.id == theId ? {...item, activity: actVal, timeValue: timeVal, status: 'Done', timeValue2: timeVal2} : item)
+        setArr(copy);
     
-                updateArr.push({_key: nanoid() ,id: Date.now(), status: "Empty", activity: "", timeValue: `${updateArr[updateArr.length -1].timeValue2}`, timeValue2: `${nextHour}:${nextMin}`, editingVal: false, editingVal2: false});
-    
-                setArr(updateArr);
-                recalculateTotalMinutes(updateArr)
-            }
-        }else{
-            if(toMinutes(timeVal2) < toMinutes(timeVal)){
-                toast.error("Time must be later than the previous one... abcd");
-                return;
-            }
-
-            const updateArr = arr.map(item => item.id == theId ? {...item, timeValue: timeVal, activity: actVal, status: 'Done', timeValue2: timeVal2} : item)
-
-            updateArr.push({_key: nanoid() ,id: Date.now(), status: "Empty", activity: "", timeValue: `${updateArr[updateArr.length -1].timeValue2}`, timeValue2: `${nextHour}:${nextMin}`, editingVal: false, editingVal2: false});
-
-            setArr(updateArr);
-            recalculateTotalMinutes(updateArr);
-        }
     }
 
     const handleStart = () => {
@@ -260,12 +301,10 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
                     const updateArr = arr.map((item,index) => item.id == theId ? {...item, timeValue: updated[index], editingVal: false, activity: actVal, status: 'Done', timeValue2: updated[index + 1]} : index != arr.length - 1 ? ({...item, timeValue: updated[index], timeValue2: updated[index + 1], editingVal: false}) : ({...item, timeValue: updated[index], editingVal: false}));
     
                     setArr(updateArr);
-                    recalculateTotalMinutes(updateArr)
                 }else{
                     const updateArr = arr.map((item,index) => item.id == theId ? {...item, timeValue: updated[index], editingVal: false, activity: actVal, status: 'Done', timeValue2: updated[index + 1]} : index != arr.length - 1 ? ({...item, timeValue: updated[index], timeValue2: updated[index + 1], editingVal: false}) : ({...item, timeValue: updated[index], editingVal: false}));
     
                     setArr(updateArr);
-                    recalculateTotalMinutes(updateArr)
                 }            
             }else if(arr[theIndex]?.editingVal2){
                 const timeVal2 = (document.getElementById(`nextInput${theIndex}`) as HTMLInputElement)?.value
@@ -328,15 +367,6 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
         setArr(updateArr);
     }
 
-    const recalculateTotalMinutes = (updatedArr: Entry[]) => {
-        const total = updatedArr.reduce((sum, item) => {
-            return sum + getTimeDifferenceInDayCycle(item.timeValue, item.timeValue2);
-        }, 0);
-        setTotalMinutes(total);
-
-        return total;
-    };
-
     const handleDelete = (theIndex: number, theId: number) => {
         const itemToDelete = arr.find(item => item.id === theId);
         if (!itemToDelete) return;
@@ -372,10 +402,6 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
         }
     }
 
-    const handleEditTitle = () => {
-        setIsTitle(!isTitle);
-    }
-
     const handleUpdateEdit = async () => {
         if(!title){
             toast.error("Title is required...");
@@ -406,7 +432,7 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
         {isTitle ? (
             <div className='shadow-xl rounded max-sm:p-2 sm:p-5 mb-3 flex gap-2 max-sm:justify-center sm:justify-between items-center'>
                 <h1 className='text-white font-bold max-sm:text-[19px] sm:text-3xl inline-block whitespace-normal break-all'>Title: {title}</h1>
-                <button onClick={()=>handleEditTitle()} type='button' className='bg-blue-500 p-2 sm:rounded-xl -translate-y-0.5 hover:translate-none duration-500 cursor-pointer'>
+                <button onClick={()=> setIsTitle(!isTitle)} type='button' className='bg-blue-500 p-2 sm:rounded-xl -translate-y-0.5 hover:translate-none duration-500 cursor-pointer'>
                     <Pencil className='text-[rgb(22,22,22)]'/>
                 </button>
             </div>
@@ -434,7 +460,7 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
                 
                 {title ? (
                     <button
-                        onClick={()=>{handleEditTitle()}}
+                        onClick={() => setIsTitle(!isTitle)}
                         type='button' 
                         className='
                             bg-red-500 
@@ -724,7 +750,7 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
                         }
                     </div>
                 )) : (
-                    arr.map((item, index)=> totalMinutes != 1440 ? (
+                    arr.map((item, index) => 
                         <li key={item?.id} className='flex items-center max-sm:gap-1 sm:gap-3 border border-white max-sm:p-1 sm:p-5 rounded justify-between max-sm:text-[12px]'>
                             { item.status === "Empty" ? (
                                     <form className='flex max-sm:flex-col sm:flex-row flex-1 max-sm:gap-1 sm:gap-2'>
@@ -1061,6 +1087,24 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
                                                 '>
                                                 <Pencil className='text-[rgb(22,22,22)]'/>
                                             </button>
+                                            {arr[index + 1].status != "Empty" &&
+                                                <button 
+                                                    onClick={()=>handleInsert(index)} 
+                                                    type='button' 
+                                                    className='
+                                                    bg-green-500 
+                                                    p-2 
+                                                    max-sm:rounded-sm
+                                                    sm:rounded-xl
+                                                    -translate-y-0.5 
+                                                    hover:translate-none 
+                                                    duration-500 
+                                                    cursor-pointer
+                                                    h-full
+                                                '>
+                                                    <Plus className='text-[rgb(22,22,22)]'/>
+                                                </button>
+                                            }
                                             <button 
                                                 onClick={()=>handleModal(index, item?.id)} 
                                                 type='button' 
@@ -1083,7 +1127,7 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
                                 )
                             }
                         </li>
-                    ) : null)
+                    ) 
                 )
             }
         </ul>
