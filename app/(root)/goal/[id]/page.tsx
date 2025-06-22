@@ -6,19 +6,24 @@ import { client } from '@/sanity/lib/client';
 import { GOALS_BY_ID } from '@/sanity/lib/queries';
 import { goalType } from '@/components/goal/Goalform';
 import ActionButtons from '@/components/goal/ActionButtons';
+import { sanityFetch, SanityLive } from '@/sanity/lib/live';
 
-const page = async (prop: {params: paramsType}) => {
+const page = async ({params}: {params: paramsType}) => {
     const session = await auth();
 
     if(!session) redirect('/')
 
-    const { id } = await prop.params;
+    const { id } = await params;
 
     console.log("You have to make this live fetching to be able to display realtime, or you can take the long way where you'll utilize state management")
     // *Make this live fetching*
-    const goalDetails: goalType[] = await client.fetch(GOALS_BY_ID, {id})
+    // const goalDetails: goalType[] = await client.fetch(GOALS_BY_ID, {id})
+    const { data: goalDetails}: {data: goalType[]} = await sanityFetch({
+      query: GOALS_BY_ID,
+      params: { id },
+    });
 
-    console.log(goalDetails[0]);
+    console.log(goalDetails);
   return (
     <div className='mb-20'>
       <article className='mt-20 p-5 m-5 text-[16px] flex flex-col gap-3'>
@@ -57,6 +62,7 @@ const page = async (prop: {params: paramsType}) => {
       </article>
 
       <ActionButtons id={id} data={goalDetails[0]}/>
+      <SanityLive/>
     </div>
   )
 }
