@@ -69,10 +69,10 @@ const GoalPage = ({goalDeets, id}: {goalDeets: goalType[], id: string}) => {
   return (
     <>
         <article className='mt-20 p-5 m-5 text-[16px] flex flex-col gap-3'>
+            <h1 className='text-white font-bold max-sm:text-[2em] sm:text-[4em] text-center border-y'>{data[0].title}</h1>
             <div className='flex flex-col justify-center items-center mx-auto'>
-                <h1 className='text-white font-bold max-sm:text-[2em] sm:text-[4em] text-center '>{data[0].title}</h1>
                 <small className='bg-yellow-500 rounded font-bold max-sm:px-3 max-sm:py-1  sm:px-5 sm:py-2 text-[rgb(22,22,22)] max-sm:text-[12px] sm:text-sm'>Accomplish by: {data[0].duration}</small>
-                <p className='text-white mt-2'>Status: <span className='text-gray-500'>{data[0].status ? "Accomplished" : "To be accomplished"}</span></p>
+                <p className='text-white mt-2'>Status: <span className={`${data[0].status ? "text-green-500 font-bold" : "text-gray-500"}`}>{data[0].status ? "Accomplished" : "To be accomplished"}</span></p>
             </div>
 
             <h1 className='text-[1em] text-[rgb(22,22,22)] bg-white text-center p-3'>{data[0].description}</h1>
@@ -83,11 +83,11 @@ const GoalPage = ({goalDeets, id}: {goalDeets: goalType[], id: string}) => {
 
                 
                 {data[0].steps.length != 0 ? (
-                    <ul>
+                    <ul className='flex flex-col max-sm:gap-5'>
                         {
                         data[0].steps.map((item, index) => (
-                            <li key={index}>
-                            <p className='text-white indent-8 '>&bull; {item.step}</p>
+                            <li key={index} className='max-sm:mx-[20px]'>
+                                <p className='text-white sm:indent-8'>&bull; {item.step}</p>
                             </li>
                         ))
                         }

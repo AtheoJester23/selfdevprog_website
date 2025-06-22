@@ -27,14 +27,13 @@ const page = async () => {
     console.log(goalList)
   return (
     <section className='mt-[80px] m-5 rounded flex gap-5 flex-col'>
-        <h1 className='text-center font-bold text-7xl bg-white text-[rgb(22,22,22)]'>Goals</h1>
-
+        <h1 className='text-center font-bold max-sm:text-[2em] sm:text-7xl bg-white text-[rgb(22,22,22)]'>Goals</h1>
 
         {goalList.length > 0 ? (
-            <ul className='bg-[rgb(16,16,16)] p-5 rounded grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4  gap-3 text-[16px]'>
+            <ul className='bg-[rgb(16,16,16)] p-5 rounded grid max-sm:grid-cols-2 md:grid-cols-5 gap-3 text-[16px]'>
                 {goalList.map((item, index)=> (
                     <li key={index}>
-                        <Link href={`/goal/${item._id}`} className='max-sm:p-2 sm:p-5 md-p-5 lg-p-5 text-white h-full flex justify-center items-center font-bold text-[2em] border rounded hover:text-[rgb(16,16,16)] hover:bg-white duration-200 truncate w-full overflow-hidden whitespace-nowrap'>
+                        <Link href={`/goal/${item._id}`} className='max-sm:p-2 sm:p-5 md-p-5 lg-p-5 text-white h-full flex justify-center items-center font-bold max-sm:text-[1em] sm:text-[24px] border rounded hover:text-[rgb(16,16,16)] hover:bg-white duration-200 truncate w-full overflow-hidden whitespace-nowrap'>
                             <div className='truncate overflow-hidden whitespace-nowrap'>
                                 {item.title}
                             </div>
