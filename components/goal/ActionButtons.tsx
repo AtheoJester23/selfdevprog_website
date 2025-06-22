@@ -1,60 +1,77 @@
 "use client"
 
+import { deleteSchedule } from '@/actions/deleteSchedule';
+import { UpdateGoalStatus } from '@/actions/updateSchedule';
 import { Dialog } from '@headlessui/react'
-import { Pencil, Printer, Trash2, TriangleAlert } from 'lucide-react'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { Check, Pencil, RefreshCcw, Trash2, TriangleAlert } from 'lucide-react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import React, { useState } from 'react'
-import { toast } from 'react-toastify'
-import { deleteSchedule } from '@/actions/deleteSchedule'
+import { toast, ToastContainer } from 'react-toastify';
+import { goalType } from './Goalform';
 
-const ActionButtons = ({id}: {id: string}) => {
+const ActionButtons = ({id, data}: {id: string, data: goalType}) => {
     const [isOpen, setIsOpen] = useState(false);
-
     const router = useRouter();
 
     const handleModal = () => {
         setIsOpen(!isOpen);
-
-        console.log(isOpen);
     }
 
     const handleDelete = async () => {
-        console.log("This is delete function...")
-    
-        try {
-            setIsOpen(false);            
+        setIsOpen(false);
 
-            const result = await deleteSchedule(id);
+        try {
+            const result = await deleteSchedule(id)
 
             if(!result.success){
-              console.error(result.error);
+                throw new Error(result.error);
             }
 
             toast.success("Item Deleted");
-
-            router.push('/dashboard');
+            
+            router.push('/goal');
         } catch (error) {
-            console.log(error);
+            console.error(error);
             toast.error("Failed to delete item")
         }
     }
+
+    const handleUpdateStats = async () => {
+        console.log(data);
+        
+        try {
+            const result = await UpdateGoalStatus(id, data, !data.status);
+
+            if(!result.success){
+                throw new Error(result.error)
+            }
+
+            toast.success(`${data.status ? "Congrats!!" : "Lets Go!"}`)
+        } catch (error) {
+            toast.error(`${error}`)
+        }
+    }
+
   return (
-    <footer className='excludePrint mt-5 flex justify-center'>
-      <div className='flex'>
-        <button onClick={()=>handleModal()} className='bg-red-500 p-5 text-white font-bold rounded-bl-xl -translate-y-0.25 hover:translate-none cursor-pointer duration-200'>
-          <Trash2 className='text-white'/>
-        </button>
+    <footer>
+        <div className='flex justify-center items-center gap-2'>
+            <button onClick={() => handleModal()} className='bg-red-500 p-3 rounded-bl-xl -translate-y-0.5 hover:translate-none duration-200 cursor-pointer'>
+                <Trash2/>
+            </button>
+            <button onClick={() => handleUpdateStats()} className={`${data.status ? "bg-blue-500" : "bg-green-500"} p-3 -translate-y-0.5 hover:translate-none duration-200 cursor-pointer`}>
+                {data.status ? (
+                    <RefreshCcw/>
+                ):(
+                    <Check/>
+                )}
+            </button>
+            <Link href={`/goal/edit/${id}`} className='bg-blue-500 p-3 rounded-br-xl -translate-y-0.5 hover:translate-none duration-200 cursor-pointer'>
+                <Pencil/>
+            </Link>
+        </div>
 
-        <button type="button" onClick={()=>window.print()} className='bg-cyan-200 p-5 text-white font-bold -translate-y-0.25 hover:translate-none cursor-pointer duration-200'>
-          <Printer className='text-[rgb(22,22,22)]'/>
-        </button>
-
-        <Link href={`/schedule/edit/${id}`} className='block bg-blue-500 p-5 text-white font-bold rounded-br-xl -translate-y-0.25 hover:translate-none cursor-pointer duration-200'>
-          <Pencil className='text-white'/>
-        </Link>
-      </div>
-
+        <ToastContainer theme='dark'/>
       <Dialog open={isOpen} onClose={() => setIsOpen(false)}>
             <div className='fixed inset-0 bg-black/30'></div>
 
@@ -77,7 +94,7 @@ const ActionButtons = ({id}: {id: string}) => {
                     </div>
                 </Dialog.Panel>
             </div>
-        </Dialog> 
+        </Dialog>
     </footer>
   )
 }

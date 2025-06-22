@@ -16,9 +16,14 @@ export const goallist = defineType({
             type: "string",
         }),
         defineField({
-            name: "thegoal",
-            title: "The Goal",
+            name: "description",
+            title: "Description",
             type: "string"
+        }),
+        defineField({
+            name: 'status',
+            title: 'Status',
+            type: 'boolean'
         }),
         defineField({
             name: "steps",
@@ -32,17 +37,22 @@ export const goallist = defineType({
                             name: "step",
                             title: "Step",
                             type: "string"
+                        }),
+                        defineField({
+                            name: "status",
+                            title: "Status",
+                            type:"string"
                         })
                     ]
                 }
             ]
         }),
-        // defineField({
-        //     name: "user",
-        //     title: "User",
-        //     type: "reference",
-        //     to: [{type: "user"}]
-        // })
+        defineField({
+            name: "user",
+            title: "User",
+            type: "reference",
+            to: [{type: "user"}]
+        })
     ],
     preview: {
         select: {

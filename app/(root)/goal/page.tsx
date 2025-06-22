@@ -1,26 +1,51 @@
-import { PlusCircle } from 'lucide-react';
+import { auth } from '@/auth';
+import { client } from '@/sanity/lib/client';
+import { GOALS_BY_AUTHOR } from '@/sanity/lib/queries';
+import { Plus, PlusCircle } from 'lucide-react';
 import Link from 'next/link'
+import { redirect } from 'next/navigation';
 import React from 'react'
 
-const page = () => {
-    const goalList: [] = [];
+type goalDeets = {
+    _id: string,
+    title: string,
+    description: string,
+    duration: string,
+    steps: {
+        step: string,
+        status: string
+    }[]
+}
 
+const page = async () => {
+    const session = await auth();
+
+    if(!session) redirect("/")
+
+    const goalList: goalDeets[] = await client.fetch(GOALS_BY_AUTHOR, {id: session.id})
+
+    console.log(goalList)
   return (
     <section className='mt-[80px] m-5 rounded flex gap-5 flex-col'>
         <h1 className='text-center font-bold text-7xl bg-white text-[rgb(22,22,22)]'>Goals</h1>
 
 
         {goalList.length > 0 ? (
-            <ul className='bg-[rgb(16,16,16)] p-5 rounded grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3  gap-3 text-[16px]'>
+            <ul className='bg-[rgb(16,16,16)] p-5 rounded grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4  gap-3 text-[16px]'>
                 {goalList.map((item, index)=> (
                     <li key={index}>
-                        <Link href={`/goal/12345`} className='max-sm:p-2 sm:p-5 md-p-5 lg-p-5 text-white h-full flex justify-center items-center font-bold text-[2em] border rounded hover:text-[rgb(16,16,16)] hover:bg-white duration-200 truncate w-full overflow-hidden whitespace-nowrap'>
+                        <Link href={`/goal/${item._id}`} className='max-sm:p-2 sm:p-5 md-p-5 lg-p-5 text-white h-full flex justify-center items-center font-bold text-[2em] border rounded hover:text-[rgb(16,16,16)] hover:bg-white duration-200 truncate w-full overflow-hidden whitespace-nowrap'>
                             <div className='truncate overflow-hidden whitespace-nowrap'>
-                                Testing
+                                {item.title}
                             </div>
                         </Link>
                     </li>
                 ))}
+                <li>
+                    <Link href={`/goal/newGoal`} className='max-sm:p-2 sm:p-5 md-p-5 lg-p-5 text-white h-full flex justify-center items-center font-bold text-[2em] border rounded hover:text-[rgb(16,16,16)] hover:bg-white duration-200 truncate w-full hover:text-[rgb(16,16,16)]'>
+                        <Plus className='text-[2em]'/>
+                    </Link>
+                </li>
             </ul>
         ):(
             <div className='bg-[rgb(16,16,16)] p-5 rounded text-[16px] flex flex-col gap-2 justify-center items-center'>

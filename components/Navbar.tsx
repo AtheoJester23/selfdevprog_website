@@ -38,7 +38,7 @@ const Navbar = ({isSession}: NavbarProps) => {
               ''
           }
           <div className='flex items-center gap-4'>
-            <a href={'/'} className='inline-flex items-center max-sm:w-[150px] md:w-[200px]'>
+            <a href={'/dashboard'} className='inline-flex items-center max-sm:w-[150px] md:w-[200px]'>
                 <Image src="/Logo.png" width={200} height={20} alt="logo" className='w-full'/>
             </a>
           </div>
@@ -101,14 +101,14 @@ const Navbar = ({isSession}: NavbarProps) => {
           <AlignJustify className='text-white'/>
         </button>
 
-        <Link href="/dashboard" passHref>
+        <Link href="/" passHref>
           <button
             type="button"
             data-drawer-hide="my-drawer"
             aria-controls="my-drawer"
-            className='w-full text-left bg-[rgb(191,4,38)] text-[rgb(22,22,22)] text-center font-bold py-3 rounded cursor-pointer justify-center flex'
+            className='w-full text-left bg-[rgb(191,4,38)] text-[rgb(22,22,22)] text-center font-bold py-3 rounded cursor-pointer justify-center flex hover:bg-white duration-200'
           >
-            Dashboard
+            Home
           </button>
         </Link>
 
@@ -117,7 +117,7 @@ const Navbar = ({isSession}: NavbarProps) => {
             type="button"
             data-drawer-hide="my-drawer"
             aria-controls="my-drawer"
-            className='w-full text-left bg-[rgb(191,4,38)] text-[rgb(22,22,22)] text-center font-bold py-3 rounded cursor-pointer justify-center flex'
+            className='w-full text-left bg-[rgb(191,4,38)] text-[rgb(22,22,22)] text-center font-bold py-3 rounded cursor-pointer justify-center flex hover:bg-white duration-200'
           >
             Create Schedule
           </button>
@@ -130,7 +130,7 @@ const Navbar = ({isSession}: NavbarProps) => {
             aria-controls="my-drawer"
             className='w-full text-left bg-[rgb(191,4,38)] text-[rgb(22,22,22)] text-center font-bold py-3 rounded cursor-pointer justify-center flex hover:bg-white duration-200'
           >
-            Create Goal
+            Goals
           </button>
         </Link>
 

@@ -14,3 +14,16 @@ export const formSchema = z.object({
         })
     )
 })
+
+export const goalFormSchema = z.object({
+    title: z.string(),
+    duration: z.string(),
+    description: z.string(),
+    status: z.boolean(),
+    steps: z.array(
+        z.object({
+            step: z.string(),
+            status: z.string()
+        })
+    )
+})

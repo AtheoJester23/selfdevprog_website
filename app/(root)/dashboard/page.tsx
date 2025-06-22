@@ -12,7 +12,6 @@ const page = async () => {
       redirect("/");
     }
 
-    // Step 1: Get the Sanity user document
     const user = await client.fetch(AUTHOR_BY_GOOGLE_ID_QUERY, { id: session.id });
 
     if (!user?._id) {
