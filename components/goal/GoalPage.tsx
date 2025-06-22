@@ -9,43 +9,47 @@ import { deleteSchedule } from '@/actions/deleteSchedule';
 import { toast, ToastContainer } from 'react-toastify';
 import { UpdateGoalStatus } from '@/actions/updateSchedule';
 import { Dialog } from '@headlessui/react';
+import { fireworkConfetti } from '../ui/fireworkConfetti';
 
 const GoalPage = ({goalDeets, id}: {goalDeets: goalType[], id: string}) => {
-  const [isOpen, setIsOpen] = useState(false);
-      const router = useRouter();
-      const [isPending, setIsPending] = useState(true);
-      const [data, setData] = useState(goalDeets ?? [])
+    const [isOpen, setIsOpen] = useState(false);
+    const router = useRouter();
+    const [isPending, setIsPending] = useState(true);
+    const [data, setData] = useState(goalDeets ?? [])
 
-      console.log("This is data: ", data);
+    console.log("This is data: ", data);
 
-      const handleModal = () => {
-          setIsOpen(!isOpen);
+    const handleModal = () => {
+        setIsOpen(!isOpen);
+    }
+    
+    const handleDelete = async () => {
+        setIsOpen(false);
+
+        try {
+            const result = await deleteSchedule(id)
+
+            if(!result.success){
+                throw new Error(result.error);
+            }
+
+            toast.success("Item Deleted");
+            
+            router.push('/goal');
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to delete item")
         }
-        
-        const handleDelete = async () => {
-          setIsOpen(false);
-  
-          try {
-              const result = await deleteSchedule(id)
-  
-              if(!result.success){
-                  throw new Error(result.error);
-              }
-  
-              toast.success("Item Deleted");
-              
-              router.push('/goal');
-            } catch (error) {
-                console.error(error);
-              toast.error("Failed to delete item")
-          }
-      }
+    }
   
       const handleUpdateStats = async () => {
           const updated = {...data[0], status: !data[0].status};
           
           setData([updated]);
           setIsPending(false);
+          if(updated.status == true){
+            fireworkConfetti();
+          }
 
           try {
               const result = await UpdateGoalStatus(id, data[0], !data[0].status);
@@ -54,7 +58,7 @@ const GoalPage = ({goalDeets, id}: {goalDeets: goalType[], id: string}) => {
                   throw new Error(result.error)
               }
   
-              toast.success(`${data[0].status ? "Lets Go!" : "Congrats!!"}`)
+              toast.success(`${data[0].status ? "Keep moving forward!" : "Congrats!!"}`)
 
               setIsPending(true);
           } catch (error) {
