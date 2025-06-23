@@ -14,6 +14,15 @@ const Navbar = dynamic(() => import('./Navbar'),{
 export default function ClientLayout({ session, children,} : { session: Session | null; children: React.ReactNode;}) {
   const [hydrated, setHydrated] = useState(false);
 
+  const pathName = usePathname();
+
+  if(pathName === "/goal/edit/hJrWNdh599drBHMnS6mqpH"){
+    console.log("This is that path....")
+  }else{
+    console.log(pathName);
+  }
+
+
   useEffect(() => {
     setHydrated(true);
   }, []);
@@ -25,7 +34,9 @@ export default function ClientLayout({ session, children,} : { session: Session 
       {hydrated && 
         session ? (
           children
-        ) : (
+        ) : pathName === "/" ? (
+          children
+        ):(
           <div className='flex items-center justify-center h-screen'>
             <motion.div
               animate={{ rotate: 360 }}
