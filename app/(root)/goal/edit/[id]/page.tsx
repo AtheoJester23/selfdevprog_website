@@ -18,7 +18,7 @@ const page = async (prop: {params: paramsType} ) => {
   return (
     <section className='mt-25'>
         <div className='flex justify-center items-center '>
-            <h1 className='text-white font-bold text-[3em] border-5 px-5 py-3 rounded border-dashed'>Edit Goal Details</h1>
+            <h1 className='text-white font-bold max-sm:text-[24px] sm:text-[3em] border-5 px-5 py-3 rounded border-dashed'>Edit Goal Details</h1>
         </div>
         <Goalform data={goalDeets} id={id}/>
     </section>

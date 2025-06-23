@@ -160,7 +160,7 @@ const Goalform = ({data, id}: {data: goalType[] | null, id: string | null}) => {
   return (
     <form id="goalForm" className='flex flex-col p-5 m-5 gap-7 text-[16px]'>
       <div className='flex flex-col gap-1'>
-        <label htmlFor="title" className='text-white text-[24px] font-bold'>Goal</label>
+        <label htmlFor="title" className='text-white max-sm:text-[20px] sm:text-[24px] font-bold'>Goal</label>
         <input 
           type="text"
           defaultValue={data?.[0]?.title ?? ""} 
@@ -179,7 +179,7 @@ const Goalform = ({data, id}: {data: goalType[] | null, id: string | null}) => {
             focus:border-blue-500 
             block 
             w-full
-            max-sm:p-1 
+            max-sm:p-2 
             sm:p-2.5 
             dark:bg-gray-700 
             dark:border-gray-600 
@@ -194,7 +194,7 @@ const Goalform = ({data, id}: {data: goalType[] | null, id: string | null}) => {
       </div>
 
       <div className='flex flex-col gap-1'>
-        <label htmlFor="duration" className='text-white font-bold text-[24px]'>Duration</label>
+        <label htmlFor="duration" className='text-white font-bold max-sm:text-[20px] sm:text-[24px]'>Duration</label>
         <select 
           name="duration" 
           defaultValue={data?.[0].duration ?? ""} 
@@ -211,7 +211,7 @@ const Goalform = ({data, id}: {data: goalType[] | null, id: string | null}) => {
             focus:ring-blue-500 
             focus:border-blue-500  
             w-full
-            max-sm:p-1 
+            max-sm:p-2 
             sm:p-2.5 
             dark:bg-gray-700 
             dark:border-gray-600 
@@ -230,7 +230,7 @@ const Goalform = ({data, id}: {data: goalType[] | null, id: string | null}) => {
       </div>
 
       <div className='flex flex-col gap-1'>
-        <label htmlFor='description' className='text-white font-bold text-[24px]'>Description</label>
+        <label htmlFor='description' className='text-white font-bold max-sm:text-[20px] sm:text-[24px]'>Description</label>
         <textarea 
           id="description" 
           name="description"
@@ -249,7 +249,7 @@ const Goalform = ({data, id}: {data: goalType[] | null, id: string | null}) => {
             focus:border-blue-500 
             block 
             w-full
-            max-sm:p-1 
+            max-sm:p-2 
             sm:p-2.5 
             dark:bg-gray-700 
             dark:border-gray-600 
@@ -262,7 +262,7 @@ const Goalform = ({data, id}: {data: goalType[] | null, id: string | null}) => {
       </div>
 
       <section className='bg-[rgb(16,16,16)] p-5 flex flex-col gap-2'>
-        <h1 className='text-white font-bold text-[24px]'>How can you achieve this goal?</h1>
+        <h1 className='text-white font-bold max-sm:text-[20px] sm:text-[24px]'>How can you achieve this goal?</h1>
         
         
         {how.length === 0 ? (
@@ -360,9 +360,9 @@ const Goalform = ({data, id}: {data: goalType[] | null, id: string | null}) => {
       </section>
       
       {data ? (
-        <button onClick={()=>handleUpdate()} type='button' className='bg-blue-500 py-2 text-[rgb(22,22,22)] rounded font-bold text-[2em] -translate-y-0.5 hover:translate-none duration-200 shadow hover:shadow-none cursor-pointer'>Update</button>     
+        <button onClick={()=>handleUpdate()} type='button' className='bg-blue-500 py-2 text-[rgb(22,22,22)] rounded font-bold max-sm:text-[1em] sm:text-[24px] -translate-y-0.5 hover:translate-none duration-200 shadow hover:shadow-none cursor-pointer'>Update</button>     
       ):(
-        <button onClick={()=>handleSubmit()} type='button' className='bg-green-500 py-2 text-[rgb(22,22,22)] rounded font-bold text-[2em] -translate-y-0.5 hover:translate-none duration-200 shadow hover:shadow-none cursor-pointer'>Create</button>     
+        <button onClick={()=>handleSubmit()} type='button' className='bg-green-500 max-sm:py-1 sm:py-2 text-[rgb(22,22,22)] rounded font-bold max-sm:text-[1em] sm:text-[24px] -translate-y-0.5 hover:translate-none duration-200 shadow hover:shadow-none cursor-pointer'>Create</button>     
       )}
       <ToastContainer theme='dark'/>
     </form>
