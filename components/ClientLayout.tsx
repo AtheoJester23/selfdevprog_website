@@ -4,6 +4,8 @@ import dynamic from 'next/dynamic';
 import { Session } from 'next-auth';
 import { motion } from "framer-motion"
 import { useEffect, useState } from 'react';
+//to check if it's the first page...
+import { usePathname } from 'next/navigation';
 
 const Navbar = dynamic(() => import('./Navbar'),{
   ssr: false,

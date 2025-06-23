@@ -3,7 +3,7 @@
 import { UpdateGoal } from '@/actions/updateSchedule';
 import { createGoal } from '@/lib/actions';
 import { goalFormSchema } from '@/sanity/lib/validation';
-import { Check, Pencil, Trash2, X } from 'lucide-react'
+import { Check, Pencil, Plus, Trash2, X } from 'lucide-react'
 import { nanoid } from 'nanoid';
 import { useRouter } from 'next/navigation';
 import React, { useRef, useState } from 'react'
@@ -234,6 +234,7 @@ const Goalform = ({data, id}: {data: goalType[] | null, id: string | null}) => {
         <textarea 
           id="description" 
           name="description"
+          rows={data?.[0]?.description ? 7 : 3}
           defaultValue={data?.[0]?.description ?? ""} 
           placeholder='What is the purpose of this goal? / Why do you want to achieve this goal?' 
           className='
@@ -262,21 +263,20 @@ const Goalform = ({data, id}: {data: goalType[] | null, id: string | null}) => {
       </div>
 
       <section className='bg-[rgb(16,16,16)] p-5 flex flex-col gap-2'>
-        <h1 className='text-white font-bold max-sm:text-[20px] sm:text-[24px]'>How can you achieve this goal?</h1>
-        
+        <h1 className='text-white font-bold max-sm:text-[20px] sm:text-[24px] text-center mb-2'>How can you achieve this goal?</h1>
         
         {how.length === 0 ? (
-          <div>
+          <div className='mx-auto flex justify-center flex-col'>
             <button onClick={()=>handleAddHow()} type='button' className='bg-green-500 text-[rgb(22,22,22)] font-bold px-3 py-2 rounded -translate-y-1 hover:translate-none duration-200 cursor-pointer'>
               Add Step
             </button>
             <p className='text-gray-500'>There&apos;s no step yet...</p>
           </div>
         ):(
-          <ul className='flex flex-col gap-2 mx-10'>
+          <ul className='flex flex-col gap-2 sm:mx-10'>
             {how.map((item, index) => item.status != "Done" ? (
-              <li className='flex justify-center items-center gap-2 text-white' key={index}>
-                  <div className='flex flex-1 gap-3 items-center'>
+              <li className='flex max-sm:flex-col justify-center sm:items-center gap-3 text-white border-y border-gray-500 p-4' key={index}>
+                  <div className='flex flex-1 gap-2 items-center'>
                       <span className='text-white text-[20px]'>&bull;</span>
                       <input
                         ref={inputRef}
@@ -320,19 +320,19 @@ const Goalform = ({data, id}: {data: goalType[] | null, id: string | null}) => {
                   <div className='flex items-center max-sm:gap-1 sm:gap-2'>
                       {item.status == "Empty" ? (
                         <>
-                          <button onClick={()=>handleAddHow(index)} type='button' className='px-2 bg-green-400 p-2 max-sm:rounded-sm sm:rounded-xl -translate-y-0.5 hover:translate-none duration-200 cursor-pointer h-full'>
+                          <button onClick={()=>handleAddHow(index)} type='button' className='px-2 bg-green-400 p-2 max-sm:rounded-sm sm:rounded-xl -translate-y-0.5 hover:translate-none duration-200 cursor-pointer h-full max-sm:w-full flex justify-center'>
                               <Check className='text-[rgb(22,22,22)]'/>
                           </button>
-                          <button onClick={()=>handleCancel()} type='button' className='px-2 bg-red-500 p-2 max-sm:rounded-sm sm:rounded-xl -translate-y-0.5 hover:translate-none duration-200 cursor-pointer h-full'>
+                          <button onClick={()=>handleCancel()} type='button' className='px-2 bg-red-500 p-2 max-sm:rounded-sm sm:rounded-xl -translate-y-0.5 hover:translate-none duration-200 cursor-pointer h-full max-sm:w-full flex justify-center'>
                               <X className='text-[rgb(22,22,22)]'/>
                           </button>
                         </>
                       ):(
                         <>
-                          <button onClick={()=>handleProceedEdit(index)} type='button' className='px-2 bg-green-400 p-2 max-sm:rounded-sm sm:rounded-xl -translate-y-0.5 hover:translate-none duration-200 cursor-pointer h-full'>
+                          <button onClick={()=>handleProceedEdit(index)} type='button' className='px-2 bg-green-400 p-2 max-sm:rounded-sm sm:rounded-xl -translate-y-0.5 hover:translate-none duration-200 cursor-pointer h-full max-sm:w-full flex justify-center'>
                               <Check className='text-[rgb(22,22,22)]'/>
                           </button>
-                          <button onClick={()=>handleEdit(index)} type='button' className='px-2 bg-red-500 p-2 max-sm:rounded-sm sm:rounded-xl -translate-y-0.5 hover:translate-none duration-200 cursor-pointer h-full'>
+                          <button onClick={()=>handleEdit(index)} type='button' className='px-2 bg-red-500 p-2 max-sm:rounded-sm sm:rounded-xl -translate-y-0.5 hover:translate-none duration-200 cursor-pointer h-full max-sm:w-full flex justify-center'>
                               <X className='text-[rgb(22,22,22)]'/>
                           </button>
                         </>
@@ -340,13 +340,13 @@ const Goalform = ({data, id}: {data: goalType[] | null, id: string | null}) => {
                   </div>
                 </li>
             ):(
-              <li key={index} className='flex justify-between py-3 border-y border-gray-500 flex items-center'>
-                <h3 className='text-white font-bold text-[20px]'>&bull; {item.step}</h3>
-                <div className='flex items-center max-sm:gap-1 sm:gap-2'>
-                  <button onClick={()=>handleEdit(index)} type='button' className='px-2 bg-blue-500 p-2 max-sm:rounded-sm sm:rounded-xl -translate-y-0.5 hover:translate-none duration-200 cursor-pointer h-full'>
+              <li key={index} className='flex max-sm:flex-col max-sm:gap-4 sm:justify-between py-3 border-y border-gray-500 flex sm:items-center'>
+                <h3 className='text-white text-[20px] break-all'>&bull; {item.step}</h3>
+                <div className='flex sm:items-center max-sm:gap-1 sm:gap-2'>
+                  <button onClick={()=>handleEdit(index)} type='button' className='px-2 bg-blue-500 p-2 max-sm:rounded-sm sm:rounded-xl -translate-y-0.5 hover:translate-none duration-200 cursor-pointer h-full max-sm:w-full flex justify-center'>
                       <Pencil className='text-[rgb(22,22,22)]'/>
                   </button>
-                  <button onClick={()=>handleDelete(index)} type='button' className='px-2 bg-red-500 p-2 max-sm:rounded-sm sm:rounded-xl -translate-y-0.5 hover:translate-none duration-200 cursor-pointer h-full'>
+                  <button onClick={()=>handleDelete(index)} type='button' className='px-2 bg-red-500 p-2 max-sm:rounded-sm sm:rounded-xl -translate-y-0.5 hover:translate-none duration-200 cursor-pointer h-full max-sm:w-full flex justify-center'>
                       <Trash2 className='text-[rgb(22,22,22)]'/>
                   </button>
               </div>
@@ -355,14 +355,19 @@ const Goalform = ({data, id}: {data: goalType[] | null, id: string | null}) => {
           </ul>
         )}
         {how[how.length -1]?.status == "Done" && (
-          <button onClick={()=>handleAddHow()} type='button' className='border py-2 text-white rounded font-bold text-[1em] duration-200 cursor-pointer hover:bg-white hover:text-[rgb(16,16,16)]'>Add</button>
+          <button onClick={()=>handleAddHow()} type='button' className='border py-2 text-white rounded font-bold text-[1em] duration-200 cursor-pointer hover:bg-white hover:text-[rgb(16,16,16)] my-2 flex justify-center items-center sm:mx-10'>
+            <Plus className='w-[20px]' size="100%"/>
+            <span>
+              Add
+            </span>
+          </button>
         )}
       </section>
       
       {data ? (
         <button onClick={()=>handleUpdate()} type='button' className='bg-blue-500 py-2 text-[rgb(22,22,22)] rounded font-bold max-sm:text-[1em] sm:text-[24px] -translate-y-0.5 hover:translate-none duration-200 shadow hover:shadow-none cursor-pointer'>Update</button>     
       ):(
-        <button onClick={()=>handleSubmit()} type='button' className='bg-green-500 max-sm:py-1 sm:py-2 text-[rgb(22,22,22)] rounded font-bold max-sm:text-[1em] sm:text-[24px] -translate-y-0.5 hover:translate-none duration-200 shadow hover:shadow-none cursor-pointer'>Create</button>     
+        <button onClick={()=>handleSubmit()} type='button' className='bg-green-500 py-2 text-[rgb(22,22,22)] rounded font-bold max-sm:text-[1em] sm:text-[24px] -translate-y-0.5 hover:translate-none duration-200 shadow hover:shadow-none cursor-pointer'>Create</button>     
       )}
       <ToastContainer theme='dark'/>
     </form>
