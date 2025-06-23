@@ -14,7 +14,8 @@ import { fireworkConfetti } from '../ui/fireworkConfetti';
 const GoalPage = ({goalDeets, id}: {goalDeets: goalType[], id: string}) => {
     const [isOpen, setIsOpen] = useState(false);
     const router = useRouter();
-    const [isPending, setIsPending] = useState(true);
+    const [isPending, setIsPending] = useState(false);
+    const [delIsPending, setDelIsPending] = useState(false);
     const [data, setData] = useState(goalDeets ?? [])
 
     console.log("This is data: ", data);
@@ -25,6 +26,7 @@ const GoalPage = ({goalDeets, id}: {goalDeets: goalType[], id: string}) => {
     
     const handleDelete = async () => {
         setIsOpen(false);
+        setDelIsPending(true);
 
         try {
             const result = await deleteSchedule(id)
@@ -39,6 +41,8 @@ const GoalPage = ({goalDeets, id}: {goalDeets: goalType[], id: string}) => {
         } catch (error) {
             console.error(error);
             toast.error("Failed to delete item")
+        }finally{
+            setDelIsPending(false);
         }
     }
   
@@ -46,7 +50,7 @@ const GoalPage = ({goalDeets, id}: {goalDeets: goalType[], id: string}) => {
           const updated = {...data[0], status: !data[0].status};
           
           setData([updated]);
-          setIsPending(false);
+          setIsPending(true);
           if(updated.status == true){
             fireworkConfetti();
           }
@@ -60,9 +64,10 @@ const GoalPage = ({goalDeets, id}: {goalDeets: goalType[], id: string}) => {
   
               toast.success(`${data[0].status ? "Keep moving forward!" : "Congrats!!"}`)
 
-              setIsPending(true);
           } catch (error) {
-              toast.error(`${error}`)
+            toast.error(`${error}`)
+          }finally{
+            setIsPending(false);
           }
       }
 
@@ -105,10 +110,10 @@ const GoalPage = ({goalDeets, id}: {goalDeets: goalType[], id: string}) => {
         
         <footer>
             <div className='flex justify-center items-center gap-2'>
-                <button onClick={()=>handleModal()} className='bg-red-500 p-3 rounded-bl-xl -translate-y-0.5 hover:translate-none duration-200 cursor-pointer'>
+                <button disabled={delIsPending} onClick={()=>handleModal()} className={`${!delIsPending ? "bg-red-500 hover:translate-none" : "bg-red-400"} p-3 rounded-bl-xl -translate-y-0.5 duration-200 cursor-pointer`}>
                     <Trash2/>
                 </button>
-                <button disabled={isPending ? false : true} onClick={()=>handleUpdateStats()} className={`${data[0].status ? (isPending ? "bg-blue-500" : "bg-blue-300") : (isPending ? "bg-green-500" : "bg-green-300")} p-3 -translate-y-0.5 ${isPending && "hover:translate-none"} duration-200 cursor-pointer` }>
+                <button disabled={isPending} onClick={()=>handleUpdateStats()} className={`${data[0].status ? (!isPending ? "bg-blue-500 hover:translate-none" : "bg-blue-300") : (!isPending ? "bg-green-500 hover:translate-none" : "bg-green-300")} p-3 -translate-y-0.5 duration-200 cursor-pointer` }>
                     {data[0].status ? (
                         <RefreshCcw/>
                     ):(

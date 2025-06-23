@@ -96,10 +96,6 @@ const Goalform = ({data, id}: {data: goalType[] | null, id: string | null}) => {
     const description = (document.getElementById("description")) as HTMLTextAreaElement;
     const allSteps = how.filter(item => item.status != "Empty" && item.status != "Edit")
 
-    // console.log(allSteps);
-
-    // return;
-
     try {
       const allData: goalType = {title: goalName.value, duration: duration.value, description: description.value, status: false, steps: allSteps}
   
@@ -136,6 +132,11 @@ const Goalform = ({data, id}: {data: goalType[] | null, id: string | null}) => {
     const duration = (document.getElementsByName("duration")[0]) as HTMLSelectElement;
     const description = (document.getElementById("description")) as HTMLTextAreaElement;
     const allSteps = how.filter(item => item.status != "Empty" && item.status != "Edit")
+
+    // if(!goalName.value){
+      
+    //   return toast.error("Goal name is required...")
+    // }
 
     try {
       const allData: goalType = {title: goalName.value, duration: duration.value, description: description.value, status: false, steps: allSteps}
