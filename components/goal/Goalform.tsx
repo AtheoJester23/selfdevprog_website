@@ -26,6 +26,8 @@ const Goalform = ({data, id}: {data: goalType[] | null, id: string | null}) => {
   const [how, setHow] = useState<Array<{_key: string, step: string, status: string}>>(data?.[0].steps ?? []);
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter()
+  const [emptyFields, setEmptyFields] = useState<string[]>([])
+  const [isPending , setIsPending] = useState<boolean>(false);
 
   console.log(id);
 
@@ -90,11 +92,33 @@ const Goalform = ({data, id}: {data: goalType[] | null, id: string | null}) => {
     setHow(filterOut);
   }
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
+    e.preventDefault();
+
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    const empty: string[] = [];
+    
+    for(const [key, value] of formData.entries()){
+      if(!value || (typeof value === "string" && value.trim() === "")){
+        empty.push(key);
+      }
+    }
+
+    if(!empty.length){
+      console.log("All Goods...");
+    }else{
+      setEmptyFields(empty);
+      console.log("There's these blank: ", empty);
+      return;
+    }
+    
     const goalName = (document.getElementsByName("title")[0]) as HTMLInputElement;
     const duration = (document.getElementsByName("duration")[0]) as HTMLSelectElement;
     const description = (document.getElementById("description")) as HTMLTextAreaElement;
     const allSteps = how.filter(item => item.status != "Empty" && item.status != "Edit")
+
+    setIsPending(true)
 
     try {
       const allData: goalType = {title: goalName.value, duration: duration.value, description: description.value, status: false, steps: allSteps}
@@ -123,20 +147,41 @@ const Goalform = ({data, id}: {data: goalType[] | null, id: string | null}) => {
       }else{
         toast.error((error as Error).message);
       }
+    }finally{
+      setIsPending(false)
     }
 
   }
 
-  const handleUpdate = async () => {
+  const handleUpdate = async (e: React.FormEvent<HTMLFormElement>): Promise<void>  => {
+    e.preventDefault();
+
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    const empty: string[] = [];
+
+    for(const[key, value] of formData.entries()){
+      if(!value || (typeof value === "string" && value.trim() === "")){
+        empty.push(key);
+      }
+    }
+
+    setEmptyFields(empty);
+
+    if(empty.length === 0){
+      console.log("All goods")
+    }else{
+      console.log("Empty fields: ", empty);
+      toast.error("Please fill in all required fields.");
+      return;
+    }
+
     const goalName = (document.getElementsByName("title")[0]) as HTMLInputElement;
     const duration = (document.getElementsByName("duration")[0]) as HTMLSelectElement;
     const description = (document.getElementById("description")) as HTMLTextAreaElement;
     const allSteps = how.filter(item => item.status != "Empty" && item.status != "Edit")
 
-    // if(!goalName.value){
-      
-    //   return toast.error("Goal name is required...")
-    // }
+    setIsPending(true)
 
     try {
       const allData: goalType = {title: goalName.value, duration: duration.value, description: description.value, status: false, steps: allSteps}
@@ -155,13 +200,15 @@ const Goalform = ({data, id}: {data: goalType[] | null, id: string | null}) => {
     } catch (error) {
       console.error(error);
       toast.error("Update failed")
+    }finally{
+      setIsPending(false)
     }
   }
 
   return (
-    <form id="goalForm" className='flex flex-col p-5 m-5 gap-7 text-[16px]'>
+    <form onSubmit={(e)=> data ? handleUpdate(e) : handleSubmit(e)} id="goalForm" className='flex flex-col p-5 m-5 gap-7 text-[16px]'>
       <div className='flex flex-col gap-1'>
-        <label htmlFor="title" className='text-white max-sm:text-[20px] sm:text-[24px] font-bold'>Goal</label>
+        <label htmlFor="title" className='text-white max-sm:text-[20px] sm:text-[24px] font-bold'>Goal*</label>
         <input 
           type="text"
           defaultValue={data?.[0]?.title ?? ""} 
@@ -191,7 +238,9 @@ const Goalform = ({data, id}: {data: goalType[] | null, id: string | null}) => {
           '
           autoFocus
           placeholder='What is the goal?'
+          aria-required="true"
         /> 
+        {emptyFields?.find(item => item === "title") && <small className="text-red-400 text-sm">This field is required.</small>}
       </div>
 
       <div className='flex flex-col gap-1'>
@@ -231,7 +280,7 @@ const Goalform = ({data, id}: {data: goalType[] | null, id: string | null}) => {
       </div>
 
       <div className='flex flex-col gap-1'>
-        <label htmlFor='description' className='text-white font-bold max-sm:text-[20px] sm:text-[24px]'>Description</label>
+        <label htmlFor='description' className='text-white font-bold max-sm:text-[20px] sm:text-[24px]'>Description*</label>
         <textarea 
           id="description" 
           name="description"
@@ -260,7 +309,9 @@ const Goalform = ({data, id}: {data: goalType[] | null, id: string | null}) => {
             dark:focus:ring-blue-500 
             dark:focus:border-blue-500" 
           '
+          aria-required="true"
         />
+        {emptyFields?.find(item => item === "description") && <small className="text-red-400 text-sm">This field is required.</small>}
       </div>
 
       <section className='bg-[rgb(16,16,16)] p-5 flex flex-col gap-2'>
@@ -366,9 +417,9 @@ const Goalform = ({data, id}: {data: goalType[] | null, id: string | null}) => {
       </section>
       
       {data ? (
-        <button onClick={()=>handleUpdate()} type='button' className='bg-blue-500 py-2 text-[rgb(22,22,22)] rounded font-bold max-sm:text-[1em] sm:text-[24px] -translate-y-0.5 hover:translate-none duration-200 shadow hover:shadow-none cursor-pointer'>Update</button>     
+        <button disabled={isPending} type='submit' className={`${isPending ? "bg-blue-400" : "bg-blue-500 hover:translate-none"} py-2 text-[rgb(22,22,22)] rounded font-bold max-sm:text-[1em] sm:text-[24px] -translate-y-0.5 duration-200 shadow hover:shadow-none cursor-pointer`}>Update</button>     
       ):(
-        <button onClick={()=>handleSubmit()} type='button' className='bg-green-500 py-2 text-[rgb(22,22,22)] rounded font-bold max-sm:text-[1em] sm:text-[24px] -translate-y-0.5 hover:translate-none duration-200 shadow hover:shadow-none cursor-pointer'>Create</button>     
+        <button disabled={isPending} type='submit' className={`${isPending ? "bg-green-300" : "bg-green-500 hover:translate-none"} py-2 text-[rgb(22,22,22)] rounded font-bold max-sm:text-[1em] sm:text-[24px] -translate-y-0.5 duration-200 shadow hover:shadow-none cursor-pointer`}>Create</button>     
       )}
       <ToastContainer theme='dark'/>
     </form>

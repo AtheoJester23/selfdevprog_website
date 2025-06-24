@@ -76,7 +76,7 @@ const GoalPage = ({goalDeets, id}: {goalDeets: goalType[], id: string}) => {
         <article className='mt-20 p-5 m-5 text-[16px] flex flex-col gap-3'>
             <h1 className='text-white font-bold max-sm:text-[2em] sm:text-[4em] text-center border-y'>{data[0].title}</h1>
             <div className='flex flex-col justify-center items-center mx-auto'>
-                <small className='bg-yellow-500 rounded font-bold max-sm:px-3 max-sm:py-1  sm:px-5 sm:py-2 text-[rgb(22,22,22)] max-sm:text-[12px] sm:text-sm'>Accomplish by: {data[0].duration}</small>
+                <small className='bg-yellow-500 rounded font-bold max-sm:px-3 max-sm:py-1  sm:px-5 sm:py-2 text-[rgb(22,22,22)] max-sm:text-[12px] sm:text-sm'>Accomplish by: {data[0].duration != "" ? data[0].duration : "Undecided"}</small>
                 <p className='text-white mt-2'>Status: <span className={`${data[0].status ? "text-green-500 font-bold" : "text-gray-500"}`}>{data[0].status ? "Accomplished" : "To be accomplished"}</span></p>
             </div>
 
