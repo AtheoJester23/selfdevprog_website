@@ -16,13 +16,6 @@ export default function ClientLayout({ session, children,} : { session: Session 
 
   const pathName = usePathname();
 
-  if(pathName === "/goal/edit/hJrWNdh599drBHMnS6mqpH"){
-    console.log("This is that path....")
-  }else{
-    console.log(pathName);
-  }
-
-
   useEffect(() => {
     setHydrated(true);
   }, []);
