@@ -1,4 +1,5 @@
 import { goalDeets } from '@/app/(root)/goal/page'
+import { ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react'
 
@@ -7,7 +8,7 @@ const RecentGoals = ({goals}: {goals: goalDeets[]}) => {
   console.log(goals);
 
   return (
-    <div className='bg-[rgb(16,16,16)]'>
+    <div className='bg-[rgb(16,16,16)] p-5'>
       { goals?.length > 0 ? (
 
             <>
@@ -24,8 +25,11 @@ const RecentGoals = ({goals}: {goals: goalDeets[]}) => {
                 </ul>
                 
                 <div className='flex justify-center items-center'>
-                    <Link href={`/goal`} className='h-full border border-gray-500 rounded-full cursor-pointer -translate-y-1 hover:translate-none duration-150 inline-block py-2 px-5'>
-                        <h1 className='text-white text-sm font-bold text-center'>See all...</h1>
+                    <Link href={`/goal`} className='hover:bg-[rgb(31,31,31)] h-full border border-gray-500 rounded-full cursor-pointer inline-block py-2 px-5'>
+                        <h1 className='flex items-center justify-center text-white text-sm font-bold text-center'>
+                            View All
+                            <ChevronRight className='w-[20px] text-gray-400' size="100%"/>
+                        </h1>
                     </Link>
                 </div>
             </>

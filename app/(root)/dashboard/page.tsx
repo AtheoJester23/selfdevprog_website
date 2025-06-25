@@ -35,7 +35,7 @@ const page = async () => {
         </div>
       </section>
 
-      <section className='p-5'>
+      <section className='p-5 mb-5'>
         <h1 className='font-bold text-white max-sm:text-[2em] sm:text-7xl mb-3'>Goals</h1>
 
         <div>

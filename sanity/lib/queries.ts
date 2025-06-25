@@ -50,7 +50,7 @@ export const GOALS_BY_ID = groq`
 `;
 
 export const RECENT_GOALS_BY_AUTHOR = groq`
-    *[_type == "goals" && user._ref == $id] | order(_createdAt desc)[0...8]{
+    *[_type == "goals" && user._ref == $id] | order(_createdAt desc)[0...6]{
         title,
         duration,
         description,

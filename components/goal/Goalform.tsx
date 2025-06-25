@@ -162,7 +162,9 @@ const Goalform = ({data, id}: {data: goalType[] | null, id: string | null}) => {
 
     for(const[key, value] of formData.entries()){
       if(!value || (typeof value === "string" && value.trim() === "")){
-        empty.push(key);
+        if(!key.includes("step")){
+          empty.push(key);
+        }
       }
     }
 
@@ -171,6 +173,8 @@ const Goalform = ({data, id}: {data: goalType[] | null, id: string | null}) => {
     if(empty.length === 0){
       console.log("All goods")
     }else{
+      
+
       console.log("Empty fields: ", empty);
       toast.error("Please fill in all required fields.");
       return;
@@ -366,6 +370,8 @@ const Goalform = ({data, id}: {data: goalType[] | null, id: string | null}) => {
                           dark:focus:ring-blue-500 
                           dark:focus:border-blue-500" 
                         '
+                        placeholder='Enter your thought...'
+                        autoComplete='off'
                       />
                   </div>
 
