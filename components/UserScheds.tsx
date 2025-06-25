@@ -1,5 +1,3 @@
-import { client } from '@/sanity/lib/client';
-import { SCHEDULE_BY_AUTHOR_QUERY } from '@/sanity/lib/queries';
 import { CalendarClock, CalendarX, Plus } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react'
@@ -13,14 +11,7 @@ export type Sched = {
     _id: string
 }
 
-const UserScheds = async ({id}: {id: string}) => {
-  
-    console.log(id);
-
-    const schedules: Sched[] = await client.fetch(SCHEDULE_BY_AUTHOR_QUERY, {id});
-  
-    console.log("abcdefg", schedules);
-  
+const UserScheds = async ({schedules}: {schedules: Sched[]}) => {  
   return (
     <>
         { schedules?.length > 0 ? (

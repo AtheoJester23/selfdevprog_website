@@ -1,0 +1,48 @@
+import { goalDeets } from '@/app/(root)/goal/page'
+import Link from 'next/link';
+import React from 'react'
+
+const RecentGoals = ({goals}: {goals: goalDeets[]}) => {
+  
+  console.log(goals);
+
+  return (
+    <div className='bg-[rgb(16,16,16)]'>
+      { goals?.length > 0 ? (
+
+            <>
+                <ul className='grid max-sm:grid-cols-2 md:grid-cols-5 gap-3 p-5'>
+                    {goals.map((item: goalDeets) => (
+                        <li key={item._id}>
+                            <Link href={`/goal/${item._id}`} className='block h-full border border-gray-500 p-5 rounded cursor-pointer -translate-y-1 hover:translate-none duration-150'>
+                                <div className='flex justify-center flex-col items-center'>
+                                    <h1 className='text-white text-lg font-bold'>{item.title}</h1>
+                                </div>
+                            </Link>
+                        </li>
+                    ))} 
+                </ul>
+                
+                <div className='flex justify-center items-center'>
+                    <Link href={`/goal`} className='h-full border border-gray-500 rounded-full cursor-pointer -translate-y-1 hover:translate-none duration-150 inline-block py-2 px-5'>
+                        <h1 className='text-white text-sm font-bold text-center'>See all...</h1>
+                    </Link>
+                </div>
+            </>
+            
+        ): (
+            <div className='flex justify-center items-center flex-col gap-3'>
+                <div className='flex justify-center flex-col items-center'>
+                    <h1 className='text-gray-500 text-lg font-bold'>No Schedule Yet...</h1>
+                </div>
+                
+                <Link href={`/goal/newGoal`} className='bg-green-500 text-[rgb(22,22,22)] py-2 px-3 rounded font-bold -translate-y-0.25 hover:translate-none duration-200 cursor-pointer shadow-xl hover:shadow-none'>
+                    Add Goal
+                </Link>
+            </div>
+        )}
+    </div>
+  )
+}
+
+export default RecentGoals
