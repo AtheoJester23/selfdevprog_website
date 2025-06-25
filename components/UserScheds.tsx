@@ -1,4 +1,4 @@
-import { CalendarClock, CalendarX, Plus } from 'lucide-react';
+import { CalendarClock, CalendarX, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react'
 import { Entry } from './Addtime';
@@ -15,23 +15,30 @@ const UserScheds = async ({schedules}: {schedules: Sched[]}) => {
   return (
     <>
         { schedules?.length > 0 ? (
-            <ul className='grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-4 xl:grid-cols-5 gap-3'>
-                {schedules.map((item: Sched) => (
-                    <li key={item._id}>
-                        <Link href={`/schedule/${item._id}`} className='block border border-gray-500 p-5 rounded cursor-pointer -translate-y-1 hover:translate-none duration-150'>
-                            <div className='flex justify-center flex-col items-center'>
-                                <CalendarClock className='text-white w-17 md:w-32' size="100%"/>
-                                <h1 className='text-white text-lg font-bold'>{item.title}</h1>
-                            </div>
-                        </Link>
-                    </li>
-                ))} 
-                <li>
-                    <Link href={`/schedule/createSchedule`} className='block h-full border border-gray-500 p-5 rounded cursor-pointer -translate-y-1 hover:translate-none duration-150'>
-                        <Plus className='text-white w-17 md:w-32 mx-auto' size="100%"/>
+            <>
+                <ul className='grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-4 xl:grid-cols-5 gap-3'>
+                    {schedules.map((item: Sched) => (
+                        <li key={item._id}>
+                            <Link href={`/schedule/${item._id}`} className='block border border-gray-500 p-5 rounded cursor-pointer -translate-y-1 hover:translate-none duration-150'>
+                                <div className='flex justify-center flex-col items-center'>
+                                    <CalendarClock className='text-white w-17 md:w-32' size="100%"/>
+                                    <h1 className='text-white text-lg font-bold truncate overflow-hidden whitespace-nowrap'>{item.title}</h1>
+                                </div>
+                            </Link>
+                        </li>
+                    ))} 
+                </ul>
+
+                <div className='flex justify-center items-center mt-5'>
+                    <Link href={`/schedule`} className='hover:bg-[rgb(31,31,31)] h-full border border-gray-500 rounded-full cursor-pointer inline-block py-2 px-5'>
+                        <h1 className='flex items-center justify-center text-white text-sm font-bold text-center'>
+                            View All
+                            <ChevronRight className='w-[20px] text-gray-400' size="100%"/>
+                        </h1>
                     </Link>
-                </li>
-            </ul>
+                </div>
+            </>
+
         ): (
             <div className='flex justify-center items-center flex-col gap-3'>
                 <div className='flex justify-center flex-col items-center'>

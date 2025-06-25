@@ -12,12 +12,12 @@ const RecentGoals = ({goals}: {goals: goalDeets[]}) => {
       { goals?.length > 0 ? (
 
             <>
-                <ul className='grid max-sm:grid-cols-2 md:grid-cols-5 gap-3 p-5'>
+                <ul className='grid max-sm:grid-cols-1 md:grid-cols-5 gap-3 p-5'>
                     {goals.map((item: goalDeets) => (
                         <li key={item._id}>
                             <Link href={`/goal/${item._id}`} className='block h-full border border-gray-500 p-5 rounded cursor-pointer -translate-y-1 hover:translate-none duration-150'>
                                 <div className='flex justify-center flex-col items-center'>
-                                    <h1 className='text-white text-lg font-bold'>{item.title}</h1>
+                                    <h1 className='line-clamp-2 text-white text-lg font-bold'>{item.title}</h1>
                                 </div>
                             </Link>
                         </li>

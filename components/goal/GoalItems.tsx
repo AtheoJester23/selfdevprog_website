@@ -118,7 +118,7 @@ const GoalItems = ({data}: {data: goalDeets[]}) => {
                         </li>
                     ))}
                     <li>
-                        <Link href={`/goal/newGoal`} className='max-sm:p-2 sm:p-5 md-p-5 lg-p-5 text-white h-full flex justify-center items-center font-bold text-[2em] border rounded hover:text-[rgb(16,16,16)] hover:bg-white duration-200 truncate w-full hover:text-[rgb(16,16,16)]'>
+                        <Link href={`/goal/newGoal`} className='max-sm:p-2 sm:p-5 md-p-5 lg-p-5 text-white h-full flex justify-center items-center font-bold text-[1em] border rounded hover:text-[rgb(16,16,16)] hover:bg-white duration-200 truncate w-full hover:text-[rgb(16,16,16)]'>
                             <Plus className='text-[2em]'/>
                             Add Goal
                         </Link>

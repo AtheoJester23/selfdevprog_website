@@ -50,7 +50,7 @@ export const GOALS_BY_ID = groq`
 `;
 
 export const RECENT_GOALS_BY_AUTHOR = groq`
-    *[_type == "goals" && user._ref == $id] | order(_createdAt desc)[0...6]{
+    *[_type == "goals" && user._ref == $id] | order(_createdAt desc)[0...5]{
         title,
         duration,
         description,
@@ -58,3 +58,17 @@ export const RECENT_GOALS_BY_AUTHOR = groq`
         _id
     }
 `
+
+export const RECENT_SCHEDS_BY_AUTHOR = groq`
+        *[_type == "schedule" && user._ref == $id] | order(_createdAt desc)[0...4]{
+            _id,
+            title,
+            _createdAt,
+            user -> {
+                _id,
+                name,
+                image
+            },
+            allTime
+        }
+    `;
