@@ -66,13 +66,13 @@ const GoalItems = ({data}: {data: goalDeets[]}) => {
                         border-gray-300 
                         text-gray-900
                         text-[1em]
-                        max-sm:rounded-sm 
-                        sm:rounded-s-full 
+                        rounded-s-full 
                         focus:ring-blue-500 
                         focus:border-blue-500 
                         block 
                         w-[50%]
-                        max-sm:p-1 
+                        max-sm:py-1
+                        max-sm:px-3 
                         sm:py-2.5
                         sm:px-5
                         dark:bg-gray-700 
@@ -102,7 +102,7 @@ const GoalItems = ({data}: {data: goalDeets[]}) => {
                 />
                 
                 <button onClick={()=>handleSearch(null)} id="searchBtn" className='bg-[rgb(16,16,16)] font-bold px-5 cursor-pointer rounded-e-full flex justify-center items-center'>
-                    <Search className='text-white'/>
+                    <Search className='text-white max-sm:w-[1em] sm:w-[24px]' size="100%"/>
                 </button>
             </div>
 
