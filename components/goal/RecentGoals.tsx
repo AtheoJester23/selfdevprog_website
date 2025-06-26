@@ -27,7 +27,7 @@ const RecentGoals = ({goals}: {goals: goalDeets[]}) => {
                 <div className='flex justify-center items-center'>
                     <Link href={`/goal`} className='hover:bg-[rgb(31,31,31)] h-full border border-gray-500 rounded-full cursor-pointer inline-block py-2 px-5'>
                         <h1 className='flex items-center justify-center text-white text-sm font-bold text-center'>
-                            View All
+                            View All Goals
                             <ChevronRight className='w-[20px] text-gray-400' size="100%"/>
                         </h1>
                     </Link>

@@ -1,7 +1,7 @@
 "use client"
 
 import { scheds } from '@/app/(root)/schedule/[id]/page'
-import { CalendarClock, PlusCircle } from 'lucide-react';
+import { CalendarClock, Plus, PlusCircle } from 'lucide-react';
 import Link from 'next/link';
 import React, { useState } from 'react'
 
@@ -12,9 +12,9 @@ const ScheduleItems = ({data}: {data: scheds[]}) => {
   
 
   return (
-    <>
+    <div className='bg-[rgb(16,16,16)] p-5'>
      {schedules.length > 0 ? (
-          <ul className='bg-[rgb(16,16,16)] p-5 rounded grid max-sm:grid-cols-2 md:grid-cols-5 gap-3 text-[16px]'>
+          <ul className='rounded grid max-sm:grid-cols-2 md:grid-cols-5 gap-3 text-[16px]'>
               {schedules.map((item, index)=> (
                   <li key={index}>
                       <Link href={`/schedule/${item._id}`} className='max-sm:p-2 sm:p-5 md-p-5 lg-p-5 text-white h-full flex justify-center items-center font-bold max-sm:text-[1em] sm:text-[24px] border rounded hover:text-[rgb(16,16,16)] hover:bg-white duration-200 w-full'>
@@ -40,8 +40,15 @@ const ScheduleItems = ({data}: {data: scheds[]}) => {
           </div>
       )} 
 
-      <button>Testing</button>
-    </>
+      <div className='flex justify-center items-center'>
+        <Link href={`/schedule/createSchedule`} className='hover:bg-[rgb(31,31,31)] h-full border border-gray-500 rounded-full cursor-pointer inline-block py-2 px-5'>
+            <h1 className='flex items-center justify-center text-white font-bold text-center'>
+                <Plus/>
+                Add New Schedule
+            </h1>
+        </Link>
+    </div>
+    </div>
   )
 }
 
