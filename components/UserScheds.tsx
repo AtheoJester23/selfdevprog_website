@@ -20,9 +20,9 @@ const UserScheds = async ({schedules}: {schedules: Sched[]}) => {
                     {schedules.map((item: Sched) => (
                         <li key={item._id}>
                             <Link href={`/schedule/${item._id}`} className='block border border-gray-500 p-5 rounded cursor-pointer -translate-y-1 hover:translate-none duration-150'>
-                                <div className='flex justify-center flex-col items-center'>
-                                    <CalendarClock className='text-white w-17 md:w-32' size="100%"/>
-                                    <h1 className='text-white text-lg font-bold truncate overflow-hidden whitespace-nowrap'>{item.title}</h1>
+                                <div className='truncate overflow-hidden whitespace-nowrap max-sm:p-2 sm:p-5 text-center text-white text-lg'>
+                                    <CalendarClock className='w-17 md:w-32 mx-auto' size="100%"/> 
+                                    {item.title}
                                 </div>
                             </Link>
                         </li>
