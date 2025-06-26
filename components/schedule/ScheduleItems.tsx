@@ -17,8 +17,7 @@ const ScheduleItems = ({data}: {data: scheds[]}) => {
           <ul className='bg-[rgb(16,16,16)] p-5 rounded grid max-sm:grid-cols-2 md:grid-cols-5 gap-3 text-[16px]'>
               {schedules.map((item, index)=> (
                   <li key={index}>
-                      <Link href={`/goal/${item._id}`} className='max-sm:p-2 sm:p-5 md-p-5 lg-p-5 text-white h-full flex justify-center items-center font-bold max-sm:text-[1em] sm:text-[24px] border rounded hover:text-[rgb(16,16,16)] hover:bg-white duration-200 w-full'>
-                          
+                      <Link href={`/schedule/${item._id}`} className='max-sm:p-2 sm:p-5 md-p-5 lg-p-5 text-white h-full flex justify-center items-center font-bold max-sm:text-[1em] sm:text-[24px] border rounded hover:text-[rgb(16,16,16)] hover:bg-white duration-200 w-full'>
                           <div className='truncate overflow-hidden whitespace-nowrap max-sm:p-2 sm:p-5 text-center'>
                             <CalendarClock className='w-17 md:w-32 mx-auto' size="100%"/> 
                             {item.title}

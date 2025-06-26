@@ -1,5 +1,5 @@
 import { goalDeets } from '@/app/(root)/goal/page'
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight} from 'lucide-react';
 import Link from 'next/link';
 import React from 'react'
 

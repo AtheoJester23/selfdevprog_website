@@ -11,6 +11,7 @@ export type goalDeets = {
     title: string,
     description: string,
     duration: string,
+    status: boolean,
     steps: {
         step: string,
         status: string
@@ -25,8 +26,9 @@ const page = async () => {
     const goalList: goalDeets[] = await client.fetch(GOALS_BY_AUTHOR, {id: session.id})
 
     // console.log(goalList)
+    
   return (
-    <section className='mt-[80px] m-5 rounded flex gap-5 flex-col'>
+    <section className='mt-[80px] m-5 rounded flex gap-5 flex-col'>        
         <div className='text-[rgb(22,22,22)] max-sm:text-[2em] sm:text-7xl bg-white flex justify-center items-center'>
           <FlagTriangleLeft className='max-sm:w-[24px] sm:w-[40px]' size="100%"/>
           <h1 className='font-bold'>Goals</h1>

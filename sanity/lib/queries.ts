@@ -34,6 +34,7 @@ export const GOALS_BY_AUTHOR = groq`
         title,
         duration,
         description,
+        status,
         steps,
         _id
     }

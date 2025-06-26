@@ -1,22 +1,35 @@
 "use client"
 
 import { goalDeets } from '@/app/(root)/goal/page'
-import { Plus, PlusCircle, Search } from 'lucide-react'
+import { allGoals} from '@/atoms/actionAtoms'
+import { useAtom} from 'jotai'
+import { Circle, Plus, PlusCircle, Search } from 'lucide-react'
 import Link from 'next/link'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 const GoalItems = ({data}: {data: goalDeets[]}) => {
-    const [goals, setGoals] = useState<goalDeets[]>(data ?? [])
+    const [goals, setGoals] = useAtom(allGoals);
+    const [searchData, setSearchData] = useState<goalDeets[]>(goals ?? []) 
     const [notFound, setNotFound] = useState<boolean>(false);
+
+    useEffect(() => {
+        if(goals.length === 0 && data.length > 0 && !notFound){
+            setGoals(data);
+            setSearchData(data);
+        }
+    }, [data, goals, setGoals, notFound]);
+
+    // console.log("the Goals:", goals);
+    
 
     const handleSearch = (searched: string | null) => {
         if(searched){
             setNotFound(false);
             const result = []
             
-            for(let i = 0; i < data.length; i++){
-                if(data[i].title.toLowerCase().replace(/\s+/g,"").includes(searched.toLocaleLowerCase().replace(/\s+/g, ""))){
-                    result.push(data[i]);
+            for(let i = 0; i < searchData.length; i++){
+                if(searchData[i].title.toLowerCase().replace(/\s+/g,"").includes(searched.toLocaleLowerCase().replace(/\s+/g, ""))){
+                    result.push(searchData[i]);
                 }
             }
     
@@ -34,9 +47,9 @@ const GoalItems = ({data}: {data: goalDeets[]}) => {
             const searchBar = (document.getElementsByName("searchBar")[0]) as HTMLInputElement
             const result: goalDeets[] = []
 
-            for(let i = 0; i < data.length; i++){
-                if(data[i].title.toLocaleLowerCase().replace(/\s+/g, "").includes(searchBar.value.toLocaleLowerCase().replace(/\s+/g, ""))){
-                    result.push(data[i])
+            for(let i = 0; i < searchData.length; i++){
+                if(searchData[i].title.toLocaleLowerCase().replace(/\s+/g, "").includes(searchBar.value.toLocaleLowerCase().replace(/\s+/g, ""))){
+                    result.push(searchData[i])
                 }
             }
 
@@ -95,7 +108,10 @@ const GoalItems = ({data}: {data: goalDeets[]}) => {
                 <div>
                     <ul className='bg-[rgb(16,16,16)] p-5 rounded grid max-sm:grid-cols-2 md:grid-cols-5 gap-3 text-[16px]'>
                         {goals.map((item, index)=> (
-                            <li key={index}>
+                            <li key={index} className='relative'>
+                                <div className='absolute top-1.5 left-1.5'>
+                                    <Circle className={`${item.status ? "text-green-500" : "text-yellow-500"} w-[12px]`} size="100%"/>
+                                </div>
                                 <Link href={`/goal/${item._id}`} className='max-sm:p-2 sm:p-5 md-p-5 lg-p-5 text-white h-full flex justify-center items-center font-bold max-sm:text-[1em] sm:text-[24px] border rounded hover:text-[rgb(16,16,16)] hover:bg-white duration-200 truncate w-full overflow-hidden whitespace-nowrap'>
                                     <div className='truncate overflow-hidden whitespace-nowrap'>
                                         {item.title}

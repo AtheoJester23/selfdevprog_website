@@ -10,6 +10,8 @@ import { toast, ToastContainer } from 'react-toastify';
 import { UpdateGoalStatus } from '@/actions/updateSchedule';
 import { Dialog } from '@headlessui/react';
 import { fireworkConfetti } from '../ui/fireworkConfetti';
+import { useAtom } from 'jotai';
+import { allGoals } from '@/atoms/actionAtoms';
 
 const GoalPage = ({goalDeets, id}: {goalDeets: goalType[], id: string}) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -17,8 +19,7 @@ const GoalPage = ({goalDeets, id}: {goalDeets: goalType[], id: string}) => {
     const [isPending, setIsPending] = useState(false);
     const [delIsPending, setDelIsPending] = useState(false);
     const [data, setData] = useState(goalDeets ?? [])
-
-    console.log("This is data: ", data);
+    const [atomGoals, setAtomGoals] = useAtom(allGoals);
 
     const handleModal = () => {
         setIsOpen(!isOpen);
@@ -47,6 +48,11 @@ const GoalPage = ({goalDeets, id}: {goalDeets: goalType[], id: string}) => {
     }
   
       const handleUpdateStats = async () => {
+        if(atomGoals.length != 0){
+            const newAtom = atomGoals.map(item => item._id === id ? {...item, status: !item.status} : item);
+            setAtomGoals(newAtom);
+        }
+
           const updated = {...data[0], status: !data[0].status};
           
           setData([updated]);
