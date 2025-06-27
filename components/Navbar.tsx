@@ -3,7 +3,7 @@
 import React, { useEffect } from 'react'
 import { initFlowbite } from 'flowbite';
 
-import { AlignJustify, Plus } from 'lucide-react';
+import { AlignJustify, CalendarDays, Goal, Home, Plus, UserRound } from 'lucide-react';
 import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { signIn, signOut } from 'next-auth/react';
@@ -48,11 +48,13 @@ const Navbar = ({isSession}: NavbarProps) => {
           { isSession ? (
               <div className='max-sm:hidden'>
                 <div className='flex items-center gap-2'>
-                    <div className=''>
-                        <div className='border border-white rounded-full p-1 flex px-3 cursor-pointer hover:bg-white hover:text-black text-white duration-200 items-center'>
+                    <div className='relative'>
+                        <button className='border border-white rounded-full p-1 flex px-3 cursor-pointer hover:bg-white hover:text-black text-white duration-200 items-center'>
                             <Plus/>
                             <p>Create</p>
-                        </div>
+                        </button>
+
+
                     </div>
                   
         
@@ -101,37 +103,24 @@ const Navbar = ({isSession}: NavbarProps) => {
           <AlignJustify className='text-white'/>
         </button>
 
-        <Link href="/" passHref>
-          <button
-            type="button"
-            data-drawer-hide="my-drawer"
-            aria-controls="my-drawer"
-            className='w-full text-left bg-[rgb(191,4,38)] text-[rgb(22,22,22)] text-center font-bold py-3 rounded cursor-pointer justify-center flex hover:bg-white duration-200'
-          >
+        <Link href="/dashboard" data-drawer-hide="my-drawer" aria-controls="my-drawer" passHref className='flex text-[16px] items-center gap-5 bg-[rgb(191,4,38)] text-[rgb(22,22,22)] font-bold p-3 rounded cursor-pointer flex hover:bg-white duration-200'>
+            <Home className='w-[24px]' size="100%"/>
             Home
-          </button>
         </Link>
 
-        <Link href="/schedule/createSchedule" passHref>
-          <button
-            type="button"
-            data-drawer-hide="my-drawer"
-            aria-controls="my-drawer"
-            className='w-full text-left bg-[rgb(191,4,38)] text-[rgb(22,22,22)] text-center font-bold py-3 rounded cursor-pointer justify-center flex hover:bg-white duration-200'
-          >
-            Create Schedule
-          </button>
+        <Link href="/schedule" data-drawer-hide="my-drawer" aria-controls="my-drawer" passHref className='flex text-[16px] items-center gap-5 bg-[rgb(191,4,38)] text-[rgb(22,22,22)] font-bold p-3 rounded cursor-pointer flex hover:bg-white duration-200'>
+            <CalendarDays className='w-[24px]' size="100%"/>
+            Schedules
         </Link>
 
-        <Link href="/goal" passHref>
-          <button
-            type="button"
-            data-drawer-hide="my-drawer"
-            aria-controls="my-drawer"
-            className='w-full text-left bg-[rgb(191,4,38)] text-[rgb(22,22,22)] text-center font-bold py-3 rounded cursor-pointer justify-center flex hover:bg-white duration-200'
-          >
+        <Link href="/goal" data-drawer-hide="my-drawer" aria-controls="my-drawer" passHref className='flex text-[16px] items-center gap-5 bg-[rgb(191,4,38)] text-[rgb(22,22,22)] font-bold p-3 rounded cursor-pointer flex hover:bg-white duration-200'>
+            <Goal className='w-[24px]' size="100%"/>
             Goals
-          </button>
+        </Link>
+
+        <Link href="/profile" data-drawer-hide="my-drawer" aria-controls="my-drawer" passHref className='flex text-[16px] items-center gap-5 bg-[rgb(191,4,38)] text-[rgb(22,22,22)] font-bold p-3 rounded cursor-pointer flex hover:bg-white duration-200'>
+            <UserRound className='w-[24px]' size="100%"/>
+            Profile
         </Link>
 
         <button onClick={() => signOut({ callbackUrl: "/" })} className='font-bold text-white border border-white rounded py-3 hover:bg-[white] hover:text-[rgb(22,22,22)] cursor-pointer'>Logout</button>

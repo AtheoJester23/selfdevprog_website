@@ -59,6 +59,12 @@
   left: 50px;
 }
 
+.fourGoals{
+  display: grid;
+  grid-template-columns: 200px 200px 200px 200px;
+  gap: 10px;
+}
+
 @media print{
   * {
     -webkit-print-color-adjust: exact;
