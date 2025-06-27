@@ -1,5 +1,6 @@
 'use server'
 
+import { userDeets } from "@/app/(root)/profile/editProfile/page";
 import { Entry } from "@/components/Addtime";
 import { goalType } from "@/components/goal/Goalform";
 import { client } from "@/sanity/lib/client";
@@ -9,7 +10,7 @@ export async function UpdateEdit(id: string, title: string, arr: Entry[]){
         const response = await client
             .patch(id)
             .set({title, allTime: arr })
-            .commit(); // commit the update
+            .commit(); 
         return{success:true}
     } catch (error) {
         console.error('Update failed:', error);
@@ -22,7 +23,7 @@ export async function UpdateGoal(id: string, goalDetails: goalType){
         const response = await client
             .patch(id)
             .set({...goalDetails})
-            .commit(); // commit the update
+            .commit(); 
         return{success:true}
     } catch (error) {
         console.error('Update failed:', error);
@@ -35,10 +36,24 @@ export async function UpdateGoalStatus(id: string, goalDetails: goalType, status
         const response = await client
             .patch(id)
             .set({...goalDetails, status})
-            .commit(); // commit the update
+            .commit(); 
         return{success:true}
     } catch (error) {
         console.error('Update failed:', error);
         return {success: false, error: (error as Error).message}
     }
 };
+
+export async function UpdateUserDetails(id: string, userDetails: userDeets){
+    try {
+        const response = await client
+            .patch(id)
+            .set({...userDetails})
+            .commit();
+        return{success:true}
+    } catch (error) {
+        console.error('Update failed: ', error);
+        return{ success: false, error: (error as Error).message }
+    }
+}
+

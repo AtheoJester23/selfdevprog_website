@@ -2,7 +2,7 @@ import {groq } from "next-sanity";
 
 export const AUTHOR_BY_GOOGLE_ID_QUERY = groq`
         *[_type == "user" && id == $id][0]{
-            _id, id, name, username, email
+            _id, id, name, username, email, quote, goals
         }
     `;
 

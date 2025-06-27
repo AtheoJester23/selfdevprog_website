@@ -53,8 +53,6 @@ const Navbar = ({isSession}: NavbarProps) => {
                             <Plus/>
                             <p>Create</p>
                         </button>
-
-
                     </div>
                   
         

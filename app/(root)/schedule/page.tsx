@@ -13,8 +13,6 @@ const page = async () => {
 
   const allScheds: scheds[] = await client.fetch(SCHEDULE_BY_AUTHOR_QUERY, { id: session.id })
 
-  console.log(allScheds);
-
   return (
     <section className='mt-[80px] m-5 rounded flex gap-5 flex-col'>
       <h1 className='text-center font-bold max-sm:text-[2em] sm:text-7xl text-white shadow-lg border-y'>Schedules</h1>
