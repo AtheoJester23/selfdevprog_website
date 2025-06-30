@@ -26,6 +26,11 @@ export const goallist = defineType({
             type: 'boolean'
         }),
         defineField({
+           name: 'picked',
+           title: 'Picked',
+           type: 'boolean' 
+        }),
+        defineField({
             name: "steps",
             title: "Steps",
             type: "array",

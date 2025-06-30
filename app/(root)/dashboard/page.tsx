@@ -2,7 +2,7 @@ import { auth } from '@/auth'
 import RecentGoals from '@/components/goal/RecentGoals';
 import UserScheds from '@/components/UserScheds';
 import { client } from '@/sanity/lib/client';
-import { AUTHOR_BY_GOOGLE_ID_QUERY, RECENT_GOALS_BY_AUTHOR, RECENT_SCHEDS_BY_AUTHOR } from '@/sanity/lib/queries';
+import { RECENT_GOALS_BY_AUTHOR, RECENT_SCHEDS_BY_AUTHOR } from '@/sanity/lib/queries';
 import { CalendarDays, Goal } from 'lucide-react';
 import { redirect } from 'next/navigation';
 import React from 'react'
@@ -14,17 +14,11 @@ const page = async () => {
       redirect("/");
     }
 
-    const [user, schedules, goals] = await Promise.all([
-      await client.fetch(AUTHOR_BY_GOOGLE_ID_QUERY, { id: session.id }),
+    const [schedules, goals] = await Promise.all([
       await client.fetch(RECENT_SCHEDS_BY_AUTHOR, { id: session.id }),
       await client.fetch(RECENT_GOALS_BY_AUTHOR, {id: session.id})
     ])
     
-
-    if (!user?._id) {
-      // No associated Sanity user found
-      return <p className='text-red-500'>No user profile found.</p>;
-    }
 
   return (
     <div className='flex flex-col gap-5'>

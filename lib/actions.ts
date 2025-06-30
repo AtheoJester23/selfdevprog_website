@@ -5,7 +5,7 @@ import { wholeData } from "@/components/Addtime";
 import { toast } from "react-toastify";
 import { writeClient } from "@/sanity/lib/write-client";
 import { parseServerActionResponse } from "./utils";
-import { goalType } from "@/components/goal/Goalform";
+import { goalDeets } from "@/app/(root)/goal/page";
 
 export const createSchedule = async (data: wholeData) => {
     const session = await auth();
@@ -43,7 +43,7 @@ export const createSchedule = async (data: wholeData) => {
     }
 }
 
-export const createGoal = async (data: goalType) => {
+export const createGoal = async (data: goalDeets) => {
     const session = await auth();
 
     if(!session){

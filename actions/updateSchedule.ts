@@ -1,5 +1,6 @@
 'use server'
 
+import { goalDeets } from "@/app/(root)/goal/page";
 import { userDeets } from "@/app/(root)/profile/editProfile/page";
 import { Entry } from "@/components/Addtime";
 import { goalType } from "@/components/goal/Goalform";
@@ -18,7 +19,7 @@ export async function UpdateEdit(id: string, title: string, arr: Entry[]){
     }
 };
 
-export async function UpdateGoal(id: string, goalDetails: goalType){
+export async function UpdateGoal(id: string, goalDetails: goalDeets){
     try {
         const response = await client
             .patch(id)
@@ -57,3 +58,12 @@ export async function UpdateUserDetails(id: string, userDetails: userDeets){
     }
 }
 
+export async function UpdateGoalPicks(selectedGoals: goalDeets[], state: boolean){
+    await Promise.all(
+        selectedGoals
+            .filter((goal): goal is goalDeets & { _id: string } => typeof goal._id === 'string')
+            .map(goal => 
+                client.patch(goal._id).set({ picked: state }).commit()
+            )
+    )
+}

@@ -7,11 +7,12 @@ import { redirect } from 'next/navigation';
 import React from 'react'
 
 export type goalDeets = {
-    _id: string,
+    _id?: string,
     title: string,
     description: string,
     duration: string,
     status: boolean,
+    picked: boolean,
     steps: {
         step: string,
         status: string

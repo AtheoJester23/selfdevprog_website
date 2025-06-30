@@ -4,4 +4,4 @@ import { atom } from 'jotai'
 // For Opening Delete Modal:
 export const modalDelete = atom(false);
 
-export const allGoals = atom<goalDeets[]>([]);
+export const allAtomGoals = atom<goalDeets[]>([]);

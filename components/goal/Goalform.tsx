@@ -1,8 +1,11 @@
 "use client"
 
 import { UpdateGoal } from '@/actions/updateSchedule';
+import { goalDeets } from '@/app/(root)/goal/page';
+import { allAtomGoals } from '@/atoms/actionAtoms';
 import { createGoal } from '@/lib/actions';
 import { goalFormSchema } from '@/sanity/lib/validation';
+import { useAtom } from 'jotai';
 import { Check, Pencil, Plus, Trash2, X } from 'lucide-react'
 import { nanoid } from 'nanoid';
 import { useRouter } from 'next/navigation';
@@ -11,10 +14,12 @@ import { toast, ToastContainer } from 'react-toastify';
 import { z } from 'zod'
 
 export type goalType = {
+  _id?: string,
   title: string,
   duration: string,
   description: string,
   status: boolean,
+  picked: boolean,
   steps: {
     _key: string,
     step: string,
@@ -22,14 +27,15 @@ export type goalType = {
   }[]
 }
 
-const Goalform = ({data, id}: {data: goalType[] | null, id: string | null}) => {
-  const [how, setHow] = useState<Array<{_key: string, step: string, status: string}>>(data?.[0].steps ?? []);
+const Goalform = ({data, id, create}: {data: goalType[] | null, id: string | null, create: boolean}) => {
+  const [how, setHow] = useState<Array<{_key: string, step: string, status: string}>>(data?.[0].steps && !create ? data?.[0].steps : []);
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter()
   const [emptyFields, setEmptyFields] = useState<string[]>([])
   const [isPending , setIsPending] = useState<boolean>(false);
+  const [atomGoals, setAtomGoals] = useAtom(allAtomGoals);
 
-  console.log(id);
+  console.log(data?.[0]._id);
 
   const handleCancel = () => {
     const cancelLast = how.filter(item => item.status != "Empty")
@@ -101,7 +107,9 @@ const Goalform = ({data, id}: {data: goalType[] | null, id: string | null}) => {
     
     for(const [key, value] of formData.entries()){
       if(!value || (typeof value === "string" && value.trim() === "")){
-        empty.push(key);
+        if(!key.includes("step")){
+          empty.push(key);
+        }
       }
     }
 
@@ -121,8 +129,14 @@ const Goalform = ({data, id}: {data: goalType[] | null, id: string | null}) => {
     setIsPending(true)
 
     try {
-      const allData: goalType = {title: goalName.value, duration: duration.value, description: description.value, status: false, steps: allSteps}
+      // I changed this from "goalType" to "goalDeets"
+      const allData: goalDeets = {_id: nanoid(), title: goalName.value, duration: duration.value, description: description.value, status: false, steps: allSteps, picked: false}
   
+      atomGoals.push(allData);
+
+      setAtomGoals(atomGoals);
+
+      // also added _id in this one:
       await goalFormSchema.parseAsync(allData);
 
       const result = await createGoal(allData);
@@ -132,10 +146,9 @@ const Goalform = ({data, id}: {data: goalType[] | null, id: string | null}) => {
       }
 
       router.push(`/goal/${result._id}`);
-                  
+    
+      
       toast.success("Schedule Created");
-
-      console.log(allData);
       
     } catch (error) {
       if(error instanceof z.ZodError){
@@ -188,8 +201,12 @@ const Goalform = ({data, id}: {data: goalType[] | null, id: string | null}) => {
     setIsPending(true)
 
     try {
-      const allData: goalType = {title: goalName.value, duration: duration.value, description: description.value, status: false, steps: allSteps}
+      const allData: goalDeets = {_id: data?.[0]._id, title: goalName.value, duration: duration.value, description: description.value, status: false, steps: allSteps, picked: data?.[0]?.picked ?? false}
   
+      atomGoals.push(allData);
+
+      setAtomGoals(atomGoals);
+
       await goalFormSchema.parseAsync(allData);
 
       const result = await UpdateGoal(id!, allData);
@@ -200,7 +217,7 @@ const Goalform = ({data, id}: {data: goalType[] | null, id: string | null}) => {
 
       toast.success("Updated Successfully...")
 
-      router.push(`/goal/${id}`);
+      // router.push(`/goal/${id}`);
     } catch (error) {
       console.error(error);
       toast.error("Update failed")
@@ -210,12 +227,12 @@ const Goalform = ({data, id}: {data: goalType[] | null, id: string | null}) => {
   }
 
   return (
-    <form onSubmit={(e)=> data ? handleUpdate(e) : handleSubmit(e)} id="goalForm" className='flex flex-col p-5 m-5 gap-7 text-[16px]'>
+    <form onSubmit={(e)=> data && !create ? handleUpdate(e) : handleSubmit(e)} id="goalForm" className='flex flex-col p-5 m-5 gap-7 text-[16px]'>
       <div className='flex flex-col gap-1'>
         <label htmlFor="title" className='text-white max-sm:text-[20px] sm:text-[24px] font-bold'>Goal*</label>
         <input 
           type="text"
-          defaultValue={data?.[0]?.title ?? ""} 
+          defaultValue={data?.[0]?.title && !create ? data?.[0]?.title : ""} 
           id='title' 
           name='title' 
           className='
@@ -251,7 +268,7 @@ const Goalform = ({data, id}: {data: goalType[] | null, id: string | null}) => {
         <label htmlFor="duration" className='text-white font-bold max-sm:text-[20px] sm:text-[24px]'>Duration</label>
         <select 
           name="duration" 
-          defaultValue={data?.[0].duration ?? ""} 
+          defaultValue={data?.[0].duration && !create ? data?.[0].duration : ""} 
           id="duration" 
           className='
             bg-gray-50 
@@ -289,7 +306,7 @@ const Goalform = ({data, id}: {data: goalType[] | null, id: string | null}) => {
           id="description" 
           name="description"
           rows={data?.[0]?.description ? 7 : 3}
-          defaultValue={data?.[0]?.description ?? ""} 
+          defaultValue={data?.[0]?.description && !create ? data?.[0]?.description : ""} 
           placeholder='What is the purpose of this goal? / Why do you want to achieve this goal?' 
           className='
             bg-gray-50 
@@ -422,7 +439,7 @@ const Goalform = ({data, id}: {data: goalType[] | null, id: string | null}) => {
         )}
       </section>
       
-      {data ? (
+      {data && !create ? (
         <button disabled={isPending} type='submit' className={`${isPending ? "bg-blue-400" : "bg-blue-500 hover:translate-none"} py-2 text-[rgb(22,22,22)] rounded font-bold max-sm:text-[1em] sm:text-[24px] -translate-y-0.5 duration-200 shadow hover:shadow-none cursor-pointer`}>Update</button>     
       ):(
         <button disabled={isPending} type='submit' className={`${isPending ? "bg-green-300" : "bg-green-500 hover:translate-none"} py-2 text-[rgb(22,22,22)] rounded font-bold max-sm:text-[1em] sm:text-[24px] -translate-y-0.5 duration-200 shadow hover:shadow-none cursor-pointer`}>Create</button>     

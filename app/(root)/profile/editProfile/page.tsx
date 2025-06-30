@@ -13,8 +13,7 @@ export type userDeets = {
   id: string,
   name: string,
   username: string,
-  quote: string,
-  goals: goalDeets[]
+  quote: string
 }
 
 const page = async () => {
@@ -27,7 +26,7 @@ const page = async () => {
 
   return (
     <section className='h-screen flex justify-center items-center'>
-      <div className='bg-[rgb(16,16,16)] p-5 rounded-lg shadow-xl w-[50%]'>
+      <div className='bg-[rgb(16,16,16)] p-5 rounded-lg shadow-xl w-[50%] mt-[50px]'>
         <h1 className='text-white text-center font-bold text-[32px]'>Profile</h1>
         
         <Profileform userDetails={userDetails} allGoals={allGoals}/>

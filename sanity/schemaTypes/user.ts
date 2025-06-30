@@ -1,6 +1,5 @@
 import { UserIcon } from "lucide-react";
 import { defineField, defineType } from "sanity";
-import { goallist } from "./goallist";
 
 export const user = defineType({
     name: "user",
@@ -32,67 +31,6 @@ export const user = defineType({
             name: 'quote',
             type: 'text'
         }),
-        defineField({
-            name: 'goals',
-            type: 'array',
-            of: [
-                    {
-                        name: "goal",
-                        title: "Goal",
-                        type: "object",
-                        fields: [
-                            defineField({
-                                name: "title",
-                                title: "Title",
-                                type: "string",
-                            }),
-                            defineField({
-                                name: "duration",
-                                title: "Duration",
-                                type: "string",
-                            }),
-                            defineField({
-                                name: "description",
-                                title: "Description",
-                                type: "string"
-                            }),
-                            defineField({
-                                name: 'status',
-                                title: 'Status',
-                                type: 'boolean'
-                            }),
-                            defineField({
-                                name: "steps",
-                                title: "Steps",
-                                type: "array",
-                                of: [
-                                    {
-                                        type: "object",
-                                        fields: [
-                                            defineField({
-                                                name: "step",
-                                                title: "Step",
-                                                type: "string"
-                                            }),
-                                            defineField({
-                                                name: "status",
-                                                title: "Status",
-                                                type:"string"
-                                            })
-                                        ]
-                                    }
-                                ]
-                            }),
-                            defineField({
-                                name: "user",
-                                title: "User",
-                                type: "reference",
-                                to: [{type: "user"}]
-                            })
-                        ]
-                    }
-                ]
-        })
     ],
     preview: {
         select: {

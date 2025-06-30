@@ -36,13 +36,12 @@ const RecentGoals = ({goals}: {goals: goalDeets[]}) => {
             
         ): (
             <div className='flex justify-center items-center flex-col gap-3'>
-                <div className='flex justify-center flex-col items-center'>
-                    <h1 className='text-gray-500 text-lg font-bold'>No Schedule Yet...</h1>
-                </div>
-                
                 <Link href={`/goal/newGoal`} className='bg-green-500 text-[rgb(22,22,22)] py-2 px-3 rounded font-bold -translate-y-0.25 hover:translate-none duration-200 cursor-pointer shadow-xl hover:shadow-none'>
                     Add Goal
                 </Link>
+                <div className='flex justify-center flex-col items-center'>
+                    <h1 className='text-gray-500 text-lg font-bold'>No Schedule Yet...</h1>
+                </div>
             </div>
         )}
     </div>

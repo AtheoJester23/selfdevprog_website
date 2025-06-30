@@ -4,22 +4,24 @@ import React, { useState } from 'react'
 import { goalType } from './Goalform'
 import { Check, Pencil, RefreshCcw, Trash2, TriangleAlert } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import { deleteSchedule } from '@/actions/deleteSchedule';
 import { toast, ToastContainer } from 'react-toastify';
 import { UpdateGoalStatus } from '@/actions/updateSchedule';
 import { Dialog } from '@headlessui/react';
 import { fireworkConfetti } from '../ui/fireworkConfetti';
 import { useAtom } from 'jotai';
-import { allGoals } from '@/atoms/actionAtoms';
+import { allAtomGoals } from '@/atoms/actionAtoms';
 
 const GoalPage = ({goalDeets, id}: {goalDeets: goalType[], id: string}) => {
     const [isOpen, setIsOpen] = useState(false);
     const router = useRouter();
     const [isPending, setIsPending] = useState(false);
     const [delIsPending, setDelIsPending] = useState(false);
-    const [data, setData] = useState(goalDeets ?? [])
-    const [atomGoals, setAtomGoals] = useAtom(allGoals);
+    const [data, setData] = useState(goalDeets)
+    const [atomGoals, setAtomGoals] = useAtom(allAtomGoals);
+
+    if(!data) redirect("/goal")
 
     const handleModal = () => {
         setIsOpen(!isOpen);
@@ -29,14 +31,19 @@ const GoalPage = ({goalDeets, id}: {goalDeets: goalType[], id: string}) => {
         setIsOpen(false);
         setDelIsPending(true);
 
+        const filtered = atomGoals.filter(item => item._id != id);
+
         try {
             const result = await deleteSchedule(id)
 
             if(!result.success){
                 throw new Error(result.error);
+                return;
             }
 
             toast.success("Item Deleted");
+
+            setAtomGoals(filtered);
             
             router.push('/goal');
         } catch (error) {
@@ -47,40 +54,40 @@ const GoalPage = ({goalDeets, id}: {goalDeets: goalType[], id: string}) => {
         }
     }
   
-      const handleUpdateStats = async () => {
+    const handleUpdateStats = async () => {
         if(atomGoals.length != 0){
             const newAtom = atomGoals.map(item => item._id === id ? {...item, status: !item.status} : item);
             setAtomGoals(newAtom);
         }
 
-          const updated = {...data[0], status: !data[0].status};
-          
-          setData([updated]);
-          setIsPending(true);
-          if(updated.status == true){
-            fireworkConfetti();
-          }
+        const updated = {...data[0], status: !data[0].status};
+        
+        setData([updated]);
+        setIsPending(true);
+        if(updated.status == true){
+        fireworkConfetti();
+        }
 
-          try {
-              const result = await UpdateGoalStatus(id, data[0], !data[0].status);
-  
-              if(!result.success){
-                  throw new Error(result.error)
-              }
-  
-              toast.success(`${data[0].status ? "Keep moving forward!" : "Congrats!!"}`)
+        try {
+            const result = await UpdateGoalStatus(id, data[0], !data[0].status);
 
-          } catch (error) {
-            toast.error(`${error}`)
-          }finally{
-            setIsPending(false);
-          }
-      }
+            if(!result.success){
+                throw new Error(result.error)
+            }
+
+            toast.success(`${data[0].status ? "Keep moving forward!" : "Congrats!!"}`)
+
+        } catch (error) {
+        toast.error(`${error}`)
+        }finally{
+        setIsPending(false);
+        }
+    }
 
   return (
     <>
         <article className='mt-20 p-5 m-5 text-[16px] flex flex-col gap-3'>
-            <h1 className='text-white font-bold max-sm:text-[2em] sm:text-[4em] text-center border-y'>{data[0].title}</h1>
+            <h1 className='text-white font-bold max-sm:text-[2em] sm:text-[4em] text-center border-y'>{data?.[0]?.title}</h1>
             <div className='flex flex-col justify-center items-center mx-auto'>
                 <small className='bg-yellow-500 rounded font-bold max-sm:px-3 max-sm:py-1  sm:px-5 sm:py-2 text-[rgb(22,22,22)] max-sm:text-[12px] sm:text-sm'>Accomplish by: {data[0].duration != "" ? data[0].duration : "Undecided"}</small>
                 <p className='text-white mt-2'>Status: <span className={`${data[0].status ? "text-green-500 font-bold" : "text-gray-500"}`}>{data[0].status ? "Accomplished" : "To be accomplished"}</span></p>
@@ -116,10 +123,10 @@ const GoalPage = ({goalDeets, id}: {goalDeets: goalType[], id: string}) => {
         
         <footer>
             <div className='flex justify-center items-center gap-2'>
-                <button disabled={delIsPending} onClick={()=>handleModal()} className={`${!delIsPending ? "bg-red-500 hover:translate-none" : "bg-red-400"} p-3 rounded-bl-xl -translate-y-0.5 duration-200 cursor-pointer`}>
+                <button disabled={delIsPending} onClick={()=>handleModal()} className={`${!delIsPending ? "bg-red-500 hover:translate-none cursor-pointer" : "bg-red-400"} p-3 rounded-bl-xl -translate-y-0.5 duration-200`}>
                     <Trash2/>
                 </button>
-                <button disabled={isPending} onClick={()=>handleUpdateStats()} className={`${data[0].status ? (!isPending ? "bg-blue-500 hover:translate-none" : "bg-blue-300") : (!isPending ? "bg-green-500 hover:translate-none" : "bg-green-300")} p-3 -translate-y-0.5 duration-200 cursor-pointer` }>
+                <button disabled={isPending} onClick={()=>handleUpdateStats()} className={`${data[0].status ? (!isPending ? "bg-blue-500 hover:translate-none cursor-pointer" : "bg-blue-300") : (!isPending ? "bg-green-500 hover:translate-none cursor-pointer" : "bg-green-300")} p-3 -translate-y-0.5 duration-200` }>
                     {data[0].status ? (
                         <RefreshCcw/>
                     ):(

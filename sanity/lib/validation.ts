@@ -16,6 +16,7 @@ export const formSchema = z.object({
 })
 
 export const goalFormSchema = z.object({
+    _id: z.string(),
     title: z.string(),
     duration: z.string(),
     description: z.string(),
