@@ -28,14 +28,12 @@ export type goalType = {
 }
 
 const Goalform = ({data, id, create}: {data: goalType[] | null, id: string | null, create: boolean}) => {
-  const [how, setHow] = useState<Array<{_key: string, step: string, status: string}>>(data?.[0].steps && !create ? data?.[0].steps : []);
+  const [how, setHow] = useState<Array<{_key: string, step: string, status: string}>>(data?.[0]?.steps && !create ? data?.[0].steps : []);
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter()
   const [emptyFields, setEmptyFields] = useState<string[]>([])
   const [isPending , setIsPending] = useState<boolean>(false);
   const [atomGoals, setAtomGoals] = useAtom(allAtomGoals);
-
-  console.log(data?.[0]._id);
 
   const handleCancel = () => {
     const cancelLast = how.filter(item => item.status != "Empty")
@@ -268,7 +266,7 @@ const Goalform = ({data, id, create}: {data: goalType[] | null, id: string | nul
         <label htmlFor="duration" className='text-white font-bold max-sm:text-[20px] sm:text-[24px]'>Duration</label>
         <select 
           name="duration" 
-          defaultValue={data?.[0].duration && !create ? data?.[0].duration : ""} 
+          defaultValue={data?.[0]?.duration && !create ? data?.[0].duration : ""} 
           id="duration" 
           className='
             bg-gray-50 
