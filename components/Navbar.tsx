@@ -3,12 +3,14 @@
 import React, { useEffect } from 'react'
 import { initFlowbite } from 'flowbite';
 
-import { AlignJustify, CalendarDays, Goal, Home, Plus, UserRound } from 'lucide-react';
+import { AlignJustify, CalendarDays, Goal, Home, UserRound } from 'lucide-react';
 import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { signIn, signOut } from 'next-auth/react';
 import { Session } from 'next-auth';
 import Image from 'next/image';
+import CreateButton from './CreateButton';
+
 
 interface NavbarProps{
   isSession: Session | null
@@ -44,17 +46,11 @@ const Navbar = ({isSession}: NavbarProps) => {
           </div>
         </div>
 
-        <div className='flex items-center gap-2'>
+        <div className='flex items-center gap-2 me-5 text-[14px]'>
           { isSession ? (
-              <div className='max-sm:hidden'>
+              <div className='max-sm:hidden sm:visible'>
                 <div className='flex items-center gap-2'>
-                    <div className='relative'>
-                        <button className='border border-white rounded-full p-1 flex px-3 cursor-pointer hover:bg-white hover:text-black text-white duration-200 items-center'>
-                            <Plus/>
-                            <p>Create</p>
-                        </button>
-                    </div>
-                  
+                    <CreateButton/>
         
                     <button 
                       className='cursor-pointer'
