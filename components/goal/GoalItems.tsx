@@ -109,8 +109,11 @@ const GoalItems = ({data}: {data: goalDeets[]}) => {
                     <ul className='bg-[rgb(16,16,16)] p-5 rounded grid max-sm:grid-cols-2 md:grid-cols-5 gap-3 text-[16px]'>
                         {goals.map((item, index)=> (
                             <li key={index} className='relative'>
-                                <div className='absolute top-1.5 left-1.5'>
+                                <div className='circle absolute top-1.5 left-1.5'>
                                     <Circle className={`${item.status ? "text-green-500" : "text-yellow-500"} w-[12px]`} fill={`${item.status ? "green" : "yellow"}`} size="100%"/>
+                                    <div className='pop absolute bg-gray-500 px-3 py-2 rounded-e-md rounded-t-md bottom-[15px] text-[rgb(16,16,16)] whitespace-nowrap font-bold'>
+                                        {!item.status ? "To be accomplished" : "Accomplished"}
+                                    </div>
                                 </div>
                                 <Link href={`/goal/${item._id}`} className='max-sm:p-2 sm:p-5 md-p-5 lg-p-5 text-white h-full flex justify-center items-center font-bold max-sm:text-[1em] sm:text-[24px] border rounded hover:text-[rgb(16,16,16)] hover:bg-white duration-200 truncate w-full overflow-hidden whitespace-nowrap'>
                                     <div className='truncate overflow-hidden whitespace-nowrap'>

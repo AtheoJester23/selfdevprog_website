@@ -59,11 +59,22 @@
   left: 50px;
 }
 
+/* Profile four goals section */
 .fourGoals{
   display: grid;
   grid-template-columns: 200px 200px 200px 200px;
   gap: 10px;
 }
+
+/* Goal tooltip*/
+.pop{
+  visibility: hidden;
+}
+
+.circle:hover .pop{
+  visibility: visible;
+}
+
 
 @media print{
   * {
