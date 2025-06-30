@@ -33,8 +33,24 @@ const CreateButton = () => {
         </button>
         
         <ul className={`absolute flex flex-col bg-[rgb(16,16,16)] py-2 rounded ${!create ? "hidden" : "visible"}`}>
-            <Link onClick={()=>setCreate(false)} href='/goal/newGoal' className='font-bold text-white whitespace-nowrap hover:bg-[rgb(23,23,23)] cursor-pointer p-5'>Create a goal</Link>
-            <Link onClick={()=>setCreate(false)} href='/schedule/createSchedule' className='font-bold text-white whitespace-nowrap hover:bg-[rgb(23,23,23)] cursor-pointer p-5'>Create a Schedule</Link>
+            <li>
+                <Link
+                    onClick={() => setCreate(false)}
+                    href='/goal/newGoal'
+                    className='font-bold text-white whitespace-nowrap hover:bg-[rgb(23,23,23)] cursor-pointer px-5 py-3 block'
+                >
+                    Create a goal
+                </Link>
+            </li>
+            <li>
+                <Link
+                    onClick={() => setCreate(false)}
+                    href='/schedule/createSchedule'
+                    className='font-bold text-white whitespace-nowrap hover:bg-[rgb(23,23,23)] cursor-pointer px-5 py-3 block'
+                >
+                    Create a Schedule
+                </Link>
+            </li>
         </ul>
     </div>
   )
