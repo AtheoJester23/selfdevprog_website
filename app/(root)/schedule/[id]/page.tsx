@@ -35,9 +35,11 @@ export default async function Page(prop: { params: paramsType}) {
       <article>
 
         <section className="flex flex-col gap-3">
-          <h1 className="text-white text-2xl md:text-5xl font-bold mb-[30px] text-center theTitle">
-            {schedule[0]?.title ?? 'Untitled'}
-          </h1>
+          <div className='flex justify-center items-center mb-[30px]'>
+            <h1 className="text-white text-2xl md:text-5xl font-bold theTitle text-center break-all">
+              {schedule[0]?.title ?? 'Untitled'}
+            </h1>
+          </div>
           
           <ul className='flex flex-col gap-3'>
             {schedule[0]?.allTime?.map((item: Entry) => (

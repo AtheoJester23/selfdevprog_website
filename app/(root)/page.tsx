@@ -6,11 +6,11 @@ export default async function Home() {
 
   return (
     <>
-      <div className="banner">
-        <div className="bannerText flex flex-col gap-5 m-5">
-            <h1 className="fw-bold hookH1 text-[2rem] md:text-[60px]">Purpose | Clarity | Motivation</h1>
+      <div className="banner relative">
+        <div className="absolute flex flex-col gap-5 max-sm:bottom-[110px] sm:bottom-[140px] left-[70px] right-[70px]">
+            <h1 className="hookH1 text-[2rem] md:text-[60px]">Purpose | Clarity | Motivation</h1>
             <div className="flex flex-col gap-1">
-              <p className="hookDesc text-[16px] md:text-[26px]">Lock in fam. Nobody can help you if you don&apos;t help yourself. Use this website for Time Management, Journal, Todo list, Workout plan, Stopwatch, Timer, etc...</p>
+              <p className="hookDesc text-[16px] md:text-[26px]">No one can help you until you choose to help yourself. This platform is designed to support your personal growth — with tools for time management, journaling, to-do lists, workout planning, a stopwatch, timer, and more.</p>
               <Startbutton isSession={session}/>
             </div>
         </div>
