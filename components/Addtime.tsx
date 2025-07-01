@@ -115,6 +115,11 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
             const actVal = (document.getElementById(`activity${theIndex}`) as HTMLInputElement)?.value     
             const timeVal2 = (document.getElementById(`nextInput${theIndex}`) as HTMLInputElement)?.value
 
+            if(!actVal || !timeVal2){
+                toast.error("Oops! You didn't input time...")
+                return;
+            }
+
             // Get all the current time:
             const currentTimes = arr.map((item: {timeValue: string}) => item.timeValue);
             const updated = updateTimes(currentTimes, theIndex, arr[theIndex]?.timeValue);
@@ -131,6 +136,11 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
             const timeVal2 = (document.getElementById(`nextInput${theIndex}`) as HTMLInputElement)?.value
             const actVal = (document.getElementById(`activity${theIndex}`) as HTMLInputElement)?.value        
     
+            if(!actVal || !timeVal2 || !timeVal2){
+                toast.error("Oops! You didn't input time...")
+                return;
+            }
+
             setTimeout(()=>{
                 inputRef.current?.focus();
             }, 100)
@@ -276,10 +286,19 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
     const handleUpdate = (theIndex: number, theId: number) => {
         const actVal = (document.getElementById(`activity${theIndex}`) as HTMLInputElement )?.value
 
+        if(!actVal){
+            toast.error("Oops! You didn't input time...")
+            return;
+        }
+
         if(arr.length - 1 != theIndex){
-            
             if(arr[theIndex]?.editingVal){
                 const timeVal = (document.getElementById(`input${theIndex}`) as HTMLInputElement)?.value
+
+                if(!timeVal){
+                    toast.error("Oops! You didn't input time...")
+                    return;
+                }
 
                 if(arr.length > 1){
                     if(theIndex != 0){
@@ -309,6 +328,11 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
             }else if(arr[theIndex]?.editingVal2){
                 const timeVal2 = (document.getElementById(`nextInput${theIndex}`) as HTMLInputElement)?.value
 
+                if(!timeVal2){
+                    toast.error("Oops! You didn't input time...")
+                    return;
+                }
+
                 // Get all the current time:
                 const currentTimes = arr.map((item: {timeValue: string}) => item.timeValue);
                 const updated = updateTimes(currentTimes, theIndex, arr[theIndex]?.timeValue);
@@ -328,6 +352,11 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
         }else{
             if(arr[theIndex]?.editingVal){
                 const timeVal = (document.getElementById(`input${theIndex}`) as HTMLInputElement)?.value
+
+                if(!timeVal){
+                    toast.error("Oops! You didn't input time...")
+                    return;
+                }
 
                 // Get all the current time:
                 const currentTimes = arr.map((item: {timeValue: string}) => item.timeValue);
@@ -349,6 +378,11 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
 
             }else if(arr[theIndex]?.editingVal2){
                 const timeVal2 = (document.getElementById(`nextInput${theIndex}`) as HTMLInputElement)?.value
+
+                if(!timeVal2){
+                    toast.error("Oops! You didn't input time...")
+                    return;
+                }
 
                 const updatedArr = arr.map(item => item.id == theId ? {...item, timeValue2: timeVal2, status: "Done", editingVal2: false} : item);
 

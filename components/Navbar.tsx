@@ -97,22 +97,22 @@ const Navbar = ({isSession}: NavbarProps) => {
           <AlignJustify className='text-white'/>
         </button>
 
-        <Link href="/dashboard" data-drawer-hide="my-drawer" aria-controls="my-drawer" passHref className='flex text-[16px] items-center gap-5 bg-[rgb(191,4,38)] text-[rgb(22,22,22)] font-bold p-3 rounded cursor-pointer flex hover:bg-white duration-200'>
+        <Link href="/dashboard" data-drawer-hide="my-drawer" aria-controls="my-drawer" passHref className='flex text-[16px] items-center gap-5 bg-[rgb(191,4,38)] text-white font-bold p-3 rounded cursor-pointer flex hover:bg-white hover:text-[rgb(23,23,23)] duration-200'>
             <Home className='w-[24px]' size="100%"/>
             Home
         </Link>
 
-        <Link href="/schedule" data-drawer-hide="my-drawer" aria-controls="my-drawer" passHref className='flex text-[16px] items-center gap-5 bg-[rgb(191,4,38)] text-[rgb(22,22,22)] font-bold p-3 rounded cursor-pointer flex hover:bg-white duration-200'>
+        <Link href="/schedule" data-drawer-hide="my-drawer" aria-controls="my-drawer" passHref className='flex text-[16px] items-center gap-5 bg-[rgb(191,4,38)] text-white font-bold p-3 rounded cursor-pointer flex hover:bg-white hover:text-[rgb(23,23,23)] duration-200'>
             <CalendarDays className='w-[24px]' size="100%"/>
             Schedules
         </Link>
 
-        <Link href="/goal" data-drawer-hide="my-drawer" aria-controls="my-drawer" passHref className='flex text-[16px] items-center gap-5 bg-[rgb(191,4,38)] text-[rgb(22,22,22)] font-bold p-3 rounded cursor-pointer flex hover:bg-white duration-200'>
+        <Link href="/goal" data-drawer-hide="my-drawer" aria-controls="my-drawer" passHref className='flex text-[16px] items-center gap-5 bg-[rgb(191,4,38)] text-white font-bold p-3 rounded cursor-pointer flex hover:bg-white hover:text-[rgb(23,23,23)] duration-200'>
             <Goal className='w-[24px]' size="100%"/>
             Goals
         </Link>
 
-        <Link href="/profile" data-drawer-hide="my-drawer" aria-controls="my-drawer" passHref className='flex text-[16px] items-center gap-5 bg-[rgb(191,4,38)] text-[rgb(22,22,22)] font-bold p-3 rounded cursor-pointer flex hover:bg-white duration-200'>
+        <Link href="/profile" data-drawer-hide="my-drawer" aria-controls="my-drawer" passHref className='flex text-[16px] items-center gap-5 bg-[rgb(191,4,38)] text-white font-bold p-3 rounded cursor-pointer flex hover:bg-white hover:text-[rgb(23,23,23)] duration-200'>
             <UserRound className='w-[24px]' size="100%"/>
             Profile
         </Link>
