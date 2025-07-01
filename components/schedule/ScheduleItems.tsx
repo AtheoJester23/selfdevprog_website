@@ -40,14 +40,14 @@ const ScheduleItems = ({data}: {data: scheds[]}) => {
           </div>
       )} 
 
-      <div className='flex justify-center items-center'>
-        <Link href={`/schedule/createSchedule`} className='hover:bg-[rgb(31,31,31)] h-full border border-gray-500 rounded-full cursor-pointer inline-block py-2 px-5'>
-            <h1 className='flex items-center justify-center text-white font-bold text-center'>
-                <Plus/>
-                Add New Schedule
-            </h1>
-        </Link>
-    </div>
+        <div className='flex justify-center items-center mt-5'>
+            <Link href={`/schedule/createSchedule`} className='hover:bg-[rgb(31,31,31)] h-full border border-gray-500 rounded-full cursor-pointer inline-block py-2 px-5'>
+                <h1 className='flex items-center justify-center text-white font-bold text-center'>
+                    <Plus/>
+                    Add New Schedule
+                </h1>
+            </Link>
+        </div>
     </div>
   )
 }

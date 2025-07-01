@@ -110,7 +110,7 @@ const GoalItems = ({data}: {data: goalDeets[]}) => {
                         {goals.map((item, index)=> (
                             <li key={index} className='relative'>
                                 <div className='circle absolute top-1.5 left-1.5'>
-                                    <Circle className={`${item.status ? "text-green-500" : "text-yellow-500"} w-[12px]`} fill={`${item.status ? "green" : "yellow"}`} size="100%"/>
+                                    <Circle className={`${item.status ? "text-green-500" : "text-yellow-500"} max-sm:w-[5px] sm:w-[12px]`} fill={`${item.status ? "green" : "yellow"}`} size="100%"/>
                                     <div className='pop absolute bg-gray-500 px-3 py-2 rounded-e-md rounded-t-md bottom-[15px] text-[rgb(16,16,16)] whitespace-nowrap font-bold'>
                                         {!item.status ? "To be accomplished" : "Accomplished"}
                                     </div>
