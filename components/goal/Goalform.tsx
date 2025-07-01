@@ -215,7 +215,7 @@ const Goalform = ({data, id, create}: {data: goalType[] | null, id: string | nul
 
       toast.success("Updated Successfully...")
 
-      // router.push(`/goal/${id}`);
+      router.push(`/goal/${id}`);
     } catch (error) {
       console.error(error);
       toast.error("Update failed")

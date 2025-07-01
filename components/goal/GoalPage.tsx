@@ -103,11 +103,11 @@ const GoalPage = ({goalDeets, id}: {goalDeets: goalType[], id: string}) => {
                 {data[0].steps.length != 0 ? (
                     <ul className='flex flex-col max-sm:gap-5'>
                         {
-                        data[0].steps.map((item, index) => (
-                            <li key={index} className='max-sm:mx-[20px]'>
-                                <p className='text-white sm:indent-8'>&bull; {item.step}</p>
-                            </li>
-                        ))
+                            data[0].steps.map((item, index) => (
+                                <li key={index} className='max-sm:mx-[20px]'>
+                                    <p className='text-white sm:indent-8'>&bull; {item.step}</p>
+                                </li>
+                            ))
                         }
                     </ul>
                 ):(

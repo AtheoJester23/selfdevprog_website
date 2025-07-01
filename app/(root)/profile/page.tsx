@@ -47,7 +47,7 @@ const page = async () => {
             )}
         </section>
 
-        <section className='text-white bg-[rgb(16,16,16)] rounded p-5 flex justify-center items-center flex-col mx-5 gap-3'>
+        <section className='text-white bg-[rgb(16,16,16)] rounded p-5 flex justify-center items-center flex-col mx-5 gap-3 mb-5'>
             <div className='flex justify-center items-center flex-col'>
                 <Goal className='w-[2em]' size="100%"/>
                 <h1 className='text-[24px] font-bold'>4 most important goal:</h1>
@@ -58,7 +58,7 @@ const page = async () => {
                     <ul className='fourGoals'>
                             <>
                                 {picked.map((item, index) => (
-                                    <Link href={`goal/${item._id}`} key={index} className={`flex justify-center items-center border p-5 text-center ${index == 0 ? "rounded-s-lg" : index === picked.length - 1 ? "rounded-e-lg" : null} hover:text-[rgb(16,16,16)] hover:bg-white font-bold`}>
+                                    <Link href={`goal/${item._id}`} key={index} className={`flex justify-center items-center border p-5 text-center ${index == 0 ? "max-sm:rounded-tl-lg sm:rounded-s-lg" : index === picked.length - 1 ? "max-sm:rounded-br-lg sm:rounded-e-lg" : null} hover:text-[rgb(16,16,16)] hover:bg-white font-bold`}>
                                         {item.title}
                                     </Link>
                                 ))}
