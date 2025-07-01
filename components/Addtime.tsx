@@ -115,7 +115,10 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
             const actVal = (document.getElementById(`activity${theIndex}`) as HTMLInputElement)?.value     
             const timeVal2 = (document.getElementById(`nextInput${theIndex}`) as HTMLInputElement)?.value
 
-            if(!actVal || !timeVal2){
+            if(!actVal){
+                toast.error("Oops! You didn't put the activity yet...")
+                return;
+            }else if(!timeVal2){
                 toast.error("Oops! You didn't input time...")
                 return;
             }
@@ -136,7 +139,10 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
             const timeVal2 = (document.getElementById(`nextInput${theIndex}`) as HTMLInputElement)?.value
             const actVal = (document.getElementById(`activity${theIndex}`) as HTMLInputElement)?.value        
     
-            if(!actVal || !timeVal2 || !timeVal2){
+            if(!actVal){
+                toast.error("Oops! You didn't put the activity yet...")
+                return;
+            }else if(!timeVal2 || !timeVal2){
                 toast.error("Oops! You didn't input time...")
                 return;
             }
@@ -287,7 +293,7 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
         const actVal = (document.getElementById(`activity${theIndex}`) as HTMLInputElement )?.value
 
         if(!actVal){
-            toast.error("Oops! You didn't input time...")
+            toast.error("Oops! You didn't put the activity yet...")
             return;
         }
 
@@ -878,7 +884,7 @@ const Addtime = ({schedule, id}: {schedule: {title: string, allTime: Entry[]} | 
                                                 }
                                             }}
                                             required
-                                            placeholder='What will you be doing abcdefg during this time?'  
+                                            placeholder='What will you be doing during this time?'  
                                         />
 
                                         <div className="flex items-center justify-center max-sm:gap-1 sm:gap-2">
