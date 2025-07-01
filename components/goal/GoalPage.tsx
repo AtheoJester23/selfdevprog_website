@@ -143,7 +143,7 @@ const GoalPage = ({goalDeets, id}: {goalDeets: goalType[], id: string}) => {
             <div className='fixed inset-0 bg-black/30'></div>
 
             <div className='fixed inset-0 flex w-screen items-center justify-center p-4'>
-                <Dialog.Panel className="mx-auto max-w-sm rounded bg-white p-5 w-[50%]">
+                <Dialog.Panel className="mx-auto max-w-sm rounded bg-white p-5 max-sm:w-[90%] sm:w-[50%]">
                     <div className='flex justify-center flex-col items-center gap-3'>
                         <TriangleAlert size={100} className='text-red-500'/>
                         <div className='text-center'>
