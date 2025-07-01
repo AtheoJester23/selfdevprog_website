@@ -4,6 +4,8 @@ import { UpdateGoal } from '@/actions/updateSchedule';
 import { goalDeets } from '@/app/(root)/goal/page';
 import { allAtomGoals } from '@/atoms/actionAtoms';
 import { createGoal } from '@/lib/actions';
+import { client } from '@/sanity/lib/client';
+import { GOALS_BY_AUTHOR } from '@/sanity/lib/queries';
 import { goalFormSchema } from '@/sanity/lib/validation';
 import { useAtom } from 'jotai';
 import { Check, Pencil, Plus, Trash2, X } from 'lucide-react'
@@ -27,13 +29,15 @@ export type goalType = {
   }[]
 }
 
-const Goalform = ({data, id, create}: {data: goalType[] | null, id: string | null, create: boolean}) => {
+const Goalform = ({data, id, create, session_id}: {data: goalType[] | null, id: string | null, create: boolean, session_id: string}) => {
   const [how, setHow] = useState<Array<{_key: string, step: string, status: string}>>(data?.[0]?.steps && !create ? data?.[0].steps : []);
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter()
   const [emptyFields, setEmptyFields] = useState<string[]>([])
   const [isPending , setIsPending] = useState<boolean>(false);
   const [atomGoals, setAtomGoals] = useAtom(allAtomGoals);
+
+  console.log(session_id);
 
   const handleCancel = () => {
     const cancelLast = how.filter(item => item.status != "Empty")
@@ -201,9 +205,11 @@ const Goalform = ({data, id, create}: {data: goalType[] | null, id: string | nul
     try {
       const allData: goalDeets = {_id: data?.[0]._id, title: goalName.value, duration: duration.value, description: description.value, status: false, steps: allSteps, picked: data?.[0]?.picked ?? false}
   
-      atomGoals.push(allData);
+      const allGoals: goalDeets[] = await client.fetch(GOALS_BY_AUTHOR, {id: session_id});
 
-      setAtomGoals(atomGoals);
+      const updatedData = allGoals.map(item => item._id == id ? {...item, ...allData} : item);
+
+      setAtomGoals(updatedData);
 
       await goalFormSchema.parseAsync(allData);
 

@@ -20,7 +20,7 @@ const page = async (prop: {params: paramsType} ) => {
         <div className='flex justify-center items-center '>
             <h1 className='text-white font-bold max-sm:text-[24px] sm:text-[3em] border-5 px-5 py-3 rounded border-dashed'>Edit Goal Details</h1>
         </div>
-        <Goalform data={goalDeets} id={id} create={false}/>
+        <Goalform data={goalDeets} id={id} create={false} session_id={session.id}/>
     </section>
   )
 }
