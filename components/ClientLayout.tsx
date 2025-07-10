@@ -4,8 +4,6 @@ import dynamic from 'next/dynamic';
 import { Session } from 'next-auth';
 import { motion } from "framer-motion"
 import { useEffect, useState } from 'react';
-//to check if it's the first page...
-import { usePathname } from 'next/navigation';
 
 const Navbar = dynamic(() => import('./Navbar'),{
   ssr: false,
@@ -13,8 +11,6 @@ const Navbar = dynamic(() => import('./Navbar'),{
 
 export default function ClientLayout({ session, children,} : { session: Session | null; children: React.ReactNode;}) {
   const [hydrated, setHydrated] = useState(false);
-
-  const pathName = usePathname();
 
   useEffect(() => {
     setHydrated(true);
@@ -24,12 +20,9 @@ export default function ClientLayout({ session, children,} : { session: Session 
     <main>
       <Navbar isSession={session} />
       
-      {hydrated && 
-        session ? (
+      {hydrated ? (
           children
-        ) : pathName === "/" ? (
-          children
-        ):(
+        ) : (
           <div className='flex items-center justify-center h-screen'>
             <motion.div
               animate={{ rotate: 360 }}

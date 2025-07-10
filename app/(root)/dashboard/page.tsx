@@ -10,10 +10,8 @@ import React from 'react'
 const page = async () => {
     const session = await auth();
 
-    if(!session){
-      redirect("/");
-    }
-
+    if(!session) redirect("/");
+    
     const [schedules, goals] = await Promise.all([
       await client.fetch(RECENT_SCHEDS_BY_AUTHOR, { id: session.id }),
       await client.fetch(RECENT_GOALS_BY_AUTHOR, {id: session.id})

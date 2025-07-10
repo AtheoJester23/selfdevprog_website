@@ -3,9 +3,15 @@ import { client } from '@/sanity/lib/client'
 import { SCHEDULE_BY_ID } from '@/sanity/lib/queries'
 import React from 'react'
 import { paramsType } from '../../[id]/page'
+import { auth } from '@/auth'
+import { redirect } from 'next/navigation'
 
 const page = async (prop: {params: paramsType} ) => {
-    const { id } = await prop.params
+  const session = await auth();
+
+  if(!session) redirect("/")
+
+  const { id } = await prop.params
 
     const sched = await client.fetch(SCHEDULE_BY_ID, {id});
 
