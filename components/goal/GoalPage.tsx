@@ -38,7 +38,6 @@ const GoalPage = ({goalDeets, id}: {goalDeets: goalType[], id: string}) => {
 
             if(!result.success){
                 throw new Error(result.error);
-                return;
             }
 
             toast.success("Item Deleted");
