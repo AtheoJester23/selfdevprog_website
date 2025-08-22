@@ -1,8 +1,9 @@
 import { auth } from '@/auth'
 import RecentGoals from '@/components/goal/RecentGoals';
+import UserNotes from '@/components/notes/UserNotes';
 import UserScheds from '@/components/UserScheds';
 import { client } from '@/sanity/lib/client';
-import { RECENT_GOALS_BY_AUTHOR, RECENT_SCHEDS_BY_AUTHOR } from '@/sanity/lib/queries';
+import { NOTES_BY_AUTHOR, RECENT_GOALS_BY_AUTHOR, RECENT_SCHEDS_BY_AUTHOR } from '@/sanity/lib/queries';
 import { CalendarDays, Goal, NotepadText, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
@@ -18,12 +19,13 @@ const page = async () => {
       {id: 1, name: "test2"}
     ]
     
-    const [schedules, goals] = await Promise.all([
+    const [schedules, goals, theNotes] = await Promise.all([
       await client.fetch(RECENT_SCHEDS_BY_AUTHOR, { id: session.id }),
-      await client.fetch(RECENT_GOALS_BY_AUTHOR, {id: session.id})
-      
+      await client.fetch(RECENT_GOALS_BY_AUTHOR, {id: session.id}),
+      await client.fetch(NOTES_BY_AUTHOR, {id: session.id})
     ])
     
+    console.log(theNotes)
 
   return (
     <div className='flex flex-col gap-5'>
@@ -39,6 +41,8 @@ const page = async () => {
                 <Plus className='max-sm:w-[20px] sm:w-[2em]' size="100%"/>
             </Link>
           </div>
+
+          <UserNotes prop={theNotes}/>
         </section>
       )}
       
