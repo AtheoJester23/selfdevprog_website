@@ -1,19 +1,10 @@
-export type typeNotes = {
-    _id: string,
-    title: string,
-    message: string
+// app/(root)/note/page.tsx
+export default async function Page() {
+  return (
+    <>
+      <ul>
+        <p>Testing</p>
+      </ul>
+    </>
+  )
 }
-
-const page = async ({prop}: {prop: typeNotes}) => {
-    console.log(prop)
-    
-    return ( 
-        <>
-            <ul>
-                <p>Testing</p>
-            </ul>
-        </> 
-    );
-}
- 
-export default page;
