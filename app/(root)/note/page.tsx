@@ -1,15 +1,12 @@
 "use client"
 
-const page = () => {
-    function test(){
-        const titleInp = (document.getElementsByName('title')[0]) as HTMLInputElement;
-        const descriptionInp = (document.getElementById('description')) as HTMLTextAreaElement;
+export type typeNotes = {
+    _id: string,
+    title: string,
+    message: string
+}
 
-
-        console.log(titleInp.value);
-        console.log(descriptionInp.value);
-    }
-    
+const page = async ({prop}: {prop: typeNotes}) => {    
     return ( 
         <>
             <ul>

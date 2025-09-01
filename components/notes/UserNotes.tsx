@@ -1,5 +1,3 @@
-import { CalendarClock, Link } from "lucide-react";
-
 export type typeNotes = {
     _id: string,
     title: string,
