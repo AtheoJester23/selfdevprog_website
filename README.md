@@ -1,5 +1,21 @@
-<img width="1440" height="773" alt="image" src="https://github.com/user-attachments/assets/453538db-845a-4ddd-8d41-513a80882222" />
+<a href="https://selfdevprog.vercel.app/">
+  <img width="1440" height="773" alt="image" src="https://github.com/user-attachments/assets/453538db-845a-4ddd-8d41-513a80882222" />
+</a>
 
+##📓 About
+This is the official repository for the SelfDevProg Website — a platform dedicated to supporting self-development activities.
+
+The project was inspired by the SelfDevProg Landing Page, which I originally created as part of freeCodeCamp’s Responsive Web Design Certification.
+
+Currently, the website provides tools for:
+
+🕒 Daily Time Management
+
+🎯 Goal Tracking
+
+📝 Notepad
+
+More tools and features are planned to be added in the future to support additional aspects of self-development and productivity.
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
