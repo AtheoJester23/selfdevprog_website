@@ -2,7 +2,8 @@
   <img width="1440" height="773" alt="image" src="https://github.com/user-attachments/assets/453538db-845a-4ddd-8d41-513a80882222" />
 </a>
 
-##📓 About
+## 📓 About
+
 This is the official repository for the SelfDevProg Website — a platform dedicated to supporting self-development activities.
 
 The project was inspired by the SelfDevProg Landing Page, which I originally created as part of freeCodeCamp’s Responsive Web Design Certification.
