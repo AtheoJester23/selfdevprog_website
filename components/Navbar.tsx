@@ -53,7 +53,7 @@ const Navbar = ({isSession}: NavbarProps) => {
                     <CreateButton/>
         
                     <button 
-                      className='cursor-pointer'
+                      className='cursor-pointer testing'
                       type='button'
                       data-drawer-target="my-drawer"
                       data-drawer-show="my-drawer"

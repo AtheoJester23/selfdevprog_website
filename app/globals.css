@@ -75,6 +75,8 @@
   visibility: visible;
 }
 
+
+
 @media (min-width: 360px) and (max-width: 820px) {
   .fourGoals{
     display: grid;
@@ -113,7 +115,18 @@
     font-size: 16px;
     padding: 5px;
     WebkitPrintColorAdjust: "exact";
+    border: solid;
+    border-color: white;
+    border-width: 1px;
+    border-bottom: none;
+    border-left: none;
+    border-right: none;
   }
+
+  .time span{
+    border: none;
+  }
+  
 
   .action *{
     font-size: 16px;
@@ -125,4 +138,31 @@
   .theTitle{
     font-size: 32px;
   }
+
+  .dailyRoutine{
+    color: black
+  }
+  
+  .theGrid{
+    gap: 0px;
+  }
+
+  .eachActivity{
+    border: solid;
+    border-width: 1px;
+    border-top: none;
+    gap: 20px;
+    @apply shadow-none
+  }
+  
+  .action{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .testing {
+    visibility: hidden;
+  }
+
 }

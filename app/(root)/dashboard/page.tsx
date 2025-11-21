@@ -34,10 +34,10 @@ const page = async () => {
           <div className='flex justify-between items-center'>
             <div className='ms-5 flex max-sm:gap-2 sm:gap-4 items-center text-black max-sm:text-[2em] sm:text-7xl mb-3'>
               <NotepadText className='max-sm:w-[30px] sm:w-[50px]' size="100%"/>
-              <h1 className='font-bold'>Notes</h1>
+              <h1 className='font-bold'>Note</h1>
             </div>
 
-            <Link href='/dashboard' className='flex jusity-center border items-center gap-2 hover:bg-black text-black hover:text-white py-3 px-5 rounded-xl font-bold -translate-y-0.25 hover:translate-none duration-200 cursor-pointer shadow-xl hover:shadow-none'>
+            <Link href='/note' className='flex jusity-center border items-center gap-2 hover:bg-black text-black hover:text-white py-3 px-5 rounded-xl font-bold -translate-y-0.25 hover:translate-none duration-200 cursor-pointer shadow-xl hover:shadow-none'>
                 <Plus className='max-sm:w-[20px] sm:w-[2em]' size="100%"/>
             </Link>
           </div>

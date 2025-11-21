@@ -35,27 +35,29 @@ export default async function Page(prop: { params: paramsType}) {
       <article>
 
         <section className="flex flex-col gap-3">
-          <div className='flex justify-center items-center mb-[30px]'>
+          <div className='flex justify-center items-center mb-[30px] flex-col'>
+            <p className='text-white dailyRoutine'>Daily Routine:</p>
             <h1 className="text-white text-2xl md:text-5xl font-bold theTitle text-center break-all">
               {schedule[0]?.title ?? 'Untitled'}
             </h1>
+            <p className='dailyRoutine'>Date Printed: {new Date(Date.now()).toDateString()}</p>
           </div>
           
-          <ul className='flex flex-col gap-3'>
+          <ul className='flex flex-col gap-3 theGrid'>
             {schedule[0]?.allTime?.map((item: Entry) => (
               <li
                 key={item.id}
-                className="border-y border-white flex flex-col sm:flex-row items-center sm:gap-1 md:gap-5 justify-start shadow-xl"
+                className="border-y border-white flex flex-col sm:flex-row items-center sm:gap-1 md:gap-5 justify-start shadow-xl eachActivity"
               >
                 <div className="time bg-white h-full items-center">
-                  <h1 className="bg-white p-2 md:p-5 text-[rgb(22,22,22)] sm:text-3xl md:text-3xl lg:text-3xl font-bold whitespace-nowrap flex items-center gap-3">
+                  <h1 className="bg-white p-2 md:p-5 text-[rgb(22,22,22)] sm:text-3xl md:text-3xl lg:text-3xl font-bold whitespace-nowrap flex items-center gap-3 ">
                     {to12Hour(item.timeValue)}{' '}
                     <span className="text-[rgb(22,22,22)] text-sm">to</span>{' '}
                     {to12Hour(item.timeValue2)}
                   </h1>
                 </div>
                 <div className="py-3 action">
-                  <h1 className="text-white mb-2 md:mb-none sm:text-3xl font-bold break-all">
+                  <h1 className="text-white md:mb-none sm:text-3xl font-bold break-all theAct">
                     {item.activity}
                   </h1>
                 </div>

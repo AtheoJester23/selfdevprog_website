@@ -92,7 +92,6 @@ export const RECENT_SCHEDS_BY_AUTHOR = groq`
 export const NOTES_BY_AUTHOR = groq`
         *[_type == "notes" && user._ref == $id]{
             _id,
-            title,
             message
         }
 `;

@@ -6,11 +6,6 @@ export const notes = defineType({
     type: "document",
     fields: [
         defineField({
-            name: "title",
-            title: "Title",
-            type: "string",
-        }),
-        defineField({
             name: "message",
             title: "Message",
             type: "string"
