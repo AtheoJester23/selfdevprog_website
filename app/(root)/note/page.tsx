@@ -2,8 +2,8 @@
 
 import React, { useEffect, useRef } from "react";
 
-const page = () => {
-    let theInput = useRef<HTMLTextAreaElement>(null);
+const Page = () => {
+    const theInput = useRef<HTMLTextAreaElement>(null);
 
     useEffect(()=>{
         theInput.current?.focus();
@@ -12,15 +12,9 @@ const page = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
         e.preventDefault();
 
-        let text = document.getElementById("description") as HTMLTextAreaElement
+        const text = document.getElementById("description") as HTMLTextAreaElement
 
         console.log(text.value)
-    }
-
-    function test(){
-        const descriptionInp = (document.getElementById('description')) as HTMLTextAreaElement;
-
-        console.log(descriptionInp.value);
     }
     
     return ( 
@@ -36,4 +30,4 @@ const page = () => {
     );
 }
  
-export default page;
+export default Page;
