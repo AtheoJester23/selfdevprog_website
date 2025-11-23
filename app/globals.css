@@ -75,6 +75,11 @@
   visibility: visible;
 }
 
+.dailyRoutine{
+  /* color: black; */
+  visibility: hidden;
+}
+
 
 
 @media (min-width: 360px) and (max-width: 820px) {
@@ -140,7 +145,8 @@
   }
 
   .dailyRoutine{
-    color: black
+    color: black;
+    visibility: visible;
   }
   
   .theGrid{
