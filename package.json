@@ -28,7 +28,7 @@
     "jotai": "^2.12.5",
     "lucide-react": "^0.510.0",
     "nanoid": "^5.1.5",
-    "next": "15.3.2",
+    "next": "15.3.8",
     "next-auth": "^5.0.0-beta.28",
     "next-sanity": "^9.12.0",
     "react": "^19.0.0",
