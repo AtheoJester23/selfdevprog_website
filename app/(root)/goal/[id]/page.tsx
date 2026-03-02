@@ -1,6 +1,6 @@
 import { paramsType } from '../../schedule/[id]/page'
 import { auth } from '@/auth'
-import { redirect } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { GOALS_BY_ID } from '@/sanity/lib/queries';
 import { goalType } from '@/components/goal/Goalform';
 import GoalPage from '@/components/goal/GoalPage';
@@ -14,6 +14,11 @@ const page = async ({params}: {params: paramsType}) => {
     const { id } = await params;
 
     const goalDetails: goalType[] = await client.fetch(GOALS_BY_ID, {id})
+  
+    if(!goalDetails || goalDetails.length <= 0){
+      return notFound();
+    }
+  
   return (
     <div className='mb-20'>
       <GoalPage goalDeets={goalDetails} id={id}/>

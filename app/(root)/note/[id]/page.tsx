@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { NOTES_BY_ID } from "@/sanity/lib/queries";
 import { client } from "@/sanity/lib/client";
@@ -15,6 +15,10 @@ const Page = async ({ params }: { params: paramsType }) => {
   const { id } = await params;
 
   const theNote: typeNotes[] = await client.fetch(NOTES_BY_ID, { id });
+
+  if(!theNote || theNote.length === 0) {
+    notFound();
+  }
 
   console.log(theNote[0].message);
 

@@ -4,7 +4,7 @@ import { Entry } from '@/components/Addtime';
 import { to12Hour } from '@/lib/utils';
 import { client } from '@/sanity/lib/client';
 import { SCHEDULE_BY_ID } from '@/sanity/lib/queries';
-import { redirect } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 
 export interface scheds {
   title: string;
@@ -28,6 +28,10 @@ export default async function Page(prop: { params: paramsType}) {
   const { id } = await prop.params;
 
   const schedule: scheds[] = await client.fetch(SCHEDULE_BY_ID, { id });
+
+  if(!schedule || schedule.length <= 0){
+    return notFound();
+  }
 
   return (
     <div className="mt-[80px] p-5 printable-area">
