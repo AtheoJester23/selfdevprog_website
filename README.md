@@ -13,7 +13,19 @@ SelfDevProg aims to provide a user-friendly website for individuals who want to 
 
 ## Features
 - 🕒 **Daily Time Management** – Plan and organize daily schedules efficiently.
+<div align=center>
+  <img src="https://github.com/user-attachments/assets/2fdc7e9f-5622-43f6-a0b9-b030b17d646f"/>
+</div>
+
+<br/>
+
 - 🎯 **Goal Tracking** – Set, monitor, and manage personal goals.
+<div align=center>
+  <img src="https://github.com/user-attachments/assets/81321b16-fadc-49fd-afd6-139ee04671b8"/>
+</div>
+
+<br/>
+
 - 📝 **Notepad** – Write quick notes, ideas, and reminders in one place.
 
 ## License
