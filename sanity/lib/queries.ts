@@ -95,3 +95,10 @@ export const NOTES_BY_AUTHOR = groq`
             message
         }
 `;
+
+export const NOTES_BY_ID = groq`
+    *[_type == "notes" && _id == $id]{
+        _id,
+        message
+    }
+`;
