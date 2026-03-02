@@ -27,6 +27,9 @@ SelfDevProg aims to provide a user-friendly website for individuals who want to 
 <br/>
 
 - 📝 **Notepad** – Write quick notes, ideas, and reminders in one place.
+<div align=center>
+  <img width="1430" height="228" alt="image" src="https://github.com/user-attachments/assets/b47da1ee-a5aa-490e-bdd8-a0c4a67e53d8" />
+</div>
 
 ## License
 
